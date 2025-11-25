@@ -1,0 +1,221 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# SalonMate Docker Compose - 로컬 개발 환경
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 사용법:
+#   전체 실행: docker compose up -d
+#   특정 서비스: docker compose up -d postgres redis
+#   로그 확인: docker compose logs -f
+#   중지: docker compose down
+#   볼륨 포함 삭제: docker compose down -v
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+version: '3.8'
+
+services:
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ PostgreSQL 데이터베이스                                                  │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  postgres:
+    image: postgres:16-alpine
+    container_name: salonmate-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: salonmate
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d salonmate"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - salonmate-network
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ Redis 캐시 및 메시지 큐                                                   │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  redis:
+    image: redis:7-alpine
+    container_name: salonmate-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - salonmate-network
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ Backend API (FastAPI)                                                   │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: salonmate-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/salonmate
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    env_file:
+      - .env
+    volumes:
+      - ./src/backend:/app
+      - backend_cache:/app/.cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - salonmate-network
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ AI Worker (Celery)                                                      │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  worker:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: salonmate-worker
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/salonmate
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    env_file:
+      - .env
+    volumes:
+      - ./src/backend:/app
+      - ./src/worker:/app/worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A worker.celery_app worker --loglevel=info --concurrency=2
+    networks:
+      - salonmate-network
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ Celery Beat (스케줄러)                                                   │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  beat:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: salonmate-beat
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/salonmate
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    env_file:
+      - .env
+    volumes:
+      - ./src/backend:/app
+      - ./src/worker:/app/worker
+    depends_on:
+      - worker
+    command: celery -A worker.celery_app beat --loglevel=info
+    networks:
+      - salonmate-network
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ Frontend (Next.js) - 개발 모드                                           │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile.dev
+    container_name: salonmate-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    env_file:
+      - .env
+    volumes:
+      - ./src/frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    command: pnpm dev
+    networks:
+      - salonmate-network
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ Adminer (DB 관리 도구) - 개발 전용                                        │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  adminer:
+    image: adminer:latest
+    container_name: salonmate-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+    networks:
+      - salonmate-network
+    profiles:
+      - dev-tools
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ Redis Commander (Redis 관리 도구) - 개발 전용                             │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: salonmate-redis-commander
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - salonmate-network
+    profiles:
+      - dev-tools
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 볼륨
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  backend_cache:
+    driver: local
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 네트워크
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+networks:
+  salonmate-network:
+    driver: bridge

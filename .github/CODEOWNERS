@@ -1,0 +1,44 @@
+# SalonMate Code Owners
+# 각 파일/디렉토리에 대한 담당자를 지정합니다.
+# PR 생성 시 자동으로 리뷰어로 할당됩니다.
+
+# 기본 리뷰어 (모든 파일)
+* @core-team
+
+# 문서
+*.md @tech-lead @product-owner
+/docs/ @tech-lead
+
+# Frontend
+/src/frontend/ @frontend-team
+/src/frontend/components/ @frontend-team @design-lead
+/src/frontend/app/ @frontend-team
+
+# Backend
+/src/backend/ @backend-team
+/src/backend/api/ @backend-team
+/src/backend/services/ @backend-team
+
+# AI / Worker
+/src/worker/ @ai-team
+/src/backend/infrastructure/external/openai_client.py @ai-team
+
+# 데이터베이스
+/src/backend/models/ @backend-team @database-admin
+/src/backend/infrastructure/repositories/ @backend-team
+
+# 인프라 / DevOps
+/infra/ @devops-team
+/.github/ @devops-team
+/docker-compose.yml @devops-team
+/Dockerfile @devops-team
+
+# 보안 관련
+/.github/workflows/security-scan.yml @security-team
+/.github/SECURITY.md @security-team
+
+# 테스트
+/tests/ @core-team
+/src/frontend/**/*.test.ts @frontend-team
+/src/frontend/**/*.test.tsx @frontend-team
+/src/backend/tests/ @backend-team
