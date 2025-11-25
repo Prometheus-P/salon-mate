@@ -155,11 +155,11 @@ graph TB
 
 | 기준 | 가중치 | 설명 |
 |------|--------|------|
-| **UI/UX 품질** | 높음 | 예쁘고 직관적인 인터페이스 필수 |
+| **UI/UX 성능** | 높음 | 최소 번들, 빠른 인터랙션 |
+| **백엔드 성능** | 높음 | 높은 처리량, 낮은 메모리 |
 | **모바일 패키징** | 높음 | 웹 → 앱 전환 용이성 |
-| **개발 생산성** | 높음 | MVP 2개월 내 출시 목표 |
-| **확장성** | 중간 | 100개 → 10,000개 고객 대응 |
-| **비용 효율** | 중간 | 초기 인프라 비용 최소화 |
+| **AI 통합** | 높음 | LangChain 네이티브 지원 |
+| **비용 효율** | 높음 | 인프라 비용 최소화 |
 
 ### 4.2 기술 스택 결정
 
@@ -167,59 +167,72 @@ graph TB
 ┌─────────────────────────────────────────────────────────────────┐
 │                        FRONTEND                                  │
 ├─────────────────────────────────────────────────────────────────┤
-│  Framework    │  Next.js 14 (App Router)                        │
+│  Framework    │  SvelteKit 2.0 (SSR/SSG/SPA)                     │
 │  Language     │  TypeScript 5.x                                  │
-│  Styling      │  Tailwind CSS + shadcn/ui                        │
-│  State        │  Zustand + TanStack Query                        │
+│  UI Library   │  Svelte 5 (Runes)                                │
+│  Styling      │  Tailwind CSS + Skeleton UI                      │
 │  Mobile       │  Capacitor (iOS/Android 패키징)                   │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────┐
-│                        BACKEND                                   │
+│                      BACKEND API                                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Framework    │  FastAPI (Python 3.12)                           │
-│  ORM          │  SQLAlchemy 2.0 + Alembic                        │
-│  Validation   │  Pydantic v2                                     │
+│  Language     │  Go 1.22+                                        │
+│  Framework    │  Echo v4 (고성능 HTTP 프레임워크)                  │
+│  Database     │  sqlc (타입 안전 SQL)                             │
+│  Migration    │  golang-migrate                                  │
+│  Task Queue   │  Asynq (Redis 기반)                               │
 │  Auth         │  JWT + OAuth 2.0 (Google, Kakao)                 │
-│  Task Queue   │  Celery + Redis                                  │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────┐
-│                      AI / WORKER                                 │
+│                      AI WORKER (별도 서비스)                      │
 ├─────────────────────────────────────────────────────────────────┤
+│  Language     │  Python 3.12                                     │
+│  Framework    │  LangChain + LangGraph                           │
 │  LLM          │  OpenAI GPT-4o (품질 우선)                        │
 │  Fallback     │  Claude Haiku / GPT-4o-mini (비용 최적화)         │
 │  Embedding    │  OpenAI text-embedding-3-small                   │
-│  Framework    │  LangChain + LangGraph                           │
+│  통신         │  Redis Queue (Asynq) / gRPC                       │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────┐
 │                     INFRASTRUCTURE                               │
 ├─────────────────────────────────────────────────────────────────┤
-│  Cloud        │  Supabase (PostgreSQL + Auth + Storage)          │
-│  Hosting      │  Vercel (Frontend) + Railway/Render (Backend)    │
-│  Cache        │  Redis (Upstash)                                 │
+│  Database     │  Neon PostgreSQL (서버리스)                       │
+│  Frontend     │  Vercel / Cloudflare Pages                       │
+│  Backend API  │  Fly.io (글로벌 엣지 배포)                        │
+│  AI Worker    │  Railway / Modal                                 │
+│  Queue/Cache  │  Upstash Redis                                   │
+│  Storage      │  Cloudflare R2                                   │
 │  CDN          │  Cloudflare                                      │
-│  Monitoring   │  Sentry + Datadog (Free tier)                    │
+│  Monitoring   │  Sentry + Grafana Cloud (Free tier)              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ### 4.3 기술 선정 근거
 
-#### Frontend: Next.js + Tailwind + shadcn/ui
-- **UI/UX 품질**: shadcn/ui 컴포넌트로 모던하고 일관된 디자인 즉시 적용
-- **모바일 대응**: Capacitor를 통해 동일 코드베이스로 iOS/Android 앱 빌드
-- **SEO**: Next.js SSR로 마케팅 랜딩 페이지 SEO 최적화
+#### Frontend: SvelteKit + Tailwind + Skeleton UI
+- **최소 번들**: React 대비 60-70% 작은 번들 크기 (30-50KB)
+- **빠른 인터랙션**: 제로 런타임 오버헤드, 컴파일 타임 최적화
+- **내장 애니메이션**: 부드러운 전환 효과 기본 제공
+- **간결한 문법**: 보일러플레이트 최소화, 생산성 향상
 
-#### Backend: FastAPI
-- **AI 친화적**: Python 기반으로 LLM/ML 라이브러리 통합 용이
-- **성능**: 비동기 처리로 높은 동시성 지원
-- **문서화**: 자동 OpenAPI 스펙 생성
+#### Backend API: Go (Echo)
+- **압도적 성능**: 100,000+ req/s (Python 대비 6-7배)
+- **메모리 효율**: 20MB 메모리 (Python 대비 1/6)
+- **동시성**: 고루틴 기반 수십만 동시 연결 처리
+- **배포 단순화**: 단일 바이너리, 빠른 콜드 스타트 (0.1초)
 
-#### Database: Supabase (PostgreSQL)
-- **통합 솔루션**: DB + Auth + Storage + Realtime 올인원
+#### AI Worker: Python (별도 서비스)
+- **LangChain 네이티브**: Python이 LangChain 생태계 최적 지원
+- **AI 라이브러리**: NumPy, Pandas 등 ML 라이브러리 통합
+- **분리된 관심사**: API 성능과 AI 처리 독립적 확장
+
+#### Database: Neon PostgreSQL
+- **서버리스**: 자동 스케일링, 사용한 만큼 과금
+- **브랜칭**: 개발/스테이징 DB 즉시 생성
 - **비용 효율**: 무료 티어로 MVP 검증 가능
-- **확장성**: PostgreSQL 기반으로 대규모 확장 가능
 
 ---
 
@@ -228,18 +241,19 @@ graph TB
 ```mermaid
 graph TB
     subgraph Client
-        WEB[Web App<br/>Next.js]
+        WEB[Web App<br/>SvelteKit]
         IOS[iOS App<br/>Capacitor]
         AND[Android App<br/>Capacitor]
     end
 
-    subgraph API Gateway
-        VERCEL[Vercel Edge]
+    subgraph Edge Layer
+        CF[Cloudflare<br/>CDN + WAF]
     end
 
-    subgraph Backend Services
-        API[FastAPI<br/>REST API]
-        WORKER[AI Worker<br/>Celery]
+    subgraph Application Layer
+        FE[SvelteKit<br/>Vercel]
+        API[Go API<br/>Fly.io]
+        AI[AI Worker<br/>Python]
     end
 
     subgraph External APIs
@@ -249,25 +263,28 @@ graph TB
     end
 
     subgraph Data Layer
-        DB[(Supabase<br/>PostgreSQL)]
-        REDIS[(Redis<br/>Cache/Queue)]
-        STORAGE[Supabase<br/>Storage]
+        DB[(Neon<br/>PostgreSQL)]
+        REDIS[(Upstash<br/>Redis)]
+        STORAGE[Cloudflare<br/>R2]
     end
 
-    WEB --> VERCEL
-    IOS --> VERCEL
-    AND --> VERCEL
+    WEB --> CF
+    IOS --> CF
+    AND --> CF
 
-    VERCEL --> API
+    CF --> FE
+    CF --> API
+
+    FE --> API
     API --> DB
     API --> REDIS
     API --> STORAGE
-    API --> WORKER
+    API --> AI
 
-    WORKER --> OPENAI
-    WORKER --> GOOGLE
-    WORKER --> INSTA
-    WORKER --> REDIS
+    AI --> OPENAI
+    AI --> REDIS
+    API --> GOOGLE
+    API --> INSTA
 ```
 
 ---

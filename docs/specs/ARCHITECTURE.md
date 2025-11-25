@@ -1,6 +1,6 @@
 ---
 title: SalonMate - 시스템 아키텍처
-version: 1.0.0
+version: 2.0.0
 status: Approved
 owner: "@tech-lead"
 created: 2025-11-25
@@ -15,6 +15,7 @@ language: Korean (한국어)
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 |------|------|--------|----------|
+| 2.0.0 | 2025-11-25 | @tech-lead | SvelteKit + Go + Python Worker 스택으로 변경 |
 | 1.0.0 | 2025-11-25 | @tech-lead | 최초 작성 |
 
 ## 관련 문서
@@ -23,6 +24,7 @@ language: Korean (한국어)
 - [PRD.md](./PRD.md) - 제품 요구사항
 - [API_SPEC.md](./API_SPEC.md) - API 명세
 - [DATA_MODEL.md](./DATA_MODEL.md) - 데이터 모델
+- [TECH_STACK_ALTERNATIVES.md](./TECH_STACK_ALTERNATIVES.md) - 기술 스택 비교 분석
 
 ---
 
@@ -65,25 +67,25 @@ graph TB
 ```mermaid
 graph TB
     subgraph Client Layer
-        WEB[🌐 Web App<br/>Next.js 14]
+        WEB[🌐 Web App<br/>SvelteKit 2]
         IOS[📱 iOS App<br/>Capacitor]
         ANDROID[📱 Android App<br/>Capacitor]
     end
 
-    subgraph API Gateway
-        VERCEL[⚡ Vercel Edge<br/>CDN + Edge Functions]
+    subgraph Edge Layer
+        CF[☁️ Cloudflare<br/>CDN + WAF + R2]
     end
 
     subgraph Application Layer
-        API[⚙️ API Server<br/>FastAPI]
-        WORKER[🔄 AI Worker<br/>Celery]
-        SCHEDULER[⏰ Scheduler<br/>Celery Beat]
+        FE[⚡ Frontend<br/>SvelteKit on Vercel]
+        API[🚀 API Server<br/>Go Echo on Fly.io]
+        AI[🤖 AI Worker<br/>Python on Railway]
     end
 
     subgraph Data Layer
-        DB[(🗄️ PostgreSQL<br/>Supabase)]
+        DB[(🗄️ PostgreSQL<br/>Neon)]
         CACHE[(⚡ Redis<br/>Upstash)]
-        STORAGE[📁 Object Storage<br/>Supabase Storage]
+        STORAGE[📁 Object Storage<br/>Cloudflare R2]
     end
 
     subgraph External Services
@@ -92,26 +94,28 @@ graph TB
         OPENAI[🤖 OpenAI]
     end
 
-    WEB --> VERCEL
-    IOS --> VERCEL
-    ANDROID --> VERCEL
+    WEB --> CF
+    IOS --> CF
+    ANDROID --> CF
 
-    VERCEL --> API
+    CF --> FE
+    CF --> API
+
+    FE --> API
 
     API --> DB
     API --> CACHE
     API --> STORAGE
-    API --> WORKER
+    API --> AI
 
-    WORKER --> CACHE
-    WORKER --> OPENAI
-    WORKER --> GOOGLE
-    WORKER --> META
+    AI --> CACHE
+    AI --> OPENAI
 
-    SCHEDULER --> WORKER
+    API --> GOOGLE
+    API --> META
 
     style API fill:#10B981,color:#fff
-    style WORKER fill:#F59E0B,color:#fff
+    style AI fill:#F59E0B,color:#fff
     style DB fill:#3B82F6,color:#fff
 ```
 
@@ -119,16 +123,17 @@ graph TB
 
 ## 2. 기술 스택 상세
 
-### 2.1 Frontend
+### 2.1 Frontend (SvelteKit)
 
 ```yaml
 Framework:
-  name: Next.js 14
+  name: SvelteKit 2.0
   features:
-    - App Router (Server Components)
-    - Server Actions
-    - ISR (Incremental Static Regeneration)
-    - Edge Runtime
+    - SSR (Server-Side Rendering)
+    - SSG (Static Site Generation)
+    - Form Actions
+    - Load Functions
+    - Streaming
 
 Language:
   name: TypeScript 5.x
@@ -137,13 +142,19 @@ Language:
     noImplicitAny: true
 
 UI Library:
-  name: shadcn/ui
-  base: Radix UI
-  styling: Tailwind CSS
+  name: Svelte 5
+  features:
+    - Runes ($state, $derived, $effect)
+    - Fine-grained Reactivity
+    - Built-in Transitions
 
-State Management:
-  client: Zustand
-  server: TanStack Query v5
+Styling:
+  framework: Tailwind CSS 3.4
+  components: Skeleton UI
+  features:
+    - Dark Mode
+    - Design Tokens
+    - Responsive
 
 Mobile:
   name: Capacitor
@@ -152,149 +163,196 @@ Mobile:
     - Camera
     - Push Notifications
     - Share
+    - Haptics
 ```
 
-### 2.2 Backend
+### 2.2 Backend API (Go)
 
 ```yaml
-Framework:
-  name: FastAPI
-  version: "0.109+"
-  features:
-    - Async/Await
-    - Automatic OpenAPI docs
-    - Dependency Injection
-    - Background Tasks
-
 Language:
-  name: Python 3.12
-  type_checking: mypy
-
-ORM:
-  name: SQLAlchemy 2.0
+  name: Go 1.22+
   features:
-    - Async support
-    - Type annotations
-  migrations: Alembic
+    - Generics
+    - Structured Logging (slog)
+    - Enhanced HTTP Routing
 
-Validation:
-  name: Pydantic v2
+Framework:
+  name: Echo v4
   features:
-    - Data validation
-    - Settings management
-    - JSON Schema generation
+    - High Performance (~100k req/s)
+    - Middleware Support
+    - WebSocket Support
+    - Request Binding & Validation
+
+Database:
+  query_builder: sqlc
+  features:
+    - Compile-time SQL Verification
+    - Type-safe Go Code Generation
+    - PostgreSQL Native Types
+
+Migration:
+  tool: golang-migrate
+  features:
+    - Version Control
+    - Up/Down Migrations
+    - CLI & Library
 
 Task Queue:
-  name: Celery
-  broker: Redis
-  result_backend: Redis
-  scheduler: Celery Beat
+  name: Asynq
+  broker: Redis (Upstash)
+  features:
+    - Reliable Task Processing
+    - Scheduled Tasks
+    - Retry with Backoff
+    - Web UI Dashboard
+
+Authentication:
+  jwt: golang-jwt/jwt/v5
+  oauth:
+    - Google OAuth 2.0
+    - Kakao OAuth 2.0
 ```
 
-### 2.3 AI / Worker
+### 2.3 AI Worker (Python)
 
 ```yaml
+Language:
+  name: Python 3.12
+  type_checking: mypy (strict)
+
+LLM Framework:
+  name: LangChain
+  version: 0.2+
+  features:
+    - Prompt Templates
+    - Output Parsers
+    - Chain Composition
+    - Memory Management
+
+Orchestration:
+  name: LangGraph
+  features:
+    - State Machines
+    - Conditional Routing
+    - Human-in-the-loop
+
 Primary LLM:
   provider: OpenAI
   model: gpt-4o
   use_cases:
-    - Review response generation
-    - Caption generation
-    - Hashtag recommendation
+    - Review Response Generation
+    - Caption Generation
+    - Hashtag Recommendation
 
 Fallback LLM:
-  provider: OpenAI
-  model: gpt-4o-mini
-  use_cases:
-    - High volume requests
-    - Cost optimization
+  models:
+    - gpt-4o-mini (cost optimization)
+    - claude-3-haiku (diversity)
 
 Embedding:
   provider: OpenAI
   model: text-embedding-3-small
   use_cases:
-    - Similar review detection
-    - Content categorization
+    - Similar Review Detection
+    - Content Categorization
 
-Framework:
-  name: LangChain
-  features:
-    - Prompt templates
-    - Output parsers
-    - Chain composition
+Communication:
+  primary: Redis Queue (Asynq compatible)
+  alternative: gRPC (for low-latency)
 ```
 
 ### 2.4 Infrastructure
 
 ```yaml
 Database:
-  provider: Supabase
-  engine: PostgreSQL 15
+  provider: Neon
+  engine: PostgreSQL 16
   features:
-    - Row Level Security
-    - Realtime subscriptions
-    - Full-text search
+    - Serverless Auto-scaling
+    - Database Branching
+    - Connection Pooling (pgbouncer)
+    - Point-in-time Recovery
 
-Cache:
+Cache & Queue:
   provider: Upstash
   engine: Redis
   use_cases:
-    - Session storage
-    - Rate limiting
-    - Task queue
-    - Response caching
+    - Session Storage
+    - Rate Limiting
+    - Task Queue (Asynq)
+    - Response Caching
 
 Storage:
-  provider: Supabase Storage
+  provider: Cloudflare R2
   features:
-    - Image optimization
-    - CDN distribution
-    - Access policies
+    - S3-compatible API
+    - Zero Egress Fees
+    - Global Distribution
+    - Image Optimization (via Workers)
 
 Hosting:
-  frontend: Vercel
-  backend: Railway
+  frontend:
+    provider: Vercel
+    features:
+      - Edge Functions
+      - Preview Deployments
+      - Analytics
+
+  backend:
+    provider: Fly.io
+    features:
+      - Global Edge Deployment
+      - Auto-scaling
+      - Private Networking
+      - Persistent Volumes
+
+  ai_worker:
+    provider: Railway
+    features:
+      - Easy Python Deployment
+      - Auto-scaling
+      - Cron Jobs
+
+CDN & Security:
+  provider: Cloudflare
   features:
-    - Auto-scaling
-    - Preview deployments
-    - Edge functions
+    - DDoS Protection
+    - WAF Rules
+    - Bot Management
+    - Edge Caching
 
 Monitoring:
   error_tracking: Sentry
-  apm: Datadog
-  logs: Datadog Logs
+  metrics: Grafana Cloud (Free tier)
+  logs: Grafana Loki
 ```
 
 ---
 
 ## 3. 컴포넌트 아키텍처
 
-### 3.1 Backend 레이어 구조
+### 3.1 Go Backend 레이어 구조
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Presentation Layer                        │
+│                        Handler Layer                             │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐                │
-│  │   Routers   │ │   Schemas   │ │   Deps      │                │
-│  │  (Endpoints)│ │  (Pydantic) │ │(Dependencies)│               │
+│  │   Handlers  │ │    DTOs     │ │ Middleware  │                │
+│  │ (HTTP)      │ │ (Request/   │ │ (Auth, Log, │                │
+│  │             │ │  Response)  │ │  RateLimit) │                │
 │  └─────────────┘ └─────────────┘ └─────────────┘                │
 ├─────────────────────────────────────────────────────────────────┤
-│                        Application Layer                         │
+│                        Service Layer                             │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐                │
-│  │  Services   │ │   UseCases  │ │    DTOs     │                │
-│  │(Biz Logic)  │ │ (Workflows) │ │(Data Trans) │                │
+│  │  Services   │ │   Domain    │ │    Ports    │                │
+│  │ (Biz Logic) │ │   Models    │ │ (Interfaces)│                │
 │  └─────────────┘ └─────────────┘ └─────────────┘                │
 ├─────────────────────────────────────────────────────────────────┤
-│                         Domain Layer                             │
+│                      Repository Layer                            │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐                │
-│  │   Entities  │ │   Value     │ │  Domain     │                │
-│  │             │ │   Objects   │ │  Events     │                │
-│  └─────────────┘ └─────────────┘ └─────────────┘                │
-├─────────────────────────────────────────────────────────────────┤
-│                      Infrastructure Layer                        │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐                │
-│  │Repositories │ │  External   │ │   Cache     │                │
-│  │   (DB)      │ │   APIs      │ │  Adapters   │                │
+│  │    sqlc     │ │  External   │ │   Cache     │                │
+│  │  Queries    │ │   Clients   │ │  Adapters   │                │
 │  └─────────────┘ └─────────────┘ └─────────────┘                │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -302,126 +360,109 @@ Monitoring:
 ### 3.2 디렉토리 구조
 
 ```
-src/backend/
-├── main.py                 # FastAPI 앱 진입점
-├── config/                 # 설정
-│   ├── settings.py         # 환경 변수, 설정
-│   └── database.py         # DB 연결 설정
+salon-mate/
+├── frontend/                    # SvelteKit 프론트엔드
+│   ├── src/
+│   │   ├── routes/              # 라우트 (페이지)
+│   │   │   ├── (auth)/          # 인증 그룹
+│   │   │   │   ├── login/
+│   │   │   │   └── signup/
+│   │   │   ├── (app)/           # 앱 그룹 (인증 필요)
+│   │   │   │   ├── dashboard/
+│   │   │   │   ├── reviews/
+│   │   │   │   ├── instagram/
+│   │   │   │   └── settings/
+│   │   │   ├── +layout.svelte
+│   │   │   └── +page.svelte     # 랜딩
+│   │   ├── lib/
+│   │   │   ├── components/      # 재사용 컴포넌트
+│   │   │   │   ├── ui/          # 기본 UI (Skeleton)
+│   │   │   │   └── features/    # 기능별 컴포넌트
+│   │   │   ├── stores/          # Svelte Stores
+│   │   │   ├── api/             # API 클라이언트
+│   │   │   └── utils/           # 유틸리티
+│   │   └── app.html
+│   ├── static/                  # 정적 파일
+│   ├── svelte.config.js
+│   ├── tailwind.config.js
+│   └── package.json
 │
-├── api/                    # Presentation Layer
-│   ├── v1/
-│   │   ├── __init__.py
-│   │   ├── auth.py         # 인증 엔드포인트
-│   │   ├── reviews.py      # 리뷰 엔드포인트
-│   │   ├── instagram.py    # 인스타그램 엔드포인트
-│   │   └── users.py        # 사용자 엔드포인트
-│   ├── deps.py             # 의존성 (인증, DB 세션)
-│   └── errors.py           # 에러 핸들러
+├── backend/                     # Go API 서버
+│   ├── cmd/
+│   │   ├── api/                 # API 서버 진입점
+│   │   │   └── main.go
+│   │   └── worker/              # Asynq Worker 진입점
+│   │       └── main.go
+│   ├── internal/
+│   │   ├── config/              # 설정
+│   │   │   └── config.go
+│   │   ├── handler/             # HTTP 핸들러
+│   │   │   ├── auth.go
+│   │   │   ├── review.go
+│   │   │   ├── instagram.go
+│   │   │   └── health.go
+│   │   ├── middleware/          # 미들웨어
+│   │   │   ├── auth.go
+│   │   │   ├── logger.go
+│   │   │   └── ratelimit.go
+│   │   ├── service/             # 비즈니스 로직
+│   │   │   ├── auth_service.go
+│   │   │   ├── review_service.go
+│   │   │   └── instagram_service.go
+│   │   ├── repository/          # 데이터 접근
+│   │   │   └── queries/         # sqlc 쿼리
+│   │   ├── domain/              # 도메인 모델
+│   │   │   ├── user.go
+│   │   │   ├── review.go
+│   │   │   └── post.go
+│   │   ├── client/              # 외부 API 클라이언트
+│   │   │   ├── google.go
+│   │   │   ├── instagram.go
+│   │   │   └── openai.go
+│   │   └── task/                # Asynq 태스크
+│   │       ├── review_task.go
+│   │       └── sync_task.go
+│   ├── db/
+│   │   ├── migrations/          # SQL 마이그레이션
+│   │   ├── queries/             # sqlc SQL 파일
+│   │   └── sqlc.yaml
+│   ├── go.mod
+│   └── go.sum
 │
-├── services/               # Application Layer
-│   ├── auth_service.py     # 인증 서비스
-│   ├── review_service.py   # 리뷰 서비스
-│   ├── ai_service.py       # AI 생성 서비스
-│   └── instagram_service.py# 인스타 서비스
+├── ai-worker/                   # Python AI Worker
+│   ├── src/
+│   │   ├── main.py              # 진입점
+│   │   ├── config.py            # 설정
+│   │   ├── tasks/               # 태스크 핸들러
+│   │   │   ├── review_response.py
+│   │   │   ├── caption_generation.py
+│   │   │   └── hashtag_recommendation.py
+│   │   ├── chains/              # LangChain 체인
+│   │   │   ├── review_chain.py
+│   │   │   └── content_chain.py
+│   │   ├── prompts/             # 프롬프트 템플릿
+│   │   │   ├── review_prompts.py
+│   │   │   └── content_prompts.py
+│   │   └── utils/
+│   │       └── redis_client.py
+│   ├── tests/
+│   ├── pyproject.toml
+│   └── requirements.txt
 │
-├── domain/                 # Domain Layer
-│   ├── entities/           # 도메인 엔티티
-│   │   ├── user.py
-│   │   ├── review.py
-│   │   └── post.py
-│   ├── value_objects/      # 값 객체
-│   └── events/             # 도메인 이벤트
+├── infra/                       # 인프라 설정
+│   ├── docker/
+│   │   ├── Dockerfile.api
+│   │   ├── Dockerfile.worker
+│   │   └── Dockerfile.frontend
+│   ├── docker-compose.yml
+│   └── fly.toml                 # Fly.io 설정
 │
-├── infrastructure/         # Infrastructure Layer
-│   ├── repositories/       # 저장소 구현
-│   │   ├── user_repo.py
-│   │   └── review_repo.py
-│   ├── external/           # 외부 API 클라이언트
-│   │   ├── google_client.py
-│   │   ├── instagram_client.py
-│   │   └── openai_client.py
-│   └── cache/              # 캐시 어댑터
-│       └── redis_cache.py
+├── docs/                        # 문서
+│   └── specs/
 │
-├── schemas/                # Pydantic 스키마
-│   ├── auth.py
-│   ├── review.py
-│   └── instagram.py
-│
-├── models/                 # SQLAlchemy 모델
-│   ├── base.py
-│   ├── user.py
-│   ├── review.py
-│   └── post.py
-│
-└── worker/                 # Celery 작업
-    ├── celery_app.py
-    ├── tasks/
-    │   ├── review_tasks.py
-    │   ├── ai_tasks.py
-    │   └── sync_tasks.py
-    └── schedules.py
-```
-
-### 3.3 Frontend 컴포넌트 구조
-
-```
-src/frontend/
-├── app/                    # Next.js App Router
-│   ├── (auth)/             # 인증 관련 라우트 그룹
-│   │   ├── login/
-│   │   ├── signup/
-│   │   └── layout.tsx
-│   ├── (dashboard)/        # 대시보드 라우트 그룹
-│   │   ├── page.tsx        # 메인 대시보드
-│   │   ├── reviews/        # 리뷰 관리
-│   │   ├── instagram/      # 인스타 관리
-│   │   ├── settings/       # 설정
-│   │   └── layout.tsx
-│   ├── api/                # API Routes (BFF)
-│   ├── layout.tsx          # 루트 레이아웃
-│   └── page.tsx            # 랜딩 페이지
-│
-├── components/             # UI 컴포넌트
-│   ├── ui/                 # shadcn/ui 기본 컴포넌트
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   └── ...
-│   ├── features/           # 기능별 컴포넌트
-│   │   ├── reviews/
-│   │   │   ├── ReviewCard.tsx
-│   │   │   ├── ReviewList.tsx
-│   │   │   └── AIResponseEditor.tsx
-│   │   ├── instagram/
-│   │   │   ├── PostCreator.tsx
-│   │   │   ├── CaptionEditor.tsx
-│   │   │   └── HashtagPicker.tsx
-│   │   └── dashboard/
-│   │       ├── StatsCard.tsx
-│   │       └── RecentActivity.tsx
-│   └── layout/             # 레이아웃 컴포넌트
-│       ├── Header.tsx
-│       ├── Sidebar.tsx
-│       └── Footer.tsx
-│
-├── hooks/                  # 커스텀 훅
-│   ├── useAuth.ts
-│   ├── useReviews.ts
-│   └── useInstagram.ts
-│
-├── lib/                    # 유틸리티
-│   ├── api.ts              # API 클라이언트
-│   ├── auth.ts             # 인증 유틸
-│   └── utils.ts            # 공통 유틸
-│
-├── stores/                 # Zustand 스토어
-│   ├── authStore.ts
-│   └── uiStore.ts
-│
-└── types/                  # TypeScript 타입
-    ├── api.ts
-    ├── review.ts
-    └── instagram.ts
+└── scripts/                     # 스크립트
+    ├── setup.sh
+    └── migrate.sh
 ```
 
 ---
@@ -432,26 +473,26 @@ src/frontend/
 
 ```mermaid
 sequenceDiagram
-    participant C as Client
-    participant API as FastAPI
-    participant W as Celery Worker
-    participant R as Redis
-    participant DB as PostgreSQL
+    participant C as Client (SvelteKit)
+    participant API as Go API (Fly.io)
+    participant Q as Redis Queue (Upstash)
+    participant AI as AI Worker (Python)
+    participant DB as PostgreSQL (Neon)
     participant G as Google API
-    participant AI as OpenAI
+    participant LLM as OpenAI
 
     Note over G,API: 1. 리뷰 동기화 (스케줄)
-    G->>API: 새 리뷰 Webhook
+    G->>API: 새 리뷰 Webhook / Polling
     API->>DB: 리뷰 저장
-    API->>R: AI 생성 작업 큐잉
+    API->>Q: AI 생성 작업 큐잉
 
-    Note over W,AI: 2. AI 답변 생성
-    W->>R: 작업 가져오기
-    W->>DB: 리뷰 데이터 조회
-    W->>AI: 답변 생성 요청
-    AI->>W: 생성된 답변
-    W->>DB: AI 답변 저장
-    W->>R: 완료 알림
+    Note over Q,LLM: 2. AI 답변 생성
+    AI->>Q: 작업 가져오기
+    AI->>DB: 리뷰 데이터 조회
+    AI->>LLM: 답변 생성 요청
+    LLM->>AI: 생성된 답변
+    AI->>DB: AI 답변 저장
+    AI->>Q: 완료 알림 발행
 
     Note over C,API: 3. 사용자 승인
     C->>API: 리뷰 목록 요청
@@ -469,11 +510,12 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant C as Client
-    participant API as FastAPI
-    participant S as Storage
-    participant W as Celery Worker
-    participant AI as OpenAI
+    participant C as Client (SvelteKit)
+    participant API as Go API
+    participant S as Cloudflare R2
+    participant Q as Redis Queue
+    participant AI as AI Worker
+    participant LLM as OpenAI
     participant I as Instagram API
 
     Note over C,S: 1. 이미지 업로드
@@ -482,20 +524,22 @@ sequenceDiagram
     S->>API: 이미지 URL
     API->>C: 업로드 완료
 
-    Note over C,AI: 2. 콘텐츠 생성
+    Note over C,LLM: 2. 콘텐츠 생성
     C->>API: 캡션/해시태그 생성 요청
-    API->>AI: AI 생성 요청
-    AI->>API: 생성된 콘텐츠
-    API->>C: 콘텐츠 응답
+    API->>Q: AI 작업 큐잉
+    AI->>Q: 작업 가져오기
+    AI->>LLM: AI 생성 요청
+    LLM->>AI: 생성된 콘텐츠
+    AI->>DB: 결과 저장
+    API->>C: 콘텐츠 응답 (polling/webhook)
 
     Note over C,I: 3. 발행
     C->>API: 포스팅 요청
-    API->>W: 발행 작업 큐잉
-    W->>I: Media Container 생성
-    I->>W: Container ID
-    W->>I: Media 발행
-    I->>W: Media ID
-    W->>API: 완료 알림
+    API->>I: Media Container 생성
+    I->>API: Container ID
+    API->>I: Media 발행
+    I->>API: Media ID
+    API->>DB: 상태 업데이트
     API->>C: 발행 완료
 ```
 
@@ -514,24 +558,28 @@ https://api.salonmate.kr/v1/...
 ```mermaid
 sequenceDiagram
     participant C as Client
-    participant API as API Server
+    participant API as Go API
     participant DB as Database
+    participant R as Redis
 
     C->>API: POST /v1/auth/login
     API->>DB: 사용자 확인
     DB->>API: 사용자 정보
-    API->>API: JWT 생성
+    API->>API: JWT 생성 (Access + Refresh)
+    API->>R: Refresh Token 저장
     API->>C: { accessToken, refreshToken }
 
     Note over C,API: 이후 요청
-    C->>API: GET /v1/reviews (Authorization: Bearer {token})
+    C->>API: GET /v1/reviews<br/>Authorization: Bearer {accessToken}
     API->>API: JWT 검증
     API->>DB: 데이터 조회
     API->>C: 응답
 
-    Note over C,API: 토큰 갱신
-    C->>API: POST /v1/auth/refresh (refreshToken)
-    API->>API: Refresh Token 검증
+    Note over C,R: 토큰 갱신
+    C->>API: POST /v1/auth/refresh<br/>{ refreshToken }
+    API->>R: Refresh Token 검증
+    R->>API: Valid
+    API->>API: 새 Access Token 생성
     API->>C: { accessToken (new) }
 ```
 
@@ -574,7 +622,7 @@ sequenceDiagram
 │                       ▼                                         │
 │               ┌───────────────┐                                 │
 │               │ JWT 발급      │                                 │
-│               │ - Access (30m)│                                 │
+│               │ - Access (15m)│                                 │
 │               │ - Refresh (7d)│                                 │
 │               └───────────────┘                                 │
 │                       │                                         │
@@ -591,28 +639,28 @@ sequenceDiagram
 
 | 항목 | 방법 |
 |------|------|
-| 전송 암호화 | TLS 1.3 |
-| 저장 암호화 | AES-256 (Supabase 제공) |
-| 비밀번호 | bcrypt (cost=12) |
-| API 키 | 환경 변수, Vault |
+| 전송 암호화 | TLS 1.3 (Cloudflare) |
+| 저장 암호화 | AES-256 (Neon 제공) |
+| 비밀번호 | bcrypt (cost=12) / Argon2id |
+| API 키 | 환경 변수, Fly.io Secrets |
 | 세션 | Redis, HTTPOnly Cookie |
 
 ### 6.3 API 보안
 
-```python
-# Rate Limiting 설정
-rate_limits = {
-    "default": "100/minute",
-    "auth": "10/minute",
+```go
+// Rate Limiting 설정 (Go Echo)
+rateLimits := map[string]string{
+    "default":       "100/minute",
+    "auth":          "10/minute",
     "ai_generation": "20/minute",
 }
 
-# CORS 설정
-cors_origins = [
+// CORS 설정
+corsOrigins := []string{
     "https://app.salonmate.kr",
     "https://www.salonmate.kr",
-    "capacitor://localhost",  # 모바일 앱
-]
+    "capacitor://localhost",  // 모바일 앱
+}
 ```
 
 ---
@@ -623,30 +671,29 @@ cors_origins = [
 
 ```mermaid
 graph TB
-    subgraph Load Balancer
-        LB[Vercel Edge]
+    subgraph Edge
+        CF[Cloudflare]
     end
 
-    subgraph API Instances
-        API1[API Server 1]
-        API2[API Server 2]
-        API3[API Server N]
+    subgraph API Instances (Fly.io)
+        API1[Go API 1<br/>Seoul]
+        API2[Go API 2<br/>Tokyo]
+        API3[Go API N<br/>Auto-scale]
     end
 
-    subgraph Worker Instances
-        W1[Worker 1]
-        W2[Worker 2]
-        W3[Worker N]
+    subgraph AI Workers (Railway)
+        W1[Python Worker 1]
+        W2[Python Worker N]
     end
 
     subgraph Shared Resources
-        DB[(PostgreSQL)]
-        REDIS[(Redis)]
+        DB[(Neon PostgreSQL)]
+        REDIS[(Upstash Redis<br/>Global)]
     end
 
-    LB --> API1
-    LB --> API2
-    LB --> API3
+    CF --> API1
+    CF --> API2
+    CF --> API3
 
     API1 --> DB
     API2 --> DB
@@ -658,17 +705,20 @@ graph TB
 
     W1 --> REDIS
     W2 --> REDIS
-    W3 --> REDIS
+
+    W1 --> DB
+    W2 --> DB
 ```
 
 ### 7.2 캐싱 전략
 
 | 데이터 | TTL | 캐시 위치 |
 |--------|-----|----------|
-| 사용자 세션 | 30분 | Redis |
-| 리뷰 목록 | 5분 | Redis |
+| 사용자 세션 | 15분 | Redis |
+| 리뷰 목록 | 5분 | Redis + Edge |
 | AI 응답 (동일 리뷰) | 24시간 | Redis |
-| 정적 자산 | 7일 | CDN |
+| 정적 자산 | 7일 | Cloudflare CDN |
+| API 응답 | 1분 | Edge (stale-while-revalidate) |
 
 ### 7.3 데이터베이스 최적화
 
@@ -678,9 +728,11 @@ CREATE INDEX idx_reviews_shop_created ON reviews(shop_id, created_at DESC);
 CREATE INDEX idx_reviews_status ON reviews(status) WHERE status = 'pending';
 CREATE INDEX idx_posts_shop_scheduled ON posts(shop_id, scheduled_at);
 
--- 파티셔닝 (고려)
--- 리뷰 테이블: 월별 파티셔닝
--- 로그 테이블: 일별 파티셔닝
+-- Connection Pooling (Neon pgbouncer)
+-- 기본 제공, 설정 불필요
+
+-- Read Replicas (필요시)
+-- Neon branching으로 읽기 전용 복제본 생성 가능
 ```
 
 ---
@@ -707,19 +759,29 @@ Infrastructure Metrics:
   - memory_usage
   - db_connections
   - cache_hit_rate
+  - queue_depth
 ```
 
-### 8.2 로깅
+### 8.2 로깅 (Go slog)
 
-```python
-# 로그 형식
+```go
+// 구조화된 로그 형식
+slog.Info("Review AI response generated",
+    "service", "ai-worker",
+    "trace_id", traceID,
+    "user_id", userID,
+    "review_id", reviewID,
+    "duration_ms", duration.Milliseconds(),
+)
+```
+
+```json
 {
-    "timestamp": "2025-11-25T10:30:00.000Z",
+    "time": "2025-11-25T10:30:00.000Z",
     "level": "INFO",
-    "message": "Review AI response generated",
+    "msg": "Review AI response generated",
     "service": "ai-worker",
     "trace_id": "abc123",
-    "span_id": "def456",
     "user_id": "user_123",
     "review_id": "rv_456",
     "duration_ms": 2500
@@ -732,7 +794,7 @@ Infrastructure Metrics:
 |------|--------|----------|
 | 에러율 > 1% | Warning | Slack |
 | 에러율 > 5% | Critical | Slack + PagerDuty |
-| API 응답 > 2초 (p95) | Warning | Slack |
+| API 응답 > 500ms (p95) | Warning | Slack |
 | DB 연결 풀 > 80% | Warning | Slack |
 | Worker 큐 백로그 > 1000 | Critical | Slack + PagerDuty |
 
@@ -752,13 +814,13 @@ Infrastructure Metrics:
 │  └──────────┘      └──────────┘      └──────────┘              │
 │       │                 │                 │                     │
 │  ┌──────────┐      ┌──────────┐      ┌──────────┐              │
-│  │ Railway  │      │ Railway  │      │ Railway  │              │
+│  │ Fly.io   │      │ Fly.io   │      │ Fly.io   │              │
 │  │ Dev      │      │ Staging  │      │ Production│             │
 │  └──────────┘      └──────────┘      └──────────┘              │
 │       │                 │                 │                     │
 │  ┌──────────┐      ┌──────────┐      ┌──────────┐              │
-│  │ Supabase │      │ Supabase │      │ Supabase │              │
-│  │ Dev      │      │ Staging  │      │ Production│             │
+│  │ Neon     │      │ Neon     │      │ Neon     │              │
+│  │ Branch   │      │ Branch   │      │ Main     │              │
 │  └──────────┘      └──────────┘      └──────────┘              │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -781,17 +843,55 @@ graph LR
     H --> K[Rollback Ready]
 ```
 
+### 9.3 배포 명령어
+
+```bash
+# Frontend (Vercel) - 자동 배포
+git push origin main
+
+# Backend (Fly.io)
+fly deploy --config fly.toml
+
+# AI Worker (Railway) - 자동 배포
+git push origin main
+
+# Database Migration
+fly ssh console -C "migrate -database $DATABASE_URL -path db/migrations up"
+```
+
 ---
 
-## 10. ADR (Architecture Decision Records)
+## 10. 성능 벤치마크 (예상)
+
+### 10.1 응답 시간 목표
+
+| 엔드포인트 | 목표 (p95) | 설명 |
+|-----------|-----------|------|
+| GET /reviews | < 100ms | 리스트 조회 |
+| POST /reviews/:id/response | < 200ms | 답변 저장 |
+| AI 답변 생성 | < 5s | 비동기 처리 |
+| 이미지 업로드 | < 2s | R2 직접 업로드 |
+
+### 10.2 처리량 목표
+
+| 지표 | 목표 |
+|------|------|
+| API 동시 요청 | 1,000+ |
+| 초당 요청 (RPS) | 10,000+ |
+| AI 작업 처리 | 100/분 |
+
+---
+
+## 11. ADR (Architecture Decision Records)
 
 주요 아키텍처 결정 사항은 [ADRs 디렉토리](./ADRs/)에서 관리합니다.
 
 | ADR | 제목 | 상태 |
 |-----|------|------|
-| ADR-0001 | 기술 스택 선정 | Accepted |
-| ADR-0002 | 데이터베이스 선정 | Accepted |
-| ADR-0003 | 인증 방식 선정 | Accepted |
+| ADR-0001 | SvelteKit + Go + Python 스택 선정 | Accepted |
+| ADR-0002 | Neon PostgreSQL 선정 | Accepted |
+| ADR-0003 | Fly.io 글로벌 배포 | Accepted |
+| ADR-0004 | AI Worker 분리 아키텍처 | Accepted |
 
 ---
 

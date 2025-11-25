@@ -1,0 +1,185 @@
+# SalonMate Docker Compose 설정
+# 기술 스택: SvelteKit + Go + Python AI Worker
+
+version: "3.9"
+
+services:
+  # ============================================
+  # PostgreSQL 데이터베이스
+  # ============================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: salonmate-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: salonmate
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Redis 캐시 및 작업 큐
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: salonmate-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Go API 서버
+  # ============================================
+  api:
+    build:
+      context: ../backend
+      dockerfile: ../infra/docker/Dockerfile.api
+    container_name: salonmate-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/salonmate?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=dev-jwt-secret-key-min-32-characters
+      - JWT_ACCESS_EXPIRY=15m
+      - JWT_REFRESH_EXPIRY=168h
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+    # 개발 모드: air로 핫 리로드
+    # command: ["air", "-c", ".air.toml"]
+
+  # ============================================
+  # Go Asynq Worker (작업 큐 처리)
+  # ============================================
+  worker:
+    build:
+      context: ../backend
+      dockerfile: ../infra/docker/Dockerfile.api
+    container_name: salonmate-worker
+    restart: unless-stopped
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/salonmate?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["./bin/worker"]
+
+  # ============================================
+  # Python AI Worker
+  # ============================================
+  ai-worker:
+    build:
+      context: ../ai-worker
+      dockerfile: ../infra/docker/Dockerfile.worker
+    container_name: salonmate-ai-worker
+    restart: unless-stopped
+    environment:
+      - APP_ENV=development
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/salonmate?sslmode=disable
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../ai-worker:/app
+
+  # ============================================
+  # SvelteKit 프론트엔드 (개발 서버)
+  # ============================================
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../infra/docker/Dockerfile.frontend
+    container_name: salonmate-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - PUBLIC_API_URL=http://localhost:8080
+    depends_on:
+      - api
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    command: ["pnpm", "dev", "--host"]
+
+  # ============================================
+  # 데이터베이스 관리 UI (선택)
+  # ============================================
+  adminer:
+    image: adminer:latest
+    container_name: salonmate-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    profiles:
+      - tools
+
+  # ============================================
+  # Redis 관리 UI (선택)
+  # ============================================
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: salonmate-redis-commander
+    restart: unless-stopped
+    ports:
+      - "8082:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    profiles:
+      - tools
+
+  # ============================================
+  # Asynq 대시보드 (선택)
+  # ============================================
+  asynqmon:
+    image: hibiken/asynqmon:latest
+    container_name: salonmate-asynqmon
+    restart: unless-stopped
+    ports:
+      - "8083:8080"
+    environment:
+      - REDIS_ADDR=redis:6379
+    depends_on:
+      - redis
+    profiles:
+      - tools
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  default:
+    name: salonmate-network

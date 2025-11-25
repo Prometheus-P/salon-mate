@@ -1,0 +1,22 @@
+# SvelteKit Frontend Dockerfile
+FROM node:20-alpine
+
+# pnpm 설치
+RUN npm install -g pnpm@latest
+
+WORKDIR /app
+
+# 의존성 파일 복사
+COPY package.json pnpm-lock.yaml* ./
+
+# 의존성 설치
+RUN pnpm install --frozen-lockfile || pnpm install
+
+# 소스 코드 복사
+COPY . .
+
+# 개발 서버 포트
+EXPOSE 5173
+
+# 개발 서버 실행
+CMD ["pnpm", "dev", "--host"]
