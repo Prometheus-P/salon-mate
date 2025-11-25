@@ -1,0 +1,62 @@
+version: 2
+updates:
+  # Frontend (npm/pnpm)
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      svelte:
+        patterns:
+          - "@sveltejs/*"
+          - "svelte*"
+      testing:
+        patterns:
+          - "@testing-library/*"
+          - "vitest*"
+      linting:
+        patterns:
+          - "eslint*"
+          - "prettier*"
+
+  # Backend (Go)
+  - package-ecosystem: "gomod"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+
+  # AI Worker (Python)
+  - package-ecosystem: "pip"
+    directory: "/ai-worker"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      langchain:
+        patterns:
+          - "langchain*"
+          - "langgraph*"
+      testing:
+        patterns:
+          - "pytest*"
+          - "mypy*"
+          - "ruff*"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+
+  # Docker
+  - package-ecosystem: "docker"
+    directory: "/infra/docker"
+    schedule:
+      interval: "monthly"

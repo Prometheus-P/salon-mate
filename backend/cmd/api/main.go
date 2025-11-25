@@ -1,62 +1,130 @@
 package main
 
 import (
-	"log/slog"
+	"context"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	echomw "github.com/labstack/echo/v4/middleware"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+
+	"github.com/salon-mate/backend/internal/config"
+	"github.com/salon-mate/backend/internal/handler"
+	"github.com/salon-mate/backend/internal/middleware"
+	"github.com/salon-mate/backend/internal/repository"
+	"github.com/salon-mate/backend/internal/service"
+	"github.com/salon-mate/backend/pkg/validator"
 )
 
 func main() {
-	// 로거 설정
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
-	}))
-	slog.SetDefault(logger)
+	// Load configuration
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to load configuration")
+	}
 
-	// Echo 인스턴스 생성
+	// Configure zerolog
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	if cfg.App.Env == "development" {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
+	}
+
+	ctx := context.Background()
+
+	// Initialize database
+	db, err := repository.NewDB(ctx, &cfg.Database)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to connect to database")
+	}
+	defer db.Close()
+	log.Info().Msg("Connected to PostgreSQL")
+
+	// Initialize Redis
+	redis, err := repository.NewRedis(ctx, &cfg.Redis)
+	if err != nil {
+		log.Warn().Err(err).Msg("Failed to connect to Redis, continuing without cache")
+	} else {
+		defer redis.Close()
+		log.Info().Msg("Connected to Redis")
+	}
+
+	// Initialize repositories
+	userRepo := repository.NewUserRepository(db)
+
+	// Initialize services
+	authService := service.NewAuthService(userRepo, &cfg.JWT)
+
+	// Initialize handlers
+	authHandler := handler.NewAuthHandler(authService)
+
+	// Initialize middleware
+	authMiddleware := middleware.NewAuthMiddleware(authService)
+
+	// Create Echo instance
 	e := echo.New()
 	e.HideBanner = true
+	e.Validator = validator.NewCustomValidator()
 
-	// 미들웨어 설정
-	e.Use(middleware.RequestID())
+	// Global middleware
+	e.Use(echomw.RequestID())
 	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
+	e.Use(echomw.Recover())
+	e.Use(echomw.CORSWithConfig(echomw.CORSConfig{
+		AllowOrigins:     []string{cfg.App.FrontendURL},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+		AllowCredentials: true,
+	}))
 
-	// Health check 엔드포인트
+	// Health check endpoint
 	e.GET("/health", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, map[string]string{
+		return c.JSON(http.StatusOK, map[string]interface{}{
 			"status":  "healthy",
 			"service": "salon-mate-api",
+			"env":     cfg.App.Env,
 		})
 	})
 
-	// API v1 라우트 그룹
+	// API v1 routes
 	v1 := e.Group("/api/v1")
 
-	// Auth 라우트
-	v1.POST("/auth/signup", func(c echo.Context) error {
-		return c.JSON(http.StatusNotImplemented, map[string]string{"message": "Not implemented"})
-	})
-	v1.POST("/auth/login", func(c echo.Context) error {
-		return c.JSON(http.StatusNotImplemented, map[string]string{"message": "Not implemented"})
-	})
-	v1.POST("/auth/refresh", func(c echo.Context) error {
-		return c.JSON(http.StatusNotImplemented, map[string]string{"message": "Not implemented"})
-	})
+	// Auth routes (public)
+	auth := v1.Group("/auth")
+	auth.POST("/signup", authHandler.Signup)
+	auth.POST("/login", authHandler.Login)
+	auth.POST("/refresh", authHandler.Refresh)
+	auth.POST("/logout", authHandler.Logout)
 
-	// 서버 시작
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	// Protected auth routes
+	auth.GET("/me", authHandler.Me, authMiddleware.RequireAuth)
+
+	// Start server
+	go func() {
+		addr := ":" + cfg.App.Port
+		log.Info().Str("port", cfg.App.Port).Str("env", cfg.App.Env).Msg("Starting server")
+		if err := e.Start(addr); err != nil && err != http.ErrServerClosed {
+			log.Fatal().Err(err).Msg("Failed to start server")
+		}
+	}()
+
+	// Graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Info().Msg("Shutting down server...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := e.Shutdown(shutdownCtx); err != nil {
+		log.Fatal().Err(err).Msg("Failed to gracefully shutdown server")
 	}
 
-	slog.Info("Starting server", "port", port)
-	if err := e.Start(":" + port); err != nil && err != http.ErrServerClosed {
-		slog.Error("Failed to start server", "error", err)
-		os.Exit(1)
-	}
+	log.Info().Msg("Server stopped")
 }

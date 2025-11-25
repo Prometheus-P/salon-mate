@@ -11,21 +11,24 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  GO_VERSION: '1.22'
   NODE_VERSION: '20'
   PYTHON_VERSION: '3.12'
   PNPM_VERSION: '9'
 
 jobs:
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Frontend 검사
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  frontend-lint:
+  # ============================================
+  # Frontend (SvelteKit)
+  # ============================================
+  frontend-check:
     name: Frontend Lint & Type Check
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -37,28 +40,30 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: src/frontend/pnpm-lock.yaml
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install dependencies
-        working-directory: src/frontend
         run: pnpm install --frozen-lockfile
 
-      - name: Run ESLint
-        working-directory: src/frontend
+      - name: Svelte check (type check)
+        run: pnpm check
+
+      - name: ESLint
         run: pnpm lint
 
-      - name: Run TypeScript check
-        working-directory: src/frontend
-        run: pnpm type-check
+      - name: Prettier (format check)
+        run: pnpm format:check
 
   frontend-test:
     name: Frontend Tests
     runs-on: ubuntu-latest
-    needs: frontend-lint
+    needs: frontend-check
+    defaults:
+      run:
+        working-directory: frontend
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -70,31 +75,31 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: src/frontend/pnpm-lock.yaml
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install dependencies
-        working-directory: src/frontend
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        working-directory: src/frontend
-        run: pnpm test:ci
+        run: pnpm test:run
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
-          files: src/frontend/coverage/lcov.info
+          files: frontend/coverage/lcov.info
           flags: frontend
           fail_ci_if_error: false
 
   frontend-build:
     name: Frontend Build
     runs-on: ubuntu-latest
-    needs: frontend-lint
+    needs: frontend-check
+    defaults:
+      run:
+        working-directory: frontend
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -106,65 +111,58 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: src/frontend/pnpm-lock.yaml
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install dependencies
-        working-directory: src/frontend
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        working-directory: src/frontend
         run: pnpm build
         env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          PUBLIC_API_URL: http://localhost:8080
 
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Backend 검사
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  backend-lint:
-    name: Backend Lint & Type Check
+  # ============================================
+  # Backend (Go)
+  # ============================================
+  backend-check:
+    name: Backend Lint
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: backend/go.sum
 
-      - name: Cache pip
-        uses: actions/cache@v3
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v4
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('src/backend/requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install dependencies
-        working-directory: src/backend
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
-
-      - name: Run Ruff (linter)
-        working-directory: src/backend
-        run: ruff check .
-
-      - name: Run Ruff (formatter check)
-        working-directory: src/backend
-        run: ruff format --check .
-
-      - name: Run mypy
-        working-directory: src/backend
-        run: mypy .
+          version: latest
+          working-directory: backend
+          args: --timeout=5m
 
   backend-test:
     name: Backend Tests
     runs-on: ubuntu-latest
-    needs: backend-lint
+    needs: backend-check
+    defaults:
+      run:
+        working-directory: backend
 
     services:
       postgres:
@@ -192,45 +190,140 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: backend/go.sum
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/salonmate_test?sslmode=disable
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test-jwt-secret-key-min-32-characters
+          APP_ENV: test
+        run: go test -v -race -coverprofile=coverage.out ./...
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: backend/coverage.out
+          flags: backend
+          fail_ci_if_error: false
+
+  backend-build:
+    name: Backend Build
+    runs-on: ubuntu-latest
+    needs: backend-check
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: backend/go.sum
+
+      - name: Build API
+        run: go build -o bin/api cmd/api/main.go
+
+      - name: Build Worker
+        run: go build -o bin/worker cmd/worker/main.go
+
+  # ============================================
+  # AI Worker (Python)
+  # ============================================
+  ai-worker-check:
+    name: AI Worker Lint & Type Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ai-worker
+
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Cache pip
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('src/backend/requirements*.txt') }}
+          cache: 'pip'
+          cache-dependency-path: ai-worker/requirements*.txt
 
       - name: Install dependencies
-        working-directory: src/backend
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run ruff (lint)
+        run: ruff check src tests
+
+      - name: Run black (format check)
+        run: black --check src tests
+
+      - name: Run mypy (type check)
+        run: mypy src
+
+  ai-worker-test:
+    name: AI Worker Tests
+    runs-on: ubuntu-latest
+    needs: ai-worker-check
+    defaults:
+      run:
+        working-directory: ai-worker
+
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: ai-worker/requirements*.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
       - name: Run tests
-        working-directory: src/backend
-        run: pytest --cov=. --cov-report=xml
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/salonmate_test
+          APP_ENV: test
           REDIS_URL: redis://localhost:6379
-          JWT_SECRET_KEY: test-secret-key-for-ci-testing
+          OPENAI_API_KEY: test-key
+        run: pytest -v --cov=src --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
-          files: src/backend/coverage.xml
-          flags: backend
+          file: ai-worker/coverage.xml
+          flags: ai-worker
           fail_ci_if_error: false
 
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 보안 스캔
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ============================================
+  # Security Scan
+  # ============================================
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
@@ -238,8 +331,7 @@ jobs:
       security-events: write
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -251,34 +343,76 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
 
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 최종 체크
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ============================================
+  # Docker Build Test
+  # ============================================
+  docker-build:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    needs: [backend-build, ai-worker-test]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./infra/docker/Dockerfile.api
+          push: false
+          tags: salonmate-api:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build AI Worker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ai-worker
+          file: ./infra/docker/Dockerfile.worker
+          push: false
+          tags: salonmate-ai-worker:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ============================================
+  # Final Status Check
+  # ============================================
   all-checks-pass:
     name: All Checks Pass
     runs-on: ubuntu-latest
     needs:
-      - frontend-lint
+      - frontend-check
       - frontend-test
       - frontend-build
-      - backend-lint
+      - backend-check
       - backend-test
+      - backend-build
+      - ai-worker-check
+      - ai-worker-test
       - security-scan
+      - docker-build
     if: always()
 
     steps:
       - name: Check all jobs passed
         run: |
-          if [[ "${{ needs.frontend-lint.result }}" != "success" ]] ||
+          if [[ "${{ needs.frontend-check.result }}" != "success" ]] ||
              [[ "${{ needs.frontend-test.result }}" != "success" ]] ||
              [[ "${{ needs.frontend-build.result }}" != "success" ]] ||
-             [[ "${{ needs.backend-lint.result }}" != "success" ]] ||
-             [[ "${{ needs.backend-test.result }}" != "success" ]]; then
+             [[ "${{ needs.backend-check.result }}" != "success" ]] ||
+             [[ "${{ needs.backend-test.result }}" != "success" ]] ||
+             [[ "${{ needs.backend-build.result }}" != "success" ]] ||
+             [[ "${{ needs.ai-worker-check.result }}" != "success" ]] ||
+             [[ "${{ needs.ai-worker-test.result }}" != "success" ]] ||
+             [[ "${{ needs.docker-build.result }}" != "success" ]]; then
             echo "One or more jobs failed"
             exit 1
           fi

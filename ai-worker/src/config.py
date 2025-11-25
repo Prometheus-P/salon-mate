@@ -1,35 +1,42 @@
 """
-SalonMate AI Worker 설정
+SalonMate AI Worker Configuration
 """
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """애플리케이션 설정"""
+    """Application settings loaded from environment variables."""
 
-    # 환경
-    APP_ENV: str = "development"
+    # Environment
+    app_env: str = "development"
 
     # Redis
-    REDIS_URL: str = "redis://localhost:6379"
+    redis_url: str = "redis://localhost:6379"
 
     # Database
-    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/salonmate"
+    database_url: str = "postgresql://postgres:password@localhost:5432/salonmate"
 
     # OpenAI
-    OPENAI_API_KEY: str = ""
-    OPENAI_MODEL: str = "gpt-4o"
-    OPENAI_FALLBACK_MODEL: str = "gpt-4o-mini"
+    openai_api_key: str = ""
+    openai_model: str = "gpt-4o"
+    openai_fallback_model: str = "gpt-4o-mini"
 
-    # AI 설정
-    MAX_RESPONSE_LENGTH: int = 500
-    MAX_CAPTION_LENGTH: int = 2200
-    MAX_HASHTAGS: int = 30
+    # AI Configuration
+    max_response_length: int = 500
+    max_caption_length: int = 2200
+    max_hashtags: int = 30
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    # Worker Configuration
+    worker_concurrency: int = 5
+    task_timeout: int = 60
+    retry_attempts: int = 3
+
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "extra": "ignore",
+    }
 
 
 settings = Settings()
