@@ -1,0 +1,154 @@
+version: 2
+
+updates:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Frontend 의존성 (pnpm)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - package-ecosystem: "npm"
+    directory: "/src/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "chore(deps-frontend)"
+    reviewers:
+      - "tech-lead"
+    groups:
+      # React 관련 패키지 그룹
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Next.js 관련 패키지 그룹
+      nextjs:
+        patterns:
+          - "next"
+          - "@next/*"
+          - "eslint-config-next"
+        update-types:
+          - "minor"
+          - "patch"
+      # 상태 관리 패키지 그룹
+      state-management:
+        patterns:
+          - "@tanstack/*"
+          - "zustand"
+        update-types:
+          - "minor"
+          - "patch"
+      # UI/스타일 관련 패키지 그룹
+      styling:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+          - "@radix-ui/*"
+          - "class-variance-authority"
+          - "clsx"
+          - "tailwind-merge"
+        update-types:
+          - "minor"
+          - "patch"
+      # 개발 도구 그룹
+      dev-tools:
+        patterns:
+          - "typescript"
+          - "eslint"
+          - "@types/*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Backend 의존성 (pip)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - package-ecosystem: "pip"
+    directory: "/src/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
+    commit-message:
+      prefix: "chore(deps-backend)"
+    reviewers:
+      - "tech-lead"
+    groups:
+      # FastAPI 관련 패키지 그룹
+      fastapi:
+        patterns:
+          - "fastapi"
+          - "uvicorn"
+          - "starlette"
+          - "pydantic*"
+        update-types:
+          - "minor"
+          - "patch"
+      # 데이터베이스 관련 패키지 그룹
+      database:
+        patterns:
+          - "sqlalchemy"
+          - "alembic"
+          - "asyncpg"
+          - "psycopg*"
+        update-types:
+          - "minor"
+          - "patch"
+      # 테스트 도구 그룹
+      testing:
+        patterns:
+          - "pytest*"
+          - "httpx"
+          - "coverage"
+        update-types:
+          - "minor"
+          - "patch"
+      # 코드 품질 도구 그룹
+      linting:
+        patterns:
+          - "ruff"
+          - "black"
+          - "mypy"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # GitHub Actions
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(deps-actions)"
+    reviewers:
+      - "tech-lead"
+    groups:
+      # GitHub 공식 액션 그룹
+      github-actions:
+        patterns:
+          - "actions/*"
+        update-types:
+          - "minor"
+          - "patch"
