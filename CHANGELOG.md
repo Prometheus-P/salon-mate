@@ -11,13 +11,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (예정) 구글 리뷰 자동 답변 기능
 - (예정) 네이버 리뷰 답변 생성 기능
 - (예정) 인스타그램 콘텐츠 생성 기능
-- (예정) 사용자 인증 (이메일, 구글, 카카오)
+- (예정) Google OAuth 인증
+- (예정) Kakao OAuth 인증
 
 ### Changed
 - (없음)
 
 ### Fixed
 - (없음)
+
+---
+
+## [0.2.0] - 2025-11-27
+
+### Added
+
+#### Authentication (Sprint 2)
+- 이메일 회원가입 API (`POST /v1/auth/signup`)
+- 이메일 로그인 API (`POST /v1/auth/login`)
+- JWT 액세스 토큰 발급 (30분 유효)
+- JWT 리프레시 토큰 발급 (7일 유효)
+- 토큰 갱신 API (`POST /v1/auth/refresh`)
+- 로그아웃 API (`POST /v1/auth/logout`)
+- bcrypt 비밀번호 해싱
+
+#### Testing
+- pytest + pytest-asyncio 테스트 인프라
+- 회원가입 테스트 (9 tests)
+- 로그인 테스트 (7 tests)
+- 토큰 갱신 테스트 (5 tests)
+- aiosqlite를 사용한 인메모리 테스트 DB
+
+#### Core Modules
+- `core/security.py`: 비밀번호 해싱, JWT 토큰 생성/검증
+- `services/auth_service.py`: 인증 비즈니스 로직
+- `models/base.py`: GUID TypeDecorator (크로스 DB 호환)
+
+### Changed
+- `models/base.py`: PostgreSQL UUID를 String(36) GUID로 변경 (SQLite 호환)
+- `requirements.txt`: bcrypt 버전 고정 (4.0.0 ~ 5.0.0)
 
 ---
 
@@ -69,6 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Description |
 |---------|------|-------------|
+| 0.2.0 | 2025-11-27 | Sprint 2 - 이메일 인증 시스템 (회원가입, 로그인, JWT) |
 | 0.1.0 | 2025-11-27 | 초기 프로젝트 설정 및 인프라 구축 |
 
 ---

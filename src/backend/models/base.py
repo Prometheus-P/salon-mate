@@ -4,12 +4,36 @@ SQLAlchemy 모델 베이스 클래스 및 공통 믹스인
 
 import uuid
 from datetime import datetime
+from typing import Any
 
-from sqlalchemy import DateTime, func
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import DateTime, String, func, TypeDecorator
 from sqlalchemy.orm import Mapped, mapped_column
 
 from config.database import Base
+
+
+class GUID(TypeDecorator):
+    """Platform-independent GUID type.
+
+    Uses String(36), storing as stringified UUID.
+    Returns UUID objects from the column.
+    """
+    impl = String(36)
+    cache_ok = True
+
+    def process_bind_param(self, value: Any, dialect: Any) -> str | None:
+        if value is not None:
+            if isinstance(value, uuid.UUID):
+                return str(value)
+            return str(uuid.UUID(value))
+        return None
+
+    def process_result_value(self, value: Any, dialect: Any) -> uuid.UUID | None:
+        if value is not None:
+            if isinstance(value, uuid.UUID):
+                return value
+            return uuid.UUID(value)
+        return None
 
 
 class TimestampMixin:
@@ -32,7 +56,7 @@ class UUIDMixin:
     """UUID 기본 키 믹스인"""
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        GUID(),
         primary_key=True,
         default=uuid.uuid4,
     )

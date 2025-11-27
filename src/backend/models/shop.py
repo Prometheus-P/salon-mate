@@ -6,10 +6,9 @@ import uuid
 from typing import TYPE_CHECKING
 
 from sqlalchemy import String, ForeignKey, JSON
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.base import BaseModel
+from models.base import BaseModel, GUID
 
 if TYPE_CHECKING:
     from models.user import User
@@ -21,7 +20,7 @@ class Shop(BaseModel):
     __tablename__ = "shops"
 
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        GUID(),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,

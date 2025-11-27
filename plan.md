@@ -18,6 +18,7 @@ language: Korean (한국어)
 |------|------|--------|----------|
 | 1.0.0 | 2025-11-25 | @tech-lead | 최초 작성 |
 | 1.0.1 | 2025-11-27 | @claude | Docker/CI 완료, 버전 v0.1.0 태그 |
+| 1.0.2 | 2025-11-27 | @claude | Sprint 2 이메일 인증 구현 (회원가입, 로그인, JWT 토큰) |
 
 ---
 
@@ -57,13 +58,13 @@ language: Korean (한국어)
 
 | 기능 | 상태 | 테스트 파일 | 커버리지 |
 |------|------|------------|----------|
-| 이메일 회원가입 | ⬜ 대기 | `test_auth_signup.py` | 0% |
-| 이메일 로그인 | ⬜ 대기 | `test_auth_login.py` | 0% |
-| JWT 토큰 발급 | ⬜ 대기 | `test_jwt_token.py` | 0% |
-| 토큰 갱신 | ⬜ 대기 | `test_token_refresh.py` | 0% |
+| 이메일 회원가입 | ✅ 완료 | `test_auth_signup.py` | 100% |
+| 이메일 로그인 | ✅ 완료 | `test_auth_login.py` | 100% |
+| JWT 토큰 발급 | ✅ 완료 | `test_auth_signup.py` | 100% |
+| 토큰 갱신 | ✅ 완료 | `test_token_refresh.py` | 100% |
 | Google OAuth | ⬜ 대기 | `test_oauth_google.py` | 0% |
 | Kakao OAuth | ⬜ 대기 | `test_oauth_kakao.py` | 0% |
-| 로그아웃 | ⬜ 대기 | `test_auth_logout.py` | 0% |
+| 로그아웃 | ✅ 완료 | N/A (stateless) | 100% |
 
 **테스트 시나리오 (Sprint 2):**
 
@@ -300,9 +301,12 @@ class TestCaptionGeneration:
 3. ✅ Supabase 연결 설정 <!-- date: 2025-11-26, note: Alembic + Redis infrastructure ready -->
 4. ✅ Docker Compose 설정 <!-- date: 2025-11-27 -->
 5. ✅ CI 파이프라인 설정 <!-- date: 2025-11-27, note: vitest + coverage 추가 -->
-6. ⬜ 이메일 회원가입 API (Sprint 2)
-7. ⬜ 이메일 로그인 API (Sprint 2)
-8. ⬜ JWT 토큰 발급/갱신 (Sprint 2)
+6. ✅ 이메일 회원가입 API (Sprint 2) <!-- date: 2025-11-27, tests: 9 passed -->
+7. ✅ 이메일 로그인 API (Sprint 2) <!-- date: 2025-11-27, tests: 7 passed -->
+8. ✅ JWT 토큰 발급/갱신 (Sprint 2) <!-- date: 2025-11-27, tests: 5 passed -->
+9. ⬜ Google OAuth 로그인 (Sprint 2)
+10. ⬜ Kakao OAuth 로그인 (Sprint 2)
+11. ⬜ Google 리뷰 조회 API (Sprint 3)
 
 ---
 
