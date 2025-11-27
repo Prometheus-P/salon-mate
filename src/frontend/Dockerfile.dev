@@ -1,0 +1,30 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# SalonMate Frontend Dockerfile (Development)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FROM node:20-alpine
+
+# pnpm 설치
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# 의존성 파일 복사
+COPY package.json pnpm-lock.yaml* ./
+
+# 의존성 설치
+RUN pnpm install --frozen-lockfile
+
+# 애플리케이션 코드 복사
+COPY . .
+
+# 포트 노출
+EXPOSE 3000
+
+# 환경 변수
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# 실행 명령 (개발 모드)
+CMD ["pnpm", "dev"]
