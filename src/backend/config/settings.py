@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     # CORS 설정
     cors_origins: list[str] = [
         "http://localhost:3000",
+        "http://localhost:3001",
         "https://app.salonmate.kr",
     ]
 
@@ -53,8 +54,13 @@ class Settings(BaseSettings):
     # 외부 API 설정
     google_client_id: str = ""
     google_client_secret: str = ""
+    kakao_client_id: str = ""
+    kakao_client_secret: str = ""
     instagram_app_id: str = ""
     instagram_app_secret: str = ""
+
+    # OAuth Redirect URIs
+    oauth_redirect_base_url: str = "http://localhost:3000/auth/callback"
 
     # Rate Limiting
     rate_limit_default: int = 100

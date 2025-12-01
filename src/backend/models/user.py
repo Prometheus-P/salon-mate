@@ -12,6 +12,7 @@ from models.base import BaseModel
 
 if TYPE_CHECKING:
     from models.shop import Shop
+    from models.social_account import SocialAccount
 
 
 class User(BaseModel):
@@ -38,6 +39,9 @@ class User(BaseModel):
     # 관계
     shops: Mapped[list["Shop"]] = relationship(
         "Shop", back_populates="owner", cascade="all, delete-orphan"
+    )
+    social_accounts: Mapped[list["SocialAccount"]] = relationship(
+        "SocialAccount", back_populates="user", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
