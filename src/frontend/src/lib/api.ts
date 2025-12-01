@@ -1,27 +1,18 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/v1';
 
 interface ApiRequestOptions extends RequestInit {
   token?: string;
 }
 
-interface ApiResponse<T> {
-  data: T;
-  meta: {
-    requestId: string;
-    timestamp: string;
-  };
-}
-
-interface ApiError {
-  error: {
-    code: string;
-    message: string;
-    details?: Record<string, unknown>;
-  };
-  meta: {
-    requestId: string;
-    timestamp: string;
-  };
+export class ApiError extends Error {
+  constructor(
+    public statusCode: number,
+    message: string,
+    public details?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
 }
 
 class ApiClient {
@@ -51,14 +42,22 @@ class ApiClient {
       headers,
     });
 
+    // 204 No Content 처리
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
     const data = await response.json();
 
     if (!response.ok) {
-      const error = data as ApiError;
-      throw new Error(error.error?.message || 'API request failed');
+      throw new ApiError(
+        response.status,
+        data.detail || data.message || 'API request failed',
+        data.details
+      );
     }
 
-    return (data as ApiResponse<T>).data;
+    return data as T;
   }
 
   async get<T>(endpoint: string, options?: ApiRequestOptions): Promise<T> {
