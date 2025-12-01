@@ -171,3 +171,4 @@ android/
 *.orig
 .scannerwork/
 .sonar/
+.playwright-mcp/
