@@ -113,9 +113,7 @@ class OAuthService:
                 "picture": user_data.get("picture"),
             }
 
-    async def get_kakao_user_info(
-        self, code: str, redirect_uri: str
-    ) -> dict[str, str]:
+    async def get_kakao_user_info(self, code: str, redirect_uri: str) -> dict[str, str]:
         """Kakao에서 사용자 정보를 가져옵니다."""
         async with httpx.AsyncClient() as client:
             # 토큰 교환
