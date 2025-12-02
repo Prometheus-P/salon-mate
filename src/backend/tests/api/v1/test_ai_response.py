@@ -93,7 +93,7 @@ class TestGenerateAIResponse:
         )
 
         assert response.status_code == 200
-        data = response.json()
+        response.json()
         assert "aiResponse" in data
         assert len(data["aiResponse"]) > 0
         # 긍정적인 답변 확인
@@ -113,7 +113,7 @@ class TestGenerateAIResponse:
         )
 
         assert response.status_code == 200
-        data = response.json()
+        response.json()
         assert "aiResponse" in data
         # 공감 및 개선 약속 확인
         assert any(word in data["aiResponse"] for word in ["죄송", "개선", "불편", "노력"])
@@ -132,7 +132,7 @@ class TestGenerateAIResponse:
         )
 
         assert response.status_code == 200
-        data = response.json()
+        response.json()
         assert "aiResponse" in data
         assert len(data["aiResponse"]) > 0
 
@@ -174,7 +174,7 @@ class TestGenerateAIResponse:
             f"/v1/shops/{shop.id}/reviews/{review.id}/ai-response",
             headers={"Authorization": f"Bearer {review_fixture['token']}"},
         )
-        first_ai_response = first_response.json()["aiResponse"]
+        first_response.json()["aiResponse"]
 
         # 두 번째 생성 (재생성)
         second_response = await client.post(
@@ -204,7 +204,7 @@ class TestAIResponseCustomization:
         )
 
         assert response.status_code == 200
-        data = response.json()
+        response.json()
         assert "aiResponse" in data
 
     @pytest.mark.asyncio
@@ -222,7 +222,7 @@ class TestAIResponseCustomization:
         )
 
         assert response.status_code == 200
-        data = response.json()
+        response.json()
         # Mock에서 매장 이름 포함 여부 확인은 선택적
 
 
