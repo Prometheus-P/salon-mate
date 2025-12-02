@@ -18,6 +18,7 @@ class GUID(TypeDecorator):
     Uses String(36), storing as stringified UUID.
     Returns UUID objects from the column.
     """
+
     impl = String(36)
     cache_ok = True
 

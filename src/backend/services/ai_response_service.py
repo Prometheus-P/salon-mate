@@ -73,6 +73,7 @@ class AIResponseService:
     async def _get_shop(self, shop_id: UUID) -> Shop | None:
         """매장 정보를 조회합니다."""
         from sqlalchemy import select
+
         result = await self.db.execute(select(Shop).where(Shop.id == shop_id))
         return result.scalar_one_or_none()
 
