@@ -60,6 +60,12 @@ warn_return_any = true
 warn_unused_ignores = true
 explicit_package_bases = true
 
+# Allow tests to be less strict
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
