@@ -35,9 +35,7 @@ class TestUserLogin:
         assert "expiresIn" in data
 
     @pytest.mark.asyncio
-    async def test_should_return_error_when_email_not_found(
-        self, client: AsyncClient
-    ):
+    async def test_should_return_error_when_email_not_found(self, client: AsyncClient):
         """존재하지 않는 이메일로 로그인 시 에러 반환"""
         login_data = {
             "email": "nonexistent@example.com",
@@ -69,9 +67,7 @@ class TestUserLogin:
         assert "detail" in data
 
     @pytest.mark.asyncio
-    async def test_should_return_error_when_email_missing(
-        self, client: AsyncClient
-    ):
+    async def test_should_return_error_when_email_missing(self, client: AsyncClient):
         """이메일 필드가 없을 때 에러 반환"""
         login_data = {"password": "SecurePass123!"}
         response = await client.post("/v1/auth/login", json=login_data)
@@ -79,9 +75,7 @@ class TestUserLogin:
         assert response.status_code == 422
 
     @pytest.mark.asyncio
-    async def test_should_return_error_when_password_missing(
-        self, client: AsyncClient
-    ):
+    async def test_should_return_error_when_password_missing(self, client: AsyncClient):
         """비밀번호 필드가 없을 때 에러 반환"""
         login_data = {"email": "test@example.com"}
         response = await client.post("/v1/auth/login", json=login_data)
