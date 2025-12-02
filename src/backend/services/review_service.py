@@ -4,10 +4,7 @@
 """
 
 from datetime import UTC, datetime
-<<<<<<< HEAD
-=======
 from typing import Any
->>>>>>> origin/main
 from uuid import UUID
 
 from sqlalchemy import func, select
