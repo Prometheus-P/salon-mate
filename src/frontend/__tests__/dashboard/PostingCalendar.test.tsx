@@ -155,11 +155,15 @@ describe('PostingCalendar Component', () => {
 
       renderWithProviders(<PostingCalendar shopId="shop-123" />);
 
+      // Switch to week view to see status badges
       await waitFor(() => {
-        // Should show published indicator
-        const publishedIndicator = screen.queryByText(/published/i) ||
-                                   screen.queryByTestId('status-published');
-        expect(publishedIndicator).toBeTruthy();
+        const weekButton = screen.getByRole('button', { name: /week|주/i });
+        fireEvent.click(weekButton);
+      });
+
+      await waitFor(() => {
+        // Should show published indicator using test ID
+        expect(screen.getByTestId('status-published')).toBeInTheDocument();
       });
     });
 
@@ -168,11 +172,15 @@ describe('PostingCalendar Component', () => {
 
       renderWithProviders(<PostingCalendar shopId="shop-123" />);
 
+      // Switch to week view to see status badges
       await waitFor(() => {
-        // Should show scheduled indicator
-        const scheduledIndicator = screen.queryByText(/scheduled/i) ||
-                                   screen.queryByTestId('status-scheduled');
-        expect(scheduledIndicator).toBeTruthy();
+        const weekButton = screen.getByRole('button', { name: /week|주/i });
+        fireEvent.click(weekButton);
+      });
+
+      await waitFor(() => {
+        // Should show scheduled indicator using test ID
+        expect(screen.getByTestId('status-scheduled')).toBeInTheDocument();
       });
     });
 
@@ -181,11 +189,15 @@ describe('PostingCalendar Component', () => {
 
       renderWithProviders(<PostingCalendar shopId="shop-123" />);
 
+      // Switch to week view to see status badges
       await waitFor(() => {
-        // Should show failed indicator
-        const failedIndicator = screen.queryByText(/failed/i) ||
-                               screen.queryByTestId('status-failed');
-        expect(failedIndicator).toBeTruthy();
+        const weekButton = screen.getByRole('button', { name: /week|주/i });
+        fireEvent.click(weekButton);
+      });
+
+      await waitFor(() => {
+        // Should show failed indicator using test ID
+        expect(screen.getByTestId('status-failed')).toBeInTheDocument();
       });
     });
   });

@@ -97,8 +97,9 @@ describe('TrendCharts Component', () => {
       renderWithProviders(<TrendCharts shopId="shop-123" />);
 
       await waitFor(() => {
-        // Check that chart components are rendered
-        expect(screen.getByTestId('line-chart')).toBeInTheDocument();
+        // Check that chart components are rendered (multiple line-charts for different metrics)
+        const lineCharts = screen.getAllByTestId('line-chart');
+        expect(lineCharts.length).toBeGreaterThan(0);
       });
     });
   });
@@ -191,11 +192,9 @@ describe('TrendCharts Component', () => {
       renderWithProviders(<TrendCharts shopId="shop-123" />);
 
       await waitFor(() => {
-        // Should have legend or metric labels
-        expect(
-          screen.getByText(/rating|review|response/i) ||
-          screen.getByTestId('legend')
-        ).toBeTruthy();
+        // Should have chart section labels (Korean: "리뷰 수", "평점 & 응답률")
+        const elements = screen.getAllByText(/리뷰 수/);
+        expect(elements.length).toBeGreaterThan(0);
       });
     });
   });

@@ -161,7 +161,10 @@ async def generate_review_response(
 
     Returns the generated response ready for review and approval.
     """
-    return await service.generate_ai_response(shop_id, review_id)
+    try:
+        return await service.generate_ai_response(shop_id, review_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.post(
@@ -180,7 +183,10 @@ async def publish_review_response(
 
     Publishes the final response and updates review status.
     """
-    return await service.publish_response(shop_id, review_id, request.final_response)
+    try:
+        return await service.publish_response(shop_id, review_id, request.final_response)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 # ============== Shop Selector ==============

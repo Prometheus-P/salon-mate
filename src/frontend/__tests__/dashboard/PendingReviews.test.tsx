@@ -134,10 +134,20 @@ describe('PendingReviews Component', () => {
       });
     });
 
-    it('should show review content', async () => {
+    it('should show review content when expanded', async () => {
       vi.mocked(dashboardApi.getPendingReviews).mockResolvedValue(mockPendingReviewsResponse);
 
       renderWithProviders(<PendingReviews shopId="shop-123" />);
+
+      await waitFor(() => {
+        expect(screen.getByText('김철수')).toBeInTheDocument();
+      });
+
+      // Click to expand the review
+      const reviewRow = screen.getByText('김철수').closest('[role="button"]');
+      if (reviewRow) {
+        fireEvent.click(reviewRow);
+      }
 
       await waitFor(() => {
         expect(screen.getByText(/좋은 서비스/)).toBeInTheDocument();
@@ -150,7 +160,8 @@ describe('PendingReviews Component', () => {
       renderWithProviders(<PendingReviews shopId="shop-123" />);
 
       await waitFor(() => {
-        expect(screen.getByText(/3/)).toBeInTheDocument();
+        // Count appears in header text "3개의 리뷰가 답변을 기다리고 있습니다"
+        expect(screen.getByText(/3개의 리뷰/)).toBeInTheDocument();
       });
     });
 
@@ -160,21 +171,31 @@ describe('PendingReviews Component', () => {
       renderWithProviders(<PendingReviews shopId="shop-123" />);
 
       await waitFor(() => {
-        // Should show platform badges (google/naver)
-        expect(screen.getByText(/google/i) || screen.getByText(/구글/i)).toBeTruthy();
+        // Should show platform badges (Google/Naver)
+        expect(screen.getAllByText('Google').length).toBeGreaterThan(0);
       });
     });
   });
 
   describe('FR-013: Generate AI Response', () => {
-    it('should show generate response button for each review', async () => {
+    it('should show generate response button when review is expanded', async () => {
       vi.mocked(dashboardApi.getPendingReviews).mockResolvedValue(mockPendingReviewsResponse);
 
       renderWithProviders(<PendingReviews shopId="shop-123" />);
 
       await waitFor(() => {
-        const generateButtons = screen.getAllByRole('button', { name: /generate|생성|ai/i });
-        expect(generateButtons.length).toBeGreaterThan(0);
+        expect(screen.getByText('김철수')).toBeInTheDocument();
+      });
+
+      // Expand the review card
+      const reviewRow = screen.getByText('김철수').closest('[role="button"]');
+      if (reviewRow) {
+        fireEvent.click(reviewRow);
+      }
+
+      await waitFor(() => {
+        const generateButton = screen.getByRole('button', { name: /AI 답변 생성/ });
+        expect(generateButton).toBeInTheDocument();
       });
     });
 
@@ -188,8 +209,18 @@ describe('PendingReviews Component', () => {
         expect(screen.getByText('김철수')).toBeInTheDocument();
       });
 
-      const generateButtons = screen.getAllByRole('button', { name: /generate|생성|ai/i });
-      fireEvent.click(generateButtons[0]);
+      // Expand the review card
+      const reviewRow = screen.getByText('김철수').closest('[role="button"]');
+      if (reviewRow) {
+        fireEvent.click(reviewRow);
+      }
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /AI 답변 생성/ })).toBeInTheDocument();
+      });
+
+      const generateButton = screen.getByRole('button', { name: /AI 답변 생성/ });
+      fireEvent.click(generateButton);
 
       await waitFor(() => {
         expect(dashboardApi.generateAIResponse).toHaveBeenCalledWith('shop-123', 'review-1');
@@ -206,8 +237,18 @@ describe('PendingReviews Component', () => {
         expect(screen.getByText('김철수')).toBeInTheDocument();
       });
 
-      const generateButtons = screen.getAllByRole('button', { name: /generate|생성|ai/i });
-      fireEvent.click(generateButtons[0]);
+      // Expand the review card
+      const reviewRow = screen.getByText('김철수').closest('[role="button"]');
+      if (reviewRow) {
+        fireEvent.click(reviewRow);
+      }
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /AI 답변 생성/ })).toBeInTheDocument();
+      });
+
+      const generateButton = screen.getByRole('button', { name: /AI 답변 생성/ });
+      fireEvent.click(generateButton);
 
       await waitFor(() => {
         expect(screen.getByDisplayValue(/김철수님|소중한 리뷰/)).toBeInTheDocument();
@@ -226,11 +267,23 @@ describe('PendingReviews Component', () => {
         expect(screen.getByText('김철수')).toBeInTheDocument();
       });
 
-      const generateButtons = screen.getAllByRole('button', { name: /generate|생성|ai/i });
-      fireEvent.click(generateButtons[0]);
+      // Expand the review card
+      const reviewRow = screen.getByText('김철수').closest('[role="button"]');
+      if (reviewRow) {
+        fireEvent.click(reviewRow);
+      }
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /AI 답변 생성/ })).toBeInTheDocument();
+      });
+
+      const generateButton = screen.getByRole('button', { name: /AI 답변 생성/ });
+      fireEvent.click(generateButton);
 
       // Should show loading indicator
-      expect(screen.getByText(/loading|생성 중|처리/i) || screen.getByRole('progressbar')).toBeTruthy();
+      await waitFor(() => {
+        expect(screen.getByText(/생성 중/)).toBeInTheDocument();
+      });
     });
   });
 
@@ -247,8 +300,18 @@ describe('PendingReviews Component', () => {
       renderWithProviders(<PendingReviews shopId="shop-123" />);
 
       await waitFor(() => {
-        const publishButtons = screen.getAllByRole('button', { name: /publish|게시|발행/i });
-        expect(publishButtons.length).toBeGreaterThan(0);
+        expect(screen.getByText('김철수')).toBeInTheDocument();
+      });
+
+      // Expand the review card
+      const reviewRow = screen.getByText('김철수').closest('[role="button"]');
+      if (reviewRow) {
+        fireEvent.click(reviewRow);
+      }
+
+      await waitFor(() => {
+        const publishButton = screen.getByRole('button', { name: /게시/ });
+        expect(publishButton).toBeInTheDocument();
       });
     });
 
@@ -262,8 +325,18 @@ describe('PendingReviews Component', () => {
         expect(screen.getByText('김철수')).toBeInTheDocument();
       });
 
-      const generateButtons = screen.getAllByRole('button', { name: /generate|생성|ai/i });
-      fireEvent.click(generateButtons[0]);
+      // Expand the review card
+      const reviewRow = screen.getByText('김철수').closest('[role="button"]');
+      if (reviewRow) {
+        fireEvent.click(reviewRow);
+      }
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /AI 답변 생성/ })).toBeInTheDocument();
+      });
+
+      const generateButton = screen.getByRole('button', { name: /AI 답변 생성/ });
+      fireEvent.click(generateButton);
 
       await waitFor(() => {
         const textarea = screen.getByRole('textbox');
@@ -285,17 +358,27 @@ describe('PendingReviews Component', () => {
         expect(screen.getByText('김철수')).toBeInTheDocument();
       });
 
+      // Expand the review card
+      const reviewRow = screen.getByText('김철수').closest('[role="button"]');
+      if (reviewRow) {
+        fireEvent.click(reviewRow);
+      }
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /AI 답변 생성/ })).toBeInTheDocument();
+      });
+
       // Generate response first
-      const generateButtons = screen.getAllByRole('button', { name: /generate|생성|ai/i });
-      fireEvent.click(generateButtons[0]);
+      const generateButton = screen.getByRole('button', { name: /AI 답변 생성/ });
+      fireEvent.click(generateButton);
 
       await waitFor(() => {
         expect(screen.getByDisplayValue(/김철수님|소중한 리뷰/)).toBeInTheDocument();
       });
 
       // Click publish
-      const publishButtons = screen.getAllByRole('button', { name: /publish|게시|발행/i });
-      fireEvent.click(publishButtons[0]);
+      const publishButton = screen.getByRole('button', { name: /게시/ });
+      fireEvent.click(publishButton);
 
       await waitFor(() => {
         expect(dashboardApi.publishResponse).toHaveBeenCalledWith(
@@ -338,7 +421,7 @@ describe('PendingReviews Component', () => {
       renderWithProviders(<PendingReviews shopId="shop-123" />);
 
       await waitFor(() => {
-        expect(screen.getByText(/error|failed|problem|오류/i)).toBeInTheDocument();
+        expect(screen.getByText(/실패했습니다/)).toBeInTheDocument();
       });
     });
 
@@ -365,14 +448,14 @@ describe('PendingReviews Component', () => {
       });
 
       // Click on a review to expand it
-      const reviewCard = screen.getByText('김철수').closest('div');
-      if (reviewCard) {
-        fireEvent.click(reviewCard);
+      const reviewRow = screen.getByText('김철수').closest('[role="button"]');
+      if (reviewRow) {
+        fireEvent.click(reviewRow);
       }
 
       // Should show expanded view with action buttons
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /generate|생성|ai/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /AI 답변 생성/ })).toBeInTheDocument();
       });
     });
   });
