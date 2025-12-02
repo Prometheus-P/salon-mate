@@ -217,7 +217,7 @@ jobs:
         working-directory: src/backend
         run: PYTHONPATH=. pytest --cov=. --cov-report=xml
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/salonmate_test
+          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/salonmate_test
           REDIS_URL: redis://localhost:6379
           JWT_SECRET_KEY: test-secret-key-for-ci-testing
 
