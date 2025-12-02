@@ -5,7 +5,7 @@
  * Main dashboard view for salon owners to monitor marketing metrics
  */
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { ShopSelector } from './components/ShopSelector';
 import { ReviewStats } from './components/ReviewStats';
 import { PostingCalendar } from './components/PostingCalendar';
@@ -25,10 +25,12 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold">대시보드</h1>
           <p className="text-gray-600">마케팅 현황을 한눈에 확인하세요</p>
         </div>
-        <ShopSelector
-          selectedShopId={selectedShopId}
-          onShopChange={setSelectedShopId}
-        />
+        <Suspense fallback={<div className="h-10 w-48 animate-pulse rounded-md bg-gray-200" />}>
+          <ShopSelector
+            selectedShopId={selectedShopId}
+            onShopChange={setSelectedShopId}
+          />
+        </Suspense>
       </div>
 
       {/* Dashboard Content */}

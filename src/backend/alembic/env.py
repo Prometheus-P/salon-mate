@@ -3,19 +3,18 @@
 import asyncio
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from alembic import context
-
 # Import settings and models
-from config.settings import get_settings
 from config.database import Base
+from config.settings import get_settings
 
 # Import all models to register them with Base.metadata
-from models.user import User  # noqa: F401
 from models.shop import Shop  # noqa: F401
+from models.user import User  # noqa: F401
 
 # Alembic Config object
 config = context.config
