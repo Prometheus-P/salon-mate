@@ -3,7 +3,7 @@
 회원가입, 로그인, 토큰 갱신, OAuth 등
 """
 
-from typing import Any, Literal
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
