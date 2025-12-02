@@ -8,7 +8,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
 ShopType = Literal["nail", "hair", "skin", "lash"]
 
 

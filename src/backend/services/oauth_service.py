@@ -13,8 +13,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.settings import get_settings
 from core.security import create_tokens
-from models.user import User
 from models.social_account import SocialAccount
+from models.user import User
 from schemas.auth import AuthResponse, UserResponse
 
 settings = get_settings()
