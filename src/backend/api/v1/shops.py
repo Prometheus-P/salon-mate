@@ -5,20 +5,20 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, status, Depends, Response
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
 from models.user import User
 from schemas.shop import (
     ShopCreate,
-    ShopUpdate,
-    ShopResponse,
     ShopListResponse,
+    ShopResponse,
+    ShopUpdate,
 )
-from services.shop_service import ShopService, ShopException
-from services.auth_service import AuthService, AuthException
+from services.auth_service import AuthException, AuthService
+from services.shop_service import ShopException, ShopService
 
 router = APIRouter()
 security = HTTPBearer()

@@ -3,20 +3,20 @@
 프로필 조회/수정, 비밀번호 변경 등
 """
 
-from fastapi import APIRouter, HTTPException, status, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
 from models.user import User
 from schemas.user import (
-    UserProfileResponse,
-    UserProfileUpdate,
     ChangePasswordRequest,
     MessageResponse,
+    UserProfileResponse,
+    UserProfileUpdate,
 )
-from services.user_service import UserService, UserException
-from services.auth_service import AuthService, AuthException
+from services.auth_service import AuthException, AuthService
+from services.user_service import UserException, UserService
 
 router = APIRouter()
 security = HTTPBearer()

@@ -3,10 +3,10 @@
 리뷰 CRUD 및 통계 비즈니스 로직
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.review import Review
@@ -122,7 +122,7 @@ class ReviewService:
 
         # replied 상태로 변경 시 replied_at 설정
         if update_data.status == "replied":
-            review.replied_at = datetime.now(timezone.utc)
+            review.replied_at = datetime.now(UTC)
 
         await self.db.commit()
         await self.db.refresh(review)
