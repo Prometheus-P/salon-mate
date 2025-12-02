@@ -5,15 +5,16 @@ Revises: c001_posts
 Create Date: 2025-12-02
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
+from typing import Union
 
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = 'c002_review_idx'
-down_revision: Union[str, Sequence[str], None] = 'c001_posts'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = 'c001_posts'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
