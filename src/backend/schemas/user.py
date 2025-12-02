@@ -5,7 +5,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, Field, HttpUrl
+from pydantic import BaseModel, EmailStr, Field
 
 
 class UserProfileResponse(BaseModel):

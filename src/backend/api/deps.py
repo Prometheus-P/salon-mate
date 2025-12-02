@@ -3,7 +3,6 @@ API 의존성
 인증, 데이터베이스 세션 등 공통 의존성 정의
 """
 
-from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
