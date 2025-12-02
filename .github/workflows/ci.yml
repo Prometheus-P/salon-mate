@@ -159,7 +159,7 @@ jobs:
 
       - name: Run mypy
         working-directory: src/backend
-        run: mypy .
+        run: mypy . --explicit-package-bases
 
   backend-test:
     name: Backend Tests
