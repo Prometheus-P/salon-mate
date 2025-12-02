@@ -14,23 +14,34 @@ from config.settings import get_settings
 settings = get_settings()
 
 # 비밀번호 해싱 컨텍스트
-# truncate_error=False를 설정하여 bcrypt가 72바이트를 초과하는 비밀번호를 자동으로 자르도록 함
+# truncate_error를 비활성화하여 bcrypt가 72바이트를 초과하는 비밀번호를 자동으로 자르도록 함
 pwd_context = CryptContext(
-    schemes=["bcrypt"], deprecated="auto", bcrypt__truncate_error=False
+    schemes=["bcrypt"],
+    deprecated="auto",
+    bcrypt__default_ident="2b",
+    bcrypt__min_rounds=12,
 )
+
+
+def _truncate_password(password: str) -> bytes:
+    """비밀번호를 UTF-8로 인코딩하고 72바이트로 자릅니다."""
+    password_bytes = password.encode("utf-8")
+    return password_bytes[:72]
 
 
 def hash_password(password: str) -> str:
     """비밀번호를 bcrypt로 해싱합니다.
 
-    bcrypt는 최대 72바이트까지만 지원하므로 passlib이 자동으로 잘라냅니다.
+    bcrypt는 최대 72바이트까지만 지원하므로 자동으로 잘라냅니다.
     """
-    return pwd_context.hash(password)
+    truncated = _truncate_password(password)
+    return pwd_context.hash(truncated)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """평문 비밀번호와 해시된 비밀번호를 비교합니다."""
-    return pwd_context.verify(plain_password, hashed_password)
+    truncated = _truncate_password(plain_password)
+    return pwd_context.verify(truncated, hashed_password)
 
 
 def create_access_token(
