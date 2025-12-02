@@ -81,7 +81,7 @@ jobs:
         run: pnpm test:ci
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           files: src/frontend/coverage/lcov.info
           flags: frontend
@@ -222,7 +222,7 @@ jobs:
           JWT_SECRET_KEY: test-secret-key-for-ci-testing
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           files: src/backend/coverage.xml
           flags: backend
