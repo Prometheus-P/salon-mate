@@ -3,7 +3,7 @@ AI 리뷰 답변 생성 서비스
 OpenAI API 연동 전 Mock 버전
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -63,7 +63,7 @@ class AIResponseService:
         )
 
         # 리뷰에 AI 답변 저장
-        generated_at = datetime.now(timezone.utc)
+        generated_at = datetime.now(UTC)
         review.ai_response = ai_response
         review.ai_response_generated_at = generated_at
         await self.db.commit()
