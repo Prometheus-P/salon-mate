@@ -3,17 +3,18 @@ Integration tests for Dashboard API
 T016: Test GET /dashboard/{shop_id}/stats endpoint
 """
 
-import pytest
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
+import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.user import User
-from models.shop import Shop
+from core.security import create_tokens, hash_password
+from models.post import Post
 from models.review import Review
-from core.security import hash_password, create_tokens
+from models.shop import Shop
+from models.user import User
 
 
 @pytest.fixture
@@ -50,7 +51,7 @@ async def dashboard_shop(db_session: AsyncSession, dashboard_user) -> Shop:
 @pytest.fixture
 async def dashboard_reviews(db_session: AsyncSession, dashboard_shop: Shop) -> list[Review]:
     """Create reviews for dashboard stats testing"""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     reviews = [
         Review(
             shop_id=dashboard_shop.id,
@@ -290,7 +291,7 @@ class TestMultiShopSwitching:
         When they request stats for each shop,
         Then they should receive distinct statistics for each shop.
         """
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         # Create first shop with 3 reviews, average rating 5.0
         shop1 = Shop(
@@ -368,13 +369,11 @@ class TestMultiShopSwitching:
 
 # ============== User Story 2: Posting Calendar Integration Tests ==============
 
-from models.post import Post
-
 
 @pytest.fixture
 async def calendar_posts(db_session: AsyncSession, dashboard_shop: Shop) -> list[Post]:
     """Create posts for calendar testing"""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     posts = [
         Post(
             shop_id=dashboard_shop.id,
@@ -420,7 +419,7 @@ class TestGetPostingCalendar:
         calendar_posts: list[Post],
     ):
         """Should return calendar entries for authenticated shop owner"""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).strftime("%Y-%m-%d")
         end_date = (now + timedelta(days=7)).strftime("%Y-%m-%d")
 
@@ -445,7 +444,7 @@ class TestGetPostingCalendar:
         calendar_posts: list[Post],
     ):
         """Should return posts organized by date"""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).strftime("%Y-%m-%d")
         end_date = (now + timedelta(days=7)).strftime("%Y-%m-%d")
 
@@ -472,7 +471,7 @@ class TestGetPostingCalendar:
         calendar_posts: list[Post],
     ):
         """FR-007: Each post should have status indicator"""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).strftime("%Y-%m-%d")
         end_date = (now + timedelta(days=7)).strftime("%Y-%m-%d")
 
@@ -504,7 +503,7 @@ class TestGetPostingCalendar:
         calendar_posts: list[Post],
     ):
         """FR-006: Should support week view parameter"""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).strftime("%Y-%m-%d")
         end_date = (now + timedelta(days=7)).strftime("%Y-%m-%d")
 
@@ -524,7 +523,7 @@ class TestGetPostingCalendar:
         calendar_posts: list[Post],
     ):
         """FR-006: Should support month view parameter"""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=30)).strftime("%Y-%m-%d")
         end_date = now.strftime("%Y-%m-%d")
 
@@ -542,7 +541,7 @@ class TestGetPostingCalendar:
         dashboard_shop: Shop,
     ):
         """Should return 401 when not authenticated"""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).strftime("%Y-%m-%d")
         end_date = (now + timedelta(days=7)).strftime("%Y-%m-%d")
 
@@ -572,7 +571,7 @@ class TestGetPostingCalendar:
 
         other_token, _, _ = create_tokens(str(other_user.id))
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).strftime("%Y-%m-%d")
         end_date = (now + timedelta(days=7)).strftime("%Y-%m-%d")
 

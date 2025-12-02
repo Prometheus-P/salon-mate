@@ -57,7 +57,7 @@ async def signup(
     try:
         return await auth_service.signup(user_data)
     except AuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.post(
@@ -77,7 +77,7 @@ async def login(
     try:
         return await auth_service.login(credentials)
     except AuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.post(
@@ -95,7 +95,7 @@ async def refresh_token(
     try:
         return await auth_service.refresh_token(request.refresh_token)
     except AuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.post(
@@ -188,6 +188,6 @@ async def oauth_callback(
         return await oauth_service.handle_oauth_callback(provider, user_info)
 
     except OAuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"OAuth 인증 중 오류가 발생했습니다: {str(e) from e from e}")
+        raise HTTPException(status_code=400, detail=f"OAuth 인증 중 오류가 발생했습니다: {str(e) from e}")

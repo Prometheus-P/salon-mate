@@ -9,14 +9,14 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.security import create_tokens, hash_password, verify_password, decode_token
+from core.security import create_tokens, decode_token, hash_password, verify_password
 from models.user import User
 from schemas.auth import (
+    AccessTokenResponse,
     AuthResponse,
     UserCreate,
     UserLogin,
     UserResponse,
-    AccessTokenResponse,
 )
 
 
@@ -150,8 +150,8 @@ class AuthService:
             )
 
         # 새 액세스 토큰 생성
-        from core.security import create_access_token
         from config.settings import get_settings
+        from core.security import create_access_token
 
         settings = get_settings()
         access_token = create_access_token({"sub": str(user.id)})

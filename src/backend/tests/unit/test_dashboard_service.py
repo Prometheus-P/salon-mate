@@ -3,17 +3,18 @@ Unit tests for DashboardService
 T015: Test get_review_stats service method
 """
 
-import pytest
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
+import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.user import User
-from models.shop import Shop
-from models.review import Review
-from services.dashboard_service import DashboardService
 from core.security import hash_password
+from models.post import Post
+from models.review import Review
+from models.shop import Shop
+from models.user import User
+from services.dashboard_service import DashboardService
 
 
 @pytest.fixture
@@ -48,7 +49,7 @@ async def test_shop(db_session: AsyncSession, test_user: User) -> Shop:
 @pytest.fixture
 async def test_reviews(db_session: AsyncSession, test_shop: Shop) -> list[Review]:
     """Create test reviews with various statuses"""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     reviews = [
         # Replied reviews
         Review(
@@ -163,7 +164,7 @@ class TestGetReviewStats:
 
         assert result.last_synced_at is not None
         # Should be recent (within last minute)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         assert (now - result.last_synced_at).total_seconds() < 60
 
     @pytest.mark.asyncio
@@ -235,13 +236,11 @@ class TestVerifyShopOwnership:
 
 # ============== User Story 2: Posting Calendar Tests ==============
 
-from models.post import Post
-
 
 @pytest.fixture
 async def test_posts(db_session: AsyncSession, test_shop: Shop) -> list[Post]:
     """Create test posts with various statuses and dates"""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     posts = [
         # Published posts
         Post(
@@ -311,9 +310,8 @@ class TestGetPostingCalendar:
         self, db_session: AsyncSession, test_shop: Shop, test_posts: list[Post]
     ):
         """FR-005: Should display posts on a calendar within the date range"""
-        from datetime import date as date_type
         service = DashboardService(db_session)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).date()
         end_date = (now + timedelta(days=7)).date()
 
@@ -330,7 +328,7 @@ class TestGetPostingCalendar:
     ):
         """FR-006: Posts should be grouped by their scheduled/published date"""
         service = DashboardService(db_session)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).date()
         end_date = (now + timedelta(days=7)).date()
 
@@ -347,7 +345,7 @@ class TestGetPostingCalendar:
     ):
         """FR-007: Each post should have a status indicator"""
         service = DashboardService(db_session)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).date()
         end_date = (now + timedelta(days=7)).date()
 
@@ -369,7 +367,7 @@ class TestGetPostingCalendar:
     ):
         """Draft posts should not appear in calendar (no scheduled date)"""
         service = DashboardService(db_session)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=30)).date()
         end_date = (now + timedelta(days=30)).date()
 
@@ -386,7 +384,7 @@ class TestGetPostingCalendar:
     ):
         """Posts should include summary fields: id, status, image_url, caption_snippet"""
         service = DashboardService(db_session)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).date()
         end_date = (now + timedelta(days=7)).date()
 
@@ -406,8 +404,8 @@ class TestGetPostingCalendar:
         """Should return empty entries for date range with no posts"""
         service = DashboardService(db_session)
         # Far future dates with no posts
-        start_date = (datetime.now(timezone.utc) + timedelta(days=365)).date()
-        end_date = (datetime.now(timezone.utc) + timedelta(days=400)).date()
+        start_date = (datetime.now(UTC) + timedelta(days=365)).date()
+        end_date = (datetime.now(UTC) + timedelta(days=400)).date()
 
         result = await service.get_posting_calendar(test_shop.id, start_date, end_date)
 
@@ -419,7 +417,7 @@ class TestGetPostingCalendar:
     ):
         """Should include last_synced_at timestamp"""
         service = DashboardService(db_session)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         start_date = (now - timedelta(days=7)).date()
         end_date = (now + timedelta(days=7)).date()
 

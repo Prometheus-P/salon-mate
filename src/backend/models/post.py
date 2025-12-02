@@ -6,10 +6,10 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Text, Integer, DateTime, ForeignKey, Enum as SQLEnum, JSON
+from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.base import BaseModel, GUID
+from models.base import GUID, BaseModel
 
 if TYPE_CHECKING:
     from models.shop import Shop

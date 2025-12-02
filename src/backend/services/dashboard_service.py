@@ -3,32 +3,31 @@ Dashboard Service - Business logic for marketing dashboard
 """
 
 import logging
-from datetime import datetime, date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from uuid import UUID
 
-from sqlalchemy import func, select, and_, case
+from sqlalchemy import and_, case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import timezone
 
-from models.shop import Shop
-from models.review import Review
 from models.post import Post
+from models.review import Review
+from models.shop import Shop
 from schemas.dashboard import (
-    ReviewStatsResponse,
-    PlatformStats,
-    CalendarResponse,
     CalendarEntry,
-    PostSummary,
+    CalendarResponse,
     EngagementResponse,
-    TopPost,
-    TrendResponse,
-    TrendDataPoint,
-    PendingReviewsResponse,
-    PendingReview,
     GeneratedResponseResult,
+    PendingReview,
+    PendingReviewsResponse,
+    PlatformStats,
+    PostSummary,
     PublishResponseResult,
-    ShopSummary,
+    ReviewStatsResponse,
     ShopsListResponse,
+    ShopSummary,
+    TopPost,
+    TrendDataPoint,
+    TrendResponse,
 )
 
 logger = logging.getLogger(__name__)
@@ -136,7 +135,7 @@ class DashboardService:
             response_rate=round(response_rate, 2),
             pending_count=pending_count,
             by_platform=by_platform,
-            last_synced_at=datetime.now(timezone.utc),
+            last_synced_at=datetime.now(UTC),
         )
 
     # ============== User Story 2: Posting Calendar ==============
@@ -226,7 +225,7 @@ class DashboardService:
             start_date=start_date,
             end_date=end_date,
             entries=entries,
-            last_synced_at=datetime.now(timezone.utc),
+            last_synced_at=datetime.now(UTC),
         )
 
     # ============== User Story 3: Engagement Metrics ==============
@@ -288,7 +287,7 @@ class DashboardService:
             total_comments=total_comments,
             total_reach=total_reach,
             top_posts=top_posts,
-            last_synced_at=datetime.now(timezone.utc),
+            last_synced_at=datetime.now(UTC),
         )
 
     # ============== User Story 4: Trend Data ==============
@@ -304,7 +303,7 @@ class DashboardService:
         """
         logger.info("Fetching trend data", extra={"shop_id": str(shop_id), "period": period})
         # Determine date range based on period
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         if period == "week":
             start_date = (now - timedelta(days=7)).date()
@@ -450,7 +449,7 @@ class DashboardService:
         return GeneratedResponseResult(
             review_id=review_id,
             ai_response=ai_response,
-            generated_at=datetime.now(timezone.utc),
+            generated_at=datetime.now(UTC),
         )
 
     def _generate_mock_ai_response(self, review: Review) -> str:
@@ -490,7 +489,7 @@ class DashboardService:
         # Update review status and response
         review.final_response = final_response
         review.status = "replied"
-        review.replied_at = datetime.now(timezone.utc)
+        review.replied_at = datetime.now(UTC)
 
         await self.db.commit()
 

@@ -6,24 +6,23 @@ from datetime import date
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
 from models.user import User
-from services.dashboard_service import DashboardService
-from services.auth_service import AuthService, AuthException
 from schemas.dashboard import (
-    ReviewStatsResponse,
     CalendarResponse,
     EngagementResponse,
-    TrendResponse,
-    PendingReviewsResponse,
     GeneratedResponseResult,
+    PendingReviewsResponse,
     PublishResponseRequest,
     PublishResponseResult,
-    ShopsListResponse,
+    ReviewStatsResponse,
+    TrendResponse,
 )
+from services.auth_service import AuthException, AuthService
+from services.dashboard_service import DashboardService
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 security = HTTPBearer()

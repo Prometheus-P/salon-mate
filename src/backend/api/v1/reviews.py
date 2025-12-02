@@ -5,23 +5,23 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, status, Depends, Response, Query
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
 from models.user import User
+from schemas.ai_response import AIResponseRequest, AIResponseResult
 from schemas.review import (
     ReviewCreate,
-    ReviewUpdate,
-    ReviewResponse,
     ReviewListResponse,
+    ReviewResponse,
     ReviewStatsResponse,
+    ReviewUpdate,
 )
-from schemas.ai_response import AIResponseRequest, AIResponseResult
-from services.review_service import ReviewService, ReviewException
-from services.auth_service import AuthService, AuthException
-from services.ai_response_service import AIResponseService, AIResponseException
+from services.ai_response_service import AIResponseException, AIResponseService
+from services.auth_service import AuthException, AuthService
+from services.review_service import ReviewException, ReviewService
 
 router = APIRouter()
 security = HTTPBearer()
@@ -36,7 +36,7 @@ async def get_current_user(
     try:
         return await auth_service.get_current_user(credentials.credentials)
     except AuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 def get_review_service(db: AsyncSession = Depends(get_db)) -> ReviewService:
@@ -89,7 +89,7 @@ async def create_review(
             updatedAt=review.updated_at,
         )
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.get(
@@ -138,7 +138,7 @@ async def get_reviews(
             total=total,
         )
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.get(
@@ -162,7 +162,7 @@ async def get_review_stats(
             ignoredCount=stats["ignored_count"],
         )
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.get(
@@ -237,7 +237,7 @@ async def update_review(
             updatedAt=review.updated_at,
         )
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.delete(
@@ -256,7 +256,7 @@ async def delete_review(
         await review_service.delete_review(current_user, shop_id, review_id)
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.post(
@@ -292,4 +292,4 @@ async def generate_ai_response(
             generatedAt=generated_at,
         )
     except AIResponseException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e

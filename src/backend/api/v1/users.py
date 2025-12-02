@@ -3,20 +3,20 @@
 프로필 조회/수정, 비밀번호 변경 등
 """
 
-from fastapi import APIRouter, HTTPException, status, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
 from models.user import User
 from schemas.user import (
-    UserProfileResponse,
-    UserProfileUpdate,
     ChangePasswordRequest,
     MessageResponse,
+    UserProfileResponse,
+    UserProfileUpdate,
 )
-from services.user_service import UserService, UserException
-from services.auth_service import AuthService, AuthException
+from services.auth_service import AuthException, AuthService
+from services.user_service import UserException, UserService
 
 router = APIRouter()
 security = HTTPBearer()
@@ -31,7 +31,7 @@ async def get_current_user(
     try:
         return await auth_service.get_current_user(credentials.credentials)
     except AuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 def get_user_service(db: AsyncSession = Depends(get_db)) -> UserService:
@@ -84,7 +84,7 @@ async def update_my_profile(
             createdAt=updated_user.created_at,
         )
     except UserException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.post(
@@ -110,4 +110,4 @@ async def change_password(
         )
         return MessageResponse(message="비밀번호가 변경되었습니다.")
     except UserException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
