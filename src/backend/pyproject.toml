@@ -27,6 +27,8 @@ exclude = '''
 [tool.ruff]
 line-length = 88
 target-version = "py312"
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -42,7 +44,7 @@ ignore = [
     "UP046", # Generic class uses Generic subclass (Python 3.12+ syntax)
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["app"]
 
 [tool.mypy]
