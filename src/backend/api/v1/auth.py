@@ -5,21 +5,21 @@
 
 from typing import Literal
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
 from config.settings import get_settings
 from schemas.auth import (
-    UserCreate,
-    UserLogin,
+    AccessTokenResponse,
     AuthResponse,
     RefreshTokenRequest,
-    AccessTokenResponse,
+    UserCreate,
+    UserLogin,
 )
-from schemas.oauth import OAuthURLResponse, OAuthCallbackRequest, OAuthProvidersResponse
-from services.auth_service import AuthService, AuthException
-from services.oauth_service import OAuthService, OAuthException, SUPPORTED_PROVIDERS
+from schemas.oauth import OAuthCallbackRequest, OAuthProvidersResponse, OAuthURLResponse
+from services.auth_service import AuthException, AuthService
+from services.oauth_service import SUPPORTED_PROVIDERS, OAuthException, OAuthService
 
 router = APIRouter()
 settings = get_settings()
@@ -190,4 +190,4 @@ async def oauth_callback(
     except OAuthException as e:
         raise HTTPException(status_code=e.status_code, detail=e.message) from e
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"OAuth 인증 중 오류가 발생했습니다: {str(e) from e}")
+        raise HTTPException(status_code=400, detail=f"OAuth 인증 중 오류가 발생했습니다: {str(e)}") from e
