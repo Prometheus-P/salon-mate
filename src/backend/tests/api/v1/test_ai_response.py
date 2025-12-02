@@ -93,7 +93,7 @@ class TestGenerateAIResponse:
         )
 
         assert response.status_code == 200
-        response.json()
+        data = response.json()
         assert "aiResponse" in data
         assert len(data["aiResponse"]) > 0
         # 긍정적인 답변 확인
@@ -113,7 +113,7 @@ class TestGenerateAIResponse:
         )
 
         assert response.status_code == 200
-        response.json()
+        data = response.json()
         assert "aiResponse" in data
         # 공감 및 개선 약속 확인
         assert any(word in data["aiResponse"] for word in ["죄송", "개선", "불편", "노력"])
@@ -132,7 +132,7 @@ class TestGenerateAIResponse:
         )
 
         assert response.status_code == 200
-        response.json()
+        data = response.json()
         assert "aiResponse" in data
         assert len(data["aiResponse"]) > 0
 
@@ -157,7 +157,7 @@ class TestGenerateAIResponse:
         )
 
         assert get_response.status_code == 200
-        data = get_response.json()
+        data = get_data = response.json()
         assert data["aiResponse"] is not None
         assert data["aiResponseGeneratedAt"] is not None
 
@@ -204,7 +204,7 @@ class TestAIResponseCustomization:
         )
 
         assert response.status_code == 200
-        response.json()
+        data = response.json()
         assert "aiResponse" in data
 
     @pytest.mark.asyncio
