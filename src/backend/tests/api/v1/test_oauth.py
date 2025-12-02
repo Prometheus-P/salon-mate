@@ -3,9 +3,10 @@ OAuth 인증 테스트
 Google/Kakao OAuth 공통 로직 및 콜백 핸들러 테스트
 """
 
+from unittest.mock import AsyncMock, patch
+
 import pytest
 from httpx import AsyncClient
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from models.user import User
 
@@ -209,8 +210,9 @@ class TestSocialAccountModel:
         self, client: AsyncClient, db_session
     ):
         """소셜 계정 정보가 저장되어야 함"""
-        from models.social_account import SocialAccount
         from sqlalchemy import select
+
+        from models.social_account import SocialAccount
 
         mock_user_info = {
             "id": "google-store-test",

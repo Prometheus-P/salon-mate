@@ -2,7 +2,7 @@
 API 에러 핸들러
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
 from fastapi import HTTPException, Request
@@ -37,7 +37,7 @@ async def app_exception_handler(request: Request, exc: AppException) -> JSONResp
             },
             "meta": {
                 "requestId": str(uuid4()),
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         },
     )
@@ -55,7 +55,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
             },
             "meta": {
                 "requestId": str(uuid4()),
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         },
     )

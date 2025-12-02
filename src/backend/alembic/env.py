@@ -8,14 +8,14 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from config.database import Base
 
 # Import settings and models
 from config.settings import get_settings
-from config.database import Base
+from models.shop import Shop  # noqa: F401
 
 # Import all models to register them with Base.metadata
 from models.user import User  # noqa: F401
-from models.shop import Shop  # noqa: F401
 
 # Alembic Config object
 config = context.config
