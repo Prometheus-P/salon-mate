@@ -59,7 +59,8 @@ class RedisCache:
         """Set value in cache with optional TTL (seconds)."""
         if isinstance(value, (dict, list)):
             value = json.dumps(value)
-        return await self.client.set(key, value, ex=ttl)
+        result = await self.client.set(key, value, ex=ttl)
+        return bool(result)
 
     async def delete(self, key: str) -> int:
         """Delete key from cache."""
