@@ -78,7 +78,6 @@ class TestTokenRefresh:
         """새로운 액세스 토큰은 이전 토큰과 다르게 생성됨"""
         # 먼저 사용자 생성
         signup_response = await client.post("/v1/auth/signup", json=valid_user_data)
-        old_access_token = signup_response.json()["accessToken"]
         refresh_token = signup_response.json()["refreshToken"]
 
         # 토큰 갱신

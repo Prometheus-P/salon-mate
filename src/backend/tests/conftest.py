@@ -9,18 +9,17 @@ from typing import Any
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
 from config.database import Base, get_db
 from main import app
+from models.review import Review  # noqa: F401
+from models.shop import Shop  # noqa: F401
+from models.social_account import SocialAccount  # noqa: F401
 
 # 모든 모델 임포트 (테이블 생성을 위해 필요)
 from models.user import User  # noqa: F401
-from models.shop import Shop  # noqa: F401
-from models.social_account import SocialAccount  # noqa: F401
-from models.review import Review  # noqa: F401
-
 
 # 테스트용 인메모리 SQLite 데이터베이스
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
