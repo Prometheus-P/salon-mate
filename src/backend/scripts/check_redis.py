@@ -46,7 +46,7 @@ async def check_redis_info() -> dict | None:
         await client.close()
 
         print(f"Redis version: {info.get('redis_version', 'unknown')}")
-        return info
+        return dict(info)
     except Exception as e:
         print(f"Failed to get Redis info: {e}")
         return None
