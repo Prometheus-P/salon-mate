@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "../styles/tokens/colors.css";
+@import "../styles/tokens/typography.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -41,6 +43,37 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* M3 Color Tokens for Tailwind */
+  --color-m3-primary: var(--m3-primary);
+  --color-m3-on-primary: var(--m3-on-primary);
+  --color-m3-primary-container: var(--m3-primary-container);
+  --color-m3-on-primary-container: var(--m3-on-primary-container);
+  --color-m3-secondary: var(--m3-secondary);
+  --color-m3-on-secondary: var(--m3-on-secondary);
+  --color-m3-secondary-container: var(--m3-secondary-container);
+  --color-m3-on-secondary-container: var(--m3-on-secondary-container);
+  --color-m3-tertiary: var(--m3-tertiary);
+  --color-m3-on-tertiary: var(--m3-on-tertiary);
+  --color-m3-error: var(--m3-error);
+  --color-m3-on-error: var(--m3-on-error);
+  --color-m3-error-container: var(--m3-error-container);
+  --color-m3-surface: var(--m3-surface);
+  --color-m3-on-surface: var(--m3-on-surface);
+  --color-m3-surface-variant: var(--m3-surface-variant);
+  --color-m3-on-surface-variant: var(--m3-on-surface-variant);
+  --color-m3-outline: var(--m3-outline);
+  --color-m3-outline-variant: var(--m3-outline-variant);
+
+  /* M3 Status Colors */
+  --color-status-published: var(--m3-status-published);
+  --color-status-published-container: var(--m3-status-published-container);
+  --color-status-scheduled: var(--m3-status-scheduled);
+  --color-status-scheduled-container: var(--m3-status-scheduled-container);
+  --color-status-failed: var(--m3-status-failed);
+  --color-status-failed-container: var(--m3-status-failed-container);
+  --color-status-pending: var(--m3-status-pending);
+  --color-status-pending-container: var(--m3-status-pending-container);
 }
 
 :root {
@@ -51,10 +84,12 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  /* M3 Primary Purple #6750A4 */
+  --primary: oklch(0.494 0.146 284.8);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  /* M3 Secondary */
+  --secondary: oklch(0.455 0.043 286);
+  --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
@@ -85,10 +120,12 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
+  /* M3 Primary Purple (light variant for dark mode) #D0BCFF */
+  --primary: oklch(0.818 0.097 286);
+  --primary-foreground: oklch(0.245 0.097 286);
+  /* M3 Secondary (dark mode) */
+  --secondary: oklch(0.812 0.043 286);
+  --secondary-foreground: oklch(0.245 0.043 286);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
@@ -118,5 +155,31 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* M3 Subtle Transitions (150ms ease-out) */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  [data-slot="button"],
+  [data-slot="card"] {
+    transition-property: background-color, border-color, color, box-shadow, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
