@@ -3,7 +3,7 @@ API 의존성
 인증, 데이터베이스 세션 등 공통 의존성 정의
 """
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -21,7 +21,7 @@ DBSession = Annotated[AsyncSession, Depends(get_db)]
 async def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     db: DBSession,
-) -> dict:
+) -> dict[str, Any]:
     """현재 인증된 사용자를 반환합니다."""
     # TODO: JWT 토큰 검증 및 사용자 조회 (Sprint 2에서 구현 예정)
     raise HTTPException(
@@ -31,4 +31,4 @@ async def get_current_user(
 
 
 # 현재 사용자 의존성
-CurrentUser = Annotated[dict, Depends(get_current_user)]
+CurrentUser = Annotated[dict[str, Any], Depends(get_current_user)]

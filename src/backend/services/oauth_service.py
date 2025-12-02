@@ -167,15 +167,18 @@ class OAuthService:
         # 기존 소셜 계정 확인
         social_account = await self._get_social_account(provider, provider_user_id)
 
+        user: User
+
         if social_account:
             # 기존 소셜 계정으로 로그인
             user = social_account.user
         else:
             # 이메일로 기존 사용자 확인
-            user = await self._get_user_by_email(email)
+            existing_user = await self._get_user_by_email(email)
 
-            if user:
+            if existing_user:
                 # 기존 사용자에 소셜 계정 연동
+                user = existing_user
                 social_account = SocialAccount(
                     user_id=user.id,
                     provider=provider,

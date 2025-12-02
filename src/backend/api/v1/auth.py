@@ -3,7 +3,7 @@
 회원가입, 로그인, 토큰 갱신, OAuth 등
 """
 
-from typing import Literal
+from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -100,10 +100,10 @@ async def refresh_token(
 
 @router.post(
     "/logout",
-    response_model=dict,
+    response_model=dict[str, str],
     summary="로그아웃",
 )
-async def logout() -> dict:
+async def logout() -> dict[str, str]:
     """
     현재 세션을 종료합니다.
 
