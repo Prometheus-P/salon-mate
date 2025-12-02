@@ -172,10 +172,11 @@ class TestGenerateAIResponse:
         review = review_fixture["positive_review"]
 
         # 첫 번째 생성
-        await client.post(
+        first_response = await client.post(
             f"/v1/shops/{shop.id}/reviews/{review.id}/ai-response",
             headers={"Authorization": f"Bearer {review_fixture['token']}"},
         )
+        first_response.json()["aiResponse"]
 
         # 두 번째 생성 (재생성)
         second_response = await client.post(
@@ -221,6 +222,7 @@ class TestAIResponseCustomization:
         )
 
         assert response.status_code == 200
+        response.json()
         # Mock에서 매장 이름 포함 여부 확인은 선택적
 
 

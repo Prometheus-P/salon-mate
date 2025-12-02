@@ -14,7 +14,6 @@ from sqlalchemy.pool import StaticPool
 
 from config.database import Base, get_db
 from main import app
-from models.post import Post  # noqa: F401
 from models.review import Review  # noqa: F401
 from models.shop import Shop  # noqa: F401
 from models.social_account import SocialAccount  # noqa: F401

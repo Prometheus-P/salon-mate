@@ -18,12 +18,23 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
-    """비밀번호를 bcrypt로 해싱합니다."""
+    """비밀번호를 bcrypt로 해싱합니다.
+
+    bcrypt는 최대 72바이트까지만 지원하므로 필요시 자동으로 잘라냅니다.
+    """
+    # bcrypt는 72바이트 제한이 있으므로 UTF-8 인코딩 기준으로 자릅니다
+    password_bytes = password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password = password_bytes[:72].decode('utf-8', errors='ignore')
     return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """평문 비밀번호와 해시된 비밀번호를 비교합니다."""
+    # bcrypt는 72바이트 제한이 있으므로 UTF-8 인코딩 기준으로 자릅니다
+    password_bytes = plain_password.encode('utf-8')
+    if len(password_bytes) > 72:
+        plain_password = password_bytes[:72].decode('utf-8', errors='ignore')
     return pwd_context.verify(plain_password, hashed_password)
 
 

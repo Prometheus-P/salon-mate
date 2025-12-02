@@ -4,6 +4,10 @@
 """
 
 from datetime import UTC, datetime
+<<<<<<< HEAD
+=======
+from typing import Any
+>>>>>>> origin/main
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -137,7 +141,7 @@ class ReviewService:
         await self.db.delete(review)
         await self.db.commit()
 
-    async def get_review_stats(self, user: User, shop_id: UUID) -> dict:
+    async def get_review_stats(self, user: User, shop_id: UUID) -> dict[str, Any]:
         """리뷰 통계를 조회합니다."""
         shop = await self._get_user_shop(user, shop_id)
         if not shop:
