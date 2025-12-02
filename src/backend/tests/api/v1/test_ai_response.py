@@ -157,7 +157,7 @@ class TestGenerateAIResponse:
         )
 
         assert get_response.status_code == 200
-        data = get_data = response.json()
+        data = get_response.json()
         assert data["aiResponse"] is not None
         assert data["aiResponseGeneratedAt"] is not None
 
