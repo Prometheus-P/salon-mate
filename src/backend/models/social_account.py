@@ -3,14 +3,14 @@
 사용자의 OAuth 연동 정보를 저장합니다.
 """
 
+import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
-import uuid
 
-from sqlalchemy import String, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import DateTime, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.base import Base, TimestampMixin, GUID
+from models.base import GUID, Base, TimestampMixin
 
 if TYPE_CHECKING:
     from models.user import User
