@@ -49,7 +49,9 @@ async def dashboard_shop(db_session: AsyncSession, dashboard_user) -> Shop:
 
 
 @pytest.fixture
-async def dashboard_reviews(db_session: AsyncSession, dashboard_shop: Shop) -> list[Review]:
+async def dashboard_reviews(
+    db_session: AsyncSession, dashboard_shop: Shop
+) -> list[Review]:
     """Create reviews for dashboard stats testing"""
     now = datetime.now(UTC)
     reviews = [
@@ -304,16 +306,18 @@ class TestMultiShopSwitching:
         await db_session.refresh(shop1)
 
         for i in range(3):
-            db_session.add(Review(
-                shop_id=shop1.id,
-                reviewer_name=f"Shop1 Reviewer {i}",
-                rating=5,
-                content="Excellent!",
-                review_date=now - timedelta(days=i),
-                status="replied",
-                final_response="Thank you!",
-                replied_at=now,
-            ))
+            db_session.add(
+                Review(
+                    shop_id=shop1.id,
+                    reviewer_name=f"Shop1 Reviewer {i}",
+                    rating=5,
+                    content="Excellent!",
+                    review_date=now - timedelta(days=i),
+                    status="replied",
+                    final_response="Thank you!",
+                    replied_at=now,
+                )
+            )
 
         # Create second shop with 2 reviews, average rating 3.0
         shop2 = Shop(
@@ -326,14 +330,16 @@ class TestMultiShopSwitching:
         await db_session.refresh(shop2)
 
         for i in range(2):
-            db_session.add(Review(
-                shop_id=shop2.id,
-                reviewer_name=f"Shop2 Reviewer {i}",
-                rating=3,
-                content="Average",
-                review_date=now - timedelta(days=i),
-                status="pending",
-            ))
+            db_session.add(
+                Review(
+                    shop_id=shop2.id,
+                    reviewer_name=f"Shop2 Reviewer {i}",
+                    rating=3,
+                    content="Average",
+                    review_date=now - timedelta(days=i),
+                    status="pending",
+                )
+            )
 
         await db_session.commit()
 

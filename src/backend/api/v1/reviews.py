@@ -69,9 +69,7 @@ async def create_review(
     - **reviewDate**: 리뷰 작성일
     """
     try:
-        review = await review_service.create_review(
-            current_user, shop_id, review_data
-        )
+        review = await review_service.create_review(current_user, shop_id, review_data)
         return ReviewResponse(
             id=review.id,
             shopId=review.shop_id,

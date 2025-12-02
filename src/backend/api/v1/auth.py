@@ -141,7 +141,9 @@ async def get_oauth_url(
     - **provider**: google 또는 kakao
     """
     if provider not in SUPPORTED_PROVIDERS:
-        raise HTTPException(status_code=404, detail=f"지원하지 않는 프로바이더입니다: {provider}")
+        raise HTTPException(
+            status_code=404, detail=f"지원하지 않는 프로바이더입니다: {provider}"
+        )
 
     redirect_uri = f"{settings.oauth_redirect_base_url}/{provider}"
     auth_url = oauth_service.get_oauth_url(provider, redirect_uri)
@@ -167,7 +169,9 @@ async def oauth_callback(
     - **state**: CSRF 방지용 state 값
     """
     if provider not in SUPPORTED_PROVIDERS:
-        raise HTTPException(status_code=404, detail=f"지원하지 않는 프로바이더입니다: {provider}")
+        raise HTTPException(
+            status_code=404, detail=f"지원하지 않는 프로바이더입니다: {provider}"
+        )
 
     try:
         redirect_uri = f"{settings.oauth_redirect_base_url}/{provider}"
@@ -182,7 +186,9 @@ async def oauth_callback(
                 callback_data.code, redirect_uri
             )
         else:
-            raise HTTPException(status_code=404, detail="지원하지 않는 프로바이더입니다.")
+            raise HTTPException(
+                status_code=404, detail="지원하지 않는 프로바이더입니다."
+            )
 
         # OAuth 콜백 처리 (사용자 생성/로그인)
         return await oauth_service.handle_oauth_callback(provider, user_info)
@@ -190,4 +196,6 @@ async def oauth_callback(
     except OAuthException as e:
         raise HTTPException(status_code=e.status_code, detail=e.message) from e
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"OAuth 인증 중 오류가 발생했습니다: {str(e)}") from e
+        raise HTTPException(
+            status_code=400, detail=f"OAuth 인증 중 오류가 발생했습니다: {str(e)}"
+        ) from e

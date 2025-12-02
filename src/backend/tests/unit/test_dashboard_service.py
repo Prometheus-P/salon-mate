@@ -480,7 +480,10 @@ class TestGetEngagementMetrics:
         assert len(result.top_posts) > 0
         # Should be sorted by engagement score descending
         if len(result.top_posts) > 1:
-            assert result.top_posts[0].engagement_score >= result.top_posts[1].engagement_score
+            assert (
+                result.top_posts[0].engagement_score
+                >= result.top_posts[1].engagement_score
+            )
 
     @pytest.mark.asyncio
     async def test_should_limit_top_posts_to_five(
@@ -769,6 +772,7 @@ class TestGenerateAiResponse:
     ):
         """Should raise ValueError for non-existent review"""
         from uuid import uuid4
+
         service = DashboardService(db_session)
         fake_review_id = uuid4()
 
@@ -807,7 +811,11 @@ class TestGenerateAiResponse:
             result = await service.generate_ai_response(test_shop.id, review_id)
 
             # Should contain apologetic or improvement language
-            assert "죄송" in result.ai_response or "개선" in result.ai_response or "노력" in result.ai_response
+            assert (
+                "죄송" in result.ai_response
+                or "개선" in result.ai_response
+                or "노력" in result.ai_response
+            )
 
 
 class TestPublishResponse:
@@ -835,6 +843,7 @@ class TestPublishResponse:
     ):
         """Published response should be stored as final_response"""
         from sqlalchemy import select
+
         service = DashboardService(db_session)
         pending = await service.get_pending_reviews(test_shop.id, limit=1)
         review_id = pending.reviews[0].id
@@ -843,9 +852,7 @@ class TestPublishResponse:
         await service.publish_response(test_shop.id, review_id, final_response)
 
         # Verify the review was updated
-        result = await db_session.execute(
-            select(Review).where(Review.id == review_id)
-        )
+        result = await db_session.execute(select(Review).where(Review.id == review_id))
         review = result.scalar_one()
         assert review.final_response == final_response
         assert review.status == "replied"
@@ -856,6 +863,7 @@ class TestPublishResponse:
     ):
         """Should raise ValueError for non-existent review"""
         from uuid import uuid4
+
         service = DashboardService(db_session)
         fake_review_id = uuid4()
 

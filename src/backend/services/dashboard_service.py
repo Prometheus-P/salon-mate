@@ -41,15 +41,19 @@ class DashboardService:
 
     async def verify_shop_ownership(self, shop_id: UUID, user_id: UUID) -> Shop | None:
         """Verify that the user owns the shop"""
-        logger.debug("Verifying shop ownership", extra={"shop_id": str(shop_id), "user_id": str(user_id)})
+        logger.debug(
+            "Verifying shop ownership",
+            extra={"shop_id": str(shop_id), "user_id": str(user_id)},
+        )
         result = await self.db.execute(
-            select(Shop).where(
-                and_(Shop.id == shop_id, Shop.user_id == user_id)
-            )
+            select(Shop).where(and_(Shop.id == shop_id, Shop.user_id == user_id))
         )
         shop = result.scalar_one_or_none()
         if not shop:
-            logger.warning("Shop ownership verification failed", extra={"shop_id": str(shop_id), "user_id": str(user_id)})
+            logger.warning(
+                "Shop ownership verification failed",
+                extra={"shop_id": str(shop_id), "user_id": str(user_id)},
+            )
         return shop
 
     # ============== User Story 1: Review Stats ==============
@@ -65,8 +69,12 @@ class DashboardService:
             select(
                 func.count(Review.id).label("total_reviews"),
                 func.coalesce(func.avg(Review.rating), 0).label("average_rating"),
-                func.sum(case((Review.status == "replied", 1), else_=0)).label("replied_count"),
-                func.sum(case((Review.status == "pending", 1), else_=0)).label("pending_count"),
+                func.sum(case((Review.status == "replied", 1), else_=0)).label(
+                    "replied_count"
+                ),
+                func.sum(case((Review.status == "pending", 1), else_=0)).label(
+                    "pending_count"
+                ),
             ).where(Review.shop_id == shop_id)
         )
         row = result.one()
@@ -90,7 +98,9 @@ class DashboardService:
             select(
                 func.count(Review.id).label("total"),
                 func.coalesce(func.avg(Review.rating), 0).label("avg_rating"),
-                func.sum(case((Review.status == "replied", 1), else_=0)).label("replied"),
+                func.sum(case((Review.status == "replied", 1), else_=0)).label(
+                    "replied"
+                ),
             ).where(
                 and_(
                     Review.shop_id == shop_id,
@@ -100,7 +110,9 @@ class DashboardService:
         )
         google_row = google_result.one()
         if google_row.total and google_row.total > 0:
-            google_response_rate = (int(google_row.replied or 0) / google_row.total) * 100
+            google_response_rate = (
+                int(google_row.replied or 0) / google_row.total
+            ) * 100
             by_platform["google"] = PlatformStats(
                 total_reviews=google_row.total,
                 average_rating=float(google_row.avg_rating or 0),
@@ -112,7 +124,9 @@ class DashboardService:
             select(
                 func.count(Review.id).label("total"),
                 func.coalesce(func.avg(Review.rating), 0).label("avg_rating"),
-                func.sum(case((Review.status == "replied", 1), else_=0)).label("replied"),
+                func.sum(case((Review.status == "replied", 1), else_=0)).label(
+                    "replied"
+                ),
             ).where(
                 and_(
                     Review.shop_id == shop_id,
@@ -150,18 +164,22 @@ class DashboardService:
         Get posting calendar entries for a date range.
         Implements FR-005, FR-006, FR-007.
         """
-        logger.info("Fetching posting calendar", extra={
-            "shop_id": str(shop_id),
-            "start_date": str(start_date),
-            "end_date": str(end_date),
-        })
+        logger.info(
+            "Fetching posting calendar",
+            extra={
+                "shop_id": str(shop_id),
+                "start_date": str(start_date),
+                "end_date": str(end_date),
+            },
+        )
         from sqlalchemy import or_
 
         # Query posts that fall within the date range
         # Posts are grouped by their display date (scheduled_at or published_at)
         # Exclude draft posts (they have no scheduled_at)
         result = await self.db.execute(
-            select(Post).where(
+            select(Post)
+            .where(
                 and_(
                     Post.shop_id == shop_id,
                     Post.status != "draft",  # Exclude drafts
@@ -181,7 +199,8 @@ class DashboardService:
                         ),
                     ),
                 )
-            ).order_by(Post.scheduled_at, Post.published_at)
+            )
+            .order_by(Post.scheduled_at, Post.published_at)
         )
         posts = result.scalars().all()
 
@@ -202,7 +221,9 @@ class DashboardService:
             # Create caption snippet (first 50 chars)
             caption_snippet = None
             if post.caption:
-                caption_snippet = post.caption[:50] + ("..." if len(post.caption) > 50 else "")
+                caption_snippet = post.caption[:50] + (
+                    "..." if len(post.caption) > 50 else ""
+                )
 
             posts_by_date[display_date].append(
                 PostSummary(
@@ -217,8 +238,7 @@ class DashboardService:
 
         # Convert to CalendarEntry list, sorted by date
         entries = [
-            CalendarEntry(date=d, posts=p)
-            for d, p in sorted(posts_by_date.items())
+            CalendarEntry(date=d, posts=p) for d, p in sorted(posts_by_date.items())
         ]
 
         return CalendarResponse(
@@ -258,15 +278,20 @@ class DashboardService:
         # Get top 5 posts by engagement score
         # Engagement score = likes + comments*2 + reach/10
         posts_result = await self.db.execute(
-            select(Post).where(
+            select(Post)
+            .where(
                 and_(
                     Post.shop_id == shop_id,
                     Post.status == "published",
                 )
-            ).order_by(
+            )
+            .order_by(
                 # Order by engagement score descending
-                (Post.likes_count + Post.comments_count * 2 + Post.reach_count / 10).desc()
-            ).limit(5)
+                (
+                    Post.likes_count + Post.comments_count * 2 + Post.reach_count / 10
+                ).desc()
+            )
+            .limit(5)
         )
         top_posts_models = posts_result.scalars().all()
 
@@ -277,7 +302,9 @@ class DashboardService:
                 likes_count=post.likes_count,
                 comments_count=post.comments_count,
                 reach_count=post.reach_count,
-                engagement_score=post.likes_count + (post.comments_count * 2) + (post.reach_count // 10),
+                engagement_score=post.likes_count
+                + (post.comments_count * 2)
+                + (post.reach_count // 10),
             )
             for post in top_posts_models
         ]
@@ -301,7 +328,9 @@ class DashboardService:
         Get trend data for charts.
         Implements FR-010, FR-011.
         """
-        logger.info("Fetching trend data", extra={"shop_id": str(shop_id), "period": period})
+        logger.info(
+            "Fetching trend data", extra={"shop_id": str(shop_id), "period": period}
+        )
         # Determine date range based on period
         now = datetime.now(UTC)
 
@@ -320,18 +349,19 @@ class DashboardService:
                 func.date(Review.review_date).label("date"),
                 func.count(Review.id).label("review_count"),
                 func.coalesce(func.avg(Review.rating), 0).label("average_rating"),
-                func.sum(case((Review.status == "replied", 1), else_=0)).label("replied_count"),
-            ).where(
+                func.sum(case((Review.status == "replied", 1), else_=0)).label(
+                    "replied_count"
+                ),
+            )
+            .where(
                 and_(
                     Review.shop_id == shop_id,
                     func.date(Review.review_date) >= start_date,
                     func.date(Review.review_date) <= end_date,
                 )
-            ).group_by(
-                func.date(Review.review_date)
-            ).order_by(
-                func.date(Review.review_date)
             )
+            .group_by(func.date(Review.review_date))
+            .order_by(func.date(Review.review_date))
         )
         rows = result.all()
 
@@ -370,17 +400,20 @@ class DashboardService:
         Get pending reviews requiring response.
         Implements FR-012.
         """
-        logger.info("Fetching pending reviews", extra={"shop_id": str(shop_id), "limit": limit})
+        logger.info(
+            "Fetching pending reviews", extra={"shop_id": str(shop_id), "limit": limit}
+        )
         # Get pending reviews for the shop
         result = await self.db.execute(
-            select(Review).where(
+            select(Review)
+            .where(
                 and_(
                     Review.shop_id == shop_id,
                     Review.status == "pending",
                 )
-            ).order_by(
-                Review.review_date.desc()
-            ).limit(limit)
+            )
+            .order_by(Review.review_date.desc())
+            .limit(limit)
         )
         reviews = result.scalars().all()
 
@@ -423,7 +456,10 @@ class DashboardService:
         Generate AI response for a review.
         Implements FR-013.
         """
-        logger.info("Generating AI response", extra={"shop_id": str(shop_id), "review_id": str(review_id)})
+        logger.info(
+            "Generating AI response",
+            extra={"shop_id": str(shop_id), "review_id": str(review_id)},
+        )
         # Get the review
         result = await self.db.execute(
             select(Review).where(
@@ -471,7 +507,10 @@ class DashboardService:
         Publish approved response to review.
         Implements FR-014.
         """
-        logger.info("Publishing review response", extra={"shop_id": str(shop_id), "review_id": str(review_id)})
+        logger.info(
+            "Publishing review response",
+            extra={"shop_id": str(shop_id), "review_id": str(review_id)},
+        )
         # Get the review
         result = await self.db.execute(
             select(Review).where(
@@ -507,9 +546,7 @@ class DashboardService:
         Implements FR-016.
         """
         logger.info("Fetching user shops", extra={"user_id": str(user_id)})
-        result = await self.db.execute(
-            select(Shop).where(Shop.user_id == user_id)
-        )
+        result = await self.db.execute(select(Shop).where(Shop.user_id == user_id))
         shops = result.scalars().all()
 
         shop_summaries = []

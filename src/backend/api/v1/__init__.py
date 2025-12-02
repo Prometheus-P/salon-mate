@@ -15,5 +15,7 @@ router.include_router(health_router, tags=["health"])
 router.include_router(auth_router, prefix="/auth", tags=["auth"])
 router.include_router(users_router, prefix="/users", tags=["users"])
 router.include_router(shops_router, prefix="/shops", tags=["shops"])
-router.include_router(reviews_router, prefix="/shops/{shop_id}/reviews", tags=["reviews"])
+router.include_router(
+    reviews_router, prefix="/shops/{shop_id}/reviews", tags=["reviews"]
+)
 router.include_router(dashboard_router)

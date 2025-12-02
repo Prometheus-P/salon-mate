@@ -41,7 +41,9 @@ class TestUserSignup:
         assert response.status_code == 409
         data = response.json()
         assert "detail" in data
-        assert "이미 존재" in data["detail"] or "already exists" in data["detail"].lower()
+        assert (
+            "이미 존재" in data["detail"] or "already exists" in data["detail"].lower()
+        )
 
     @pytest.mark.asyncio
     async def test_should_return_error_when_password_too_short(
@@ -80,9 +82,7 @@ class TestUserSignup:
         assert "detail" in data
 
     @pytest.mark.asyncio
-    async def test_should_return_error_when_email_missing(
-        self, client: AsyncClient
-    ):
+    async def test_should_return_error_when_email_missing(self, client: AsyncClient):
         """이메일 필드가 없을 때 에러 반환"""
         invalid_data = {"password": "SecurePass123!", "name": "테스트"}
         response = await client.post("/v1/auth/signup", json=invalid_data)
@@ -92,9 +92,7 @@ class TestUserSignup:
         assert "detail" in data
 
     @pytest.mark.asyncio
-    async def test_should_return_error_when_password_missing(
-        self, client: AsyncClient
-    ):
+    async def test_should_return_error_when_password_missing(self, client: AsyncClient):
         """비밀번호 필드가 없을 때 에러 반환"""
         invalid_data = {"email": "test@example.com", "name": "테스트"}
         response = await client.post("/v1/auth/signup", json=invalid_data)

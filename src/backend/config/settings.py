@@ -34,7 +34,9 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
 
     # 데이터베이스 설정
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/salonmate"
+    database_url: str = (
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/salonmate"
+    )
 
     # Redis 설정
     redis_url: str = "redis://localhost:6379/0"

@@ -62,6 +62,7 @@ async def verify_shop_access(
 
 # ============== User Story 1: Review Stats ==============
 
+
 @router.get("/{shop_id}/stats", response_model=ReviewStatsResponse)
 async def get_dashboard_stats(
     shop_id: UUID,
@@ -78,12 +79,15 @@ async def get_dashboard_stats(
 
 # ============== User Story 2: Posting Calendar ==============
 
+
 @router.get("/{shop_id}/calendar", response_model=CalendarResponse)
 async def get_posting_calendar(
     shop_id: UUID,
     start_date: date = Query(..., description="Start date for calendar range"),
     end_date: date = Query(..., description="End date for calendar range"),
-    view: str = Query("month", pattern="^(week|month)$", description="Calendar view type"),
+    view: str = Query(
+        "month", pattern="^(week|month)$", description="Calendar view type"
+    ),
     _shop=Depends(verify_shop_access),
     service: DashboardService = Depends(get_dashboard_service),
 ):
@@ -96,6 +100,7 @@ async def get_posting_calendar(
 
 
 # ============== User Story 3: Engagement Metrics ==============
+
 
 @router.get("/{shop_id}/engagement", response_model=EngagementResponse)
 async def get_engagement_metrics(
@@ -113,6 +118,7 @@ async def get_engagement_metrics(
 
 # ============== User Story 4: Trend Data ==============
 
+
 @router.get("/{shop_id}/trends", response_model=TrendResponse)
 async def get_trend_data(
     shop_id: UUID,
@@ -129,6 +135,7 @@ async def get_trend_data(
 
 
 # ============== User Story 5: Pending Reviews & Quick Actions ==============
+
 
 @router.get("/{shop_id}/pending-reviews", response_model=PendingReviewsResponse)
 async def get_pending_reviews(
@@ -163,7 +170,9 @@ async def generate_review_response(
     try:
         return await service.generate_ai_response(shop_id, review_id)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        ) from e
 
 
 @router.post(
@@ -183,9 +192,13 @@ async def publish_review_response(
     Publishes the final response and updates review status.
     """
     try:
-        return await service.publish_response(shop_id, review_id, request.final_response)
+        return await service.publish_response(
+            shop_id, review_id, request.final_response
+        )
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        ) from e
 
 
 # ============== Shop Selector ==============

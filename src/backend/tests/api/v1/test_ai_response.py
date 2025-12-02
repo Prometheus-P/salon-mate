@@ -116,7 +116,9 @@ class TestGenerateAIResponse:
         data = response.json()
         assert "aiResponse" in data
         # 공감 및 개선 약속 확인
-        assert any(word in data["aiResponse"] for word in ["죄송", "개선", "불편", "노력"])
+        assert any(
+            word in data["aiResponse"] for word in ["죄송", "개선", "불편", "노력"]
+        )
 
     @pytest.mark.asyncio
     async def test_should_generate_response_without_content(
@@ -189,9 +191,7 @@ class TestAIResponseCustomization:
     """AI 답변 커스터마이징 테스트"""
 
     @pytest.mark.asyncio
-    async def test_should_accept_custom_tone(
-        self, client: AsyncClient, review_fixture
-    ):
+    async def test_should_accept_custom_tone(self, client: AsyncClient, review_fixture):
         """답변 톤 커스터마이징을 지원해야 함"""
         shop = review_fixture["shop"]
         review = review_fixture["positive_review"]

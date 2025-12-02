@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
 class PostStatus(str):
     """Post status enum values"""
+
     DRAFT = "draft"
     SCHEDULED = "scheduled"
     PUBLISHED = "published"
