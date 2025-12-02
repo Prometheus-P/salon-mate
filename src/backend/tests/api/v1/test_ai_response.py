@@ -2,14 +2,15 @@
 AI 리뷰 답변 생성 테스트
 """
 
+from datetime import UTC, datetime
+
 import pytest
 from httpx import AsyncClient
-from datetime import datetime, timezone
 
-from models.user import User
-from models.shop import Shop
+from core.security import create_tokens, hash_password
 from models.review import Review
-from core.security import hash_password, create_tokens
+from models.shop import Shop
+from models.user import User
 
 
 @pytest.fixture
@@ -39,7 +40,7 @@ async def review_fixture(db_session):
         reviewer_name="만족 고객",
         rating=5,
         content="정말 좋았어요! 손톱 예쁘게 해주셔서 감사합니다.",
-        review_date=datetime.now(timezone.utc),
+        review_date=datetime.now(UTC),
         status="pending",
     )
     negative_review = Review(
@@ -47,14 +48,14 @@ async def review_fixture(db_session):
         reviewer_name="불만 고객",
         rating=2,
         content="대기 시간이 너무 길었어요. 개선이 필요합니다.",
-        review_date=datetime.now(timezone.utc),
+        review_date=datetime.now(UTC),
         status="pending",
     )
     no_content_review = Review(
         shop_id=shop.id,
         reviewer_name="무언 고객",
         rating=4,
-        review_date=datetime.now(timezone.utc),
+        review_date=datetime.now(UTC),
         status="pending",
     )
 

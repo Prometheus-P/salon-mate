@@ -5,14 +5,14 @@
 import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, ForeignKey, JSON
+from sqlalchemy import JSON, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.base import BaseModel, GUID
+from models.base import GUID, BaseModel
 
 if TYPE_CHECKING:
-    from models.user import User
     from models.review import Review
+    from models.user import User
 
 
 class Shop(BaseModel):
