@@ -18,7 +18,9 @@ async def check_database_connection() -> bool:
     """Check if database connection is successful."""
     settings = get_settings()
     print("Checking database connection...")
-    print(f"Database URL: {settings.database_url.replace(settings.database_url.split('@')[0].split('//')[1], '***')}")
+    print(
+        f"Database URL: {settings.database_url.replace(settings.database_url.split('@')[0].split('//')[1], '***')}"
+    )
 
     try:
         engine = create_async_engine(settings.database_url, echo=False)
