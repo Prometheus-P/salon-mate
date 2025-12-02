@@ -16,12 +16,12 @@ interface PostingCalendarProps {
 
 type ViewMode = 'week' | 'month';
 
-// Status colors for FR-007
-const statusColors: Record<string, { bg: string; text: string; label: string }> = {
-  published: { bg: 'bg-green-100', text: 'text-green-700', label: '게시됨' },
-  scheduled: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: '예약됨' },
-  failed: { bg: 'bg-red-100', text: 'text-red-700', label: '실패' },
-  draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: '초안' },
+// M3 Status colors for FR-007 (spec.md Design System)
+const statusColors: Record<string, { bg: string; text: string; dot: string; label: string }> = {
+  published: { bg: 'bg-status-published-container', text: 'text-status-published', dot: 'bg-status-published', label: '게시됨' },
+  scheduled: { bg: 'bg-status-scheduled-container', text: 'text-status-scheduled', dot: 'bg-status-scheduled', label: '예약됨' },
+  failed: { bg: 'bg-status-failed-container', text: 'text-status-failed', dot: 'bg-status-failed', label: '실패' },
+  draft: { bg: 'bg-status-pending-container', text: 'text-status-pending', dot: 'bg-status-pending', label: '초안' },
 };
 
 function getDateRange(viewMode: ViewMode, referenceDate: Date): { start: Date; end: Date } {
@@ -220,13 +220,7 @@ function CalendarGrid({
               {entry?.posts.slice(0, 3).map((post) => (
                 <div
                   key={post.id}
-                  className={`h-1.5 w-full rounded-full ${
-                    post.status === 'published'
-                      ? 'bg-green-400'
-                      : post.status === 'scheduled'
-                        ? 'bg-yellow-400'
-                        : 'bg-red-400'
-                  }`}
+                  className={`h-1.5 w-full rounded-full ${statusColors[post.status]?.dot || 'bg-status-pending'}`}
                   title={`${statusColors[post.status]?.label}: ${post.caption_snippet || ''}`}
                 />
               ))}
@@ -402,19 +396,19 @@ export function PostingCalendar({ shopId }: PostingCalendarProps) {
         </div>
       </div>
 
-      {/* Legend */}
+      {/* Legend - M3 Status Colors */}
       <div className="mb-4 flex flex-wrap gap-3 text-xs">
         <div className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-full bg-green-400" />
-          <span className="text-gray-500">게시됨</span>
+          <span className="h-2 w-2 rounded-full bg-status-published" />
+          <span className="text-muted-foreground">게시됨</span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-full bg-yellow-400" />
-          <span className="text-gray-500">예약됨</span>
+          <span className="h-2 w-2 rounded-full bg-status-scheduled" />
+          <span className="text-muted-foreground">예약됨</span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-full bg-red-400" />
-          <span className="text-gray-500">실패</span>
+          <span className="h-2 w-2 rounded-full bg-status-failed" />
+          <span className="text-muted-foreground">실패</span>
         </div>
       </div>
 

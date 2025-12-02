@@ -19,11 +19,11 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header with Shop Selector */}
+      {/* Header with Shop Selector - M3 Typography */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold">대시보드</h1>
-          <p className="text-gray-600">마케팅 현황을 한눈에 확인하세요</p>
+          <h1 className="m3-headline-large text-foreground">대시보드</h1>
+          <p className="m3-body-medium text-muted-foreground">마케팅 현황을 한눈에 확인하세요</p>
         </div>
         <Suspense fallback={<div className="h-10 w-48 animate-pulse rounded-md bg-gray-200" />}>
           <ShopSelector
