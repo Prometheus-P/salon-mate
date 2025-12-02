@@ -20,6 +20,7 @@ from models.user import User  # noqa: F401
 from models.shop import Shop  # noqa: F401
 from models.social_account import SocialAccount  # noqa: F401
 from models.review import Review  # noqa: F401
+from models.post import Post  # noqa: F401
 
 
 # 테스트용 인메모리 SQLite 데이터베이스

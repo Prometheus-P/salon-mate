@@ -1,0 +1,556 @@
+openapi: 3.1.0
+info:
+  title: SalonMate Dashboard API
+  description: API endpoints for the Marketing Dashboard feature
+  version: 1.0.0
+
+servers:
+  - url: /api/v1
+    description: API v1
+
+security:
+  - bearerAuth: []
+
+paths:
+  /dashboard/{shop_id}/stats:
+    get:
+      summary: Get review statistics for a shop
+      operationId: getDashboardStats
+      tags: [Dashboard]
+      parameters:
+        - $ref: '#/components/parameters/ShopId'
+      responses:
+        '200':
+          description: Review statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewStatsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /dashboard/{shop_id}/calendar:
+    get:
+      summary: Get posting calendar entries
+      operationId: getPostingCalendar
+      tags: [Dashboard]
+      parameters:
+        - $ref: '#/components/parameters/ShopId'
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date for calendar range (inclusive)
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date for calendar range (inclusive)
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [week, month]
+            default: month
+          description: Calendar view type
+      responses:
+        '200':
+          description: Calendar entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /dashboard/{shop_id}/engagement:
+    get:
+      summary: Get engagement metrics summary
+      operationId: getEngagementMetrics
+      tags: [Dashboard]
+      parameters:
+        - $ref: '#/components/parameters/ShopId'
+      responses:
+        '200':
+          description: Engagement metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngagementResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /dashboard/{shop_id}/trends:
+    get:
+      summary: Get trend data for charts
+      operationId: getTrendData
+      tags: [Dashboard]
+      parameters:
+        - $ref: '#/components/parameters/ShopId'
+        - name: period
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [week, month, year]
+          description: Time period for trend data
+      responses:
+        '200':
+          description: Trend data points
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrendResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /dashboard/{shop_id}/pending-reviews:
+    get:
+      summary: Get pending reviews requiring response
+      operationId: getPendingReviews
+      tags: [Dashboard]
+      parameters:
+        - $ref: '#/components/parameters/ShopId'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+          description: Maximum number of reviews to return
+      responses:
+        '200':
+          description: Pending reviews list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PendingReviewsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /dashboard/{shop_id}/reviews/{review_id}/generate-response:
+    post:
+      summary: Generate AI response for a review
+      operationId: generateReviewResponse
+      tags: [Dashboard]
+      parameters:
+        - $ref: '#/components/parameters/ShopId'
+        - name: review_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Generated AI response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedResponseResult'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Review already has a response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /dashboard/{shop_id}/reviews/{review_id}/publish-response:
+    post:
+      summary: Publish approved response to review
+      operationId: publishReviewResponse
+      tags: [Dashboard]
+      parameters:
+        - $ref: '#/components/parameters/ShopId'
+        - name: review_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishResponseRequest'
+      responses:
+        '200':
+          description: Response published successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishResponseResult'
+        '400':
+          description: Invalid response content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /shops:
+    get:
+      summary: Get user's shops for selector
+      operationId: getUserShops
+      tags: [Shops]
+      responses:
+        '200':
+          description: List of user's shops
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopsListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    ShopId:
+      name: shop_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Shop identifier
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Access denied (not shop owner)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+
+    ReviewStatsResponse:
+      type: object
+      required: [total_reviews, average_rating, response_rate, pending_count, by_platform, last_synced_at]
+      properties:
+        total_reviews:
+          type: integer
+          minimum: 0
+        average_rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+        response_rate:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Percentage of reviews with responses
+        pending_count:
+          type: integer
+          minimum: 0
+        by_platform:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PlatformStats'
+        last_synced_at:
+          type: string
+          format: date-time
+
+    PlatformStats:
+      type: object
+      required: [total_reviews, average_rating, response_rate]
+      properties:
+        total_reviews:
+          type: integer
+        average_rating:
+          type: number
+          format: float
+        response_rate:
+          type: number
+          format: float
+
+    CalendarResponse:
+      type: object
+      required: [start_date, end_date, entries, last_synced_at]
+      properties:
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarEntry'
+        last_synced_at:
+          type: string
+          format: date-time
+
+    CalendarEntry:
+      type: object
+      required: [date, posts]
+      properties:
+        date:
+          type: string
+          format: date
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostSummary'
+
+    PostSummary:
+      type: object
+      required: [id, status, image_url]
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [draft, scheduled, published, failed]
+        image_url:
+          type: string
+          format: uri
+        caption_snippet:
+          type: string
+          maxLength: 50
+        scheduled_at:
+          type: string
+          format: date-time
+        published_at:
+          type: string
+          format: date-time
+
+    EngagementResponse:
+      type: object
+      required: [total_likes, total_comments, total_reach, top_posts, last_synced_at]
+      properties:
+        total_likes:
+          type: integer
+          minimum: 0
+        total_comments:
+          type: integer
+          minimum: 0
+        total_reach:
+          type: integer
+          minimum: 0
+        top_posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopPost'
+          maxItems: 5
+        last_synced_at:
+          type: string
+          format: date-time
+
+    TopPost:
+      type: object
+      required: [id, image_url, likes_count, comments_count, reach_count, engagement_score]
+      properties:
+        id:
+          type: string
+          format: uuid
+        image_url:
+          type: string
+          format: uri
+        likes_count:
+          type: integer
+        comments_count:
+          type: integer
+        reach_count:
+          type: integer
+        engagement_score:
+          type: integer
+          description: Computed score (likes + comments*2 + reach/10)
+
+    TrendResponse:
+      type: object
+      required: [period, data_points]
+      properties:
+        period:
+          type: string
+          enum: [week, month, year]
+        data_points:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrendDataPoint'
+
+    TrendDataPoint:
+      type: object
+      required: [date, review_count, average_rating, response_rate]
+      properties:
+        date:
+          type: string
+          format: date
+        review_count:
+          type: integer
+        average_rating:
+          type: number
+          format: float
+        response_rate:
+          type: number
+          format: float
+
+    PendingReviewsResponse:
+      type: object
+      required: [reviews, total_pending]
+      properties:
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/PendingReview'
+        total_pending:
+          type: integer
+
+    PendingReview:
+      type: object
+      required: [id, reviewer_name, rating, content, review_date, platform]
+      properties:
+        id:
+          type: string
+          format: uuid
+        reviewer_name:
+          type: string
+        reviewer_profile_url:
+          type: string
+          format: uri
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        content:
+          type: string
+        review_date:
+          type: string
+          format: date-time
+        platform:
+          type: string
+          enum: [google, naver]
+        ai_response:
+          type: string
+          description: Previously generated AI response if any
+
+    GeneratedResponseResult:
+      type: object
+      required: [review_id, ai_response, generated_at]
+      properties:
+        review_id:
+          type: string
+          format: uuid
+        ai_response:
+          type: string
+        generated_at:
+          type: string
+          format: date-time
+
+    PublishResponseRequest:
+      type: object
+      required: [final_response]
+      properties:
+        final_response:
+          type: string
+          minLength: 1
+          maxLength: 5000
+          description: The approved response text to publish
+
+    PublishResponseResult:
+      type: object
+      required: [review_id, status, replied_at]
+      properties:
+        review_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [replied]
+        replied_at:
+          type: string
+          format: date-time
+
+    ShopsListResponse:
+      type: object
+      required: [shops]
+      properties:
+        shops:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopSummary'
+
+    ShopSummary:
+      type: object
+      required: [id, name, type]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+        has_reviews:
+          type: boolean
+        has_posts:
+          type: boolean

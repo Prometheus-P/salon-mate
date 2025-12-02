@@ -13,6 +13,7 @@ from models.base import BaseModel, GUID
 if TYPE_CHECKING:
     from models.user import User
     from models.review import Review
+    from models.post import Post
 
 
 class Shop(BaseModel):
@@ -36,6 +37,9 @@ class Shop(BaseModel):
     owner: Mapped["User"] = relationship("User", back_populates="shops")
     reviews: Mapped[list["Review"]] = relationship(
         "Review", back_populates="shop", cascade="all, delete-orphan"
+    )
+    posts: Mapped[list["Post"]] = relationship(
+        "Post", back_populates="shop", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
