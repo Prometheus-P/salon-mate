@@ -23,10 +23,20 @@ pwd_context = CryptContext(
 )
 
 
-def _truncate_password(password: str) -> bytes:
-    """비밀번호를 UTF-8로 인코딩하고 72바이트로 자릅니다."""
+def _truncate_password(password: str) -> str:
+    """비밀번호를 UTF-8 기준 72바이트로 자르되, 문자 경계를 고려합니다."""
     password_bytes = password.encode("utf-8")
-    return password_bytes[:72]
+    if len(password_bytes) <= 72:
+        return password
+    # 72바이트로 자르고, 유효한 UTF-8이 되도록 조정
+    truncated_bytes = password_bytes[:72]
+    # 잘못된 UTF-8 바이트 제거
+    while truncated_bytes:
+        try:
+            return truncated_bytes.decode("utf-8")
+        except UnicodeDecodeError:
+            truncated_bytes = truncated_bytes[:-1]
+    return ""
 
 
 def hash_password(password: str) -> str:
