@@ -128,9 +128,7 @@ class ReviewService:
         await self.db.refresh(review)
         return review
 
-    async def delete_review(
-        self, user: User, shop_id: UUID, review_id: UUID
-    ) -> None:
+    async def delete_review(self, user: User, shop_id: UUID, review_id: UUID) -> None:
         """리뷰를 삭제합니다."""
         review = await self.get_review_by_id(user, shop_id, review_id)
         if not review:
@@ -139,9 +137,7 @@ class ReviewService:
         await self.db.delete(review)
         await self.db.commit()
 
-    async def get_review_stats(
-        self, user: User, shop_id: UUID
-    ) -> dict:
+    async def get_review_stats(self, user: User, shop_id: UUID) -> dict:
         """리뷰 통계를 조회합니다."""
         shop = await self._get_user_shop(user, shop_id)
         if not shop:

@@ -52,7 +52,9 @@ class TestCreateReview:
 
         response = await client.post(
             f"/v1/shops/{shop.id}/reviews",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={
                 "reviewerName": "김고객",
                 "rating": 5,
@@ -77,7 +79,9 @@ class TestCreateReview:
 
         response = await client.post(
             f"/v1/shops/{shop.id}/reviews",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={
                 "reviewerName": "김고객",
                 "rating": 6,  # 1-5만 유효
@@ -114,7 +118,9 @@ class TestCreateReview:
 
         response = await client.post(
             f"/v1/shops/{other_shop.id}/reviews",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={
                 "reviewerName": "테스트",
                 "rating": 5,
@@ -155,7 +161,9 @@ class TestGetReviews:
 
         response = await client.get(
             f"/v1/shops/{shop.id}/reviews",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 200
@@ -190,7 +198,9 @@ class TestGetReviews:
 
         response = await client.get(
             f"/v1/shops/{shop.id}/reviews?status=pending",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 200
@@ -222,7 +232,9 @@ class TestGetReviewById:
 
         response = await client.get(
             f"/v1/shops/{shop.id}/reviews/{review.id}",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 200
@@ -240,7 +252,9 @@ class TestGetReviewById:
 
         response = await client.get(
             f"/v1/shops/{shop.id}/reviews/{fake_id}",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 404
@@ -269,7 +283,9 @@ class TestUpdateReview:
 
         response = await client.patch(
             f"/v1/shops/{shop.id}/reviews/{review.id}",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={"status": "ignored"},
         )
 
@@ -296,7 +312,9 @@ class TestUpdateReview:
 
         response = await client.patch(
             f"/v1/shops/{shop.id}/reviews/{review.id}",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={
                 "finalResponse": "감사합니다! 다음에도 방문해주세요.",
                 "status": "replied",
@@ -331,7 +349,9 @@ class TestDeleteReview:
 
         response = await client.delete(
             f"/v1/shops/{shop.id}/reviews/{review.id}",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 204
@@ -339,7 +359,9 @@ class TestDeleteReview:
         # 삭제 확인
         get_response = await client.get(
             f"/v1/shops/{shop.id}/reviews/{review.id}",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
         assert get_response.status_code == 404
 
@@ -356,17 +378,39 @@ class TestReviewStatistics:
 
         # 다양한 평점의 리뷰 생성
         reviews = [
-            Review(shop_id=shop.id, reviewer_name="고객1", rating=5, review_date=datetime.now(UTC)),
-            Review(shop_id=shop.id, reviewer_name="고객2", rating=5, review_date=datetime.now(UTC)),
-            Review(shop_id=shop.id, reviewer_name="고객3", rating=4, review_date=datetime.now(UTC)),
-            Review(shop_id=shop.id, reviewer_name="고객4", rating=3, review_date=datetime.now(UTC)),
+            Review(
+                shop_id=shop.id,
+                reviewer_name="고객1",
+                rating=5,
+                review_date=datetime.now(UTC),
+            ),
+            Review(
+                shop_id=shop.id,
+                reviewer_name="고객2",
+                rating=5,
+                review_date=datetime.now(UTC),
+            ),
+            Review(
+                shop_id=shop.id,
+                reviewer_name="고객3",
+                rating=4,
+                review_date=datetime.now(UTC),
+            ),
+            Review(
+                shop_id=shop.id,
+                reviewer_name="고객4",
+                rating=3,
+                review_date=datetime.now(UTC),
+            ),
         ]
         db_session.add_all(reviews)
         await db_session.commit()
 
         response = await client.get(
             f"/v1/shops/{shop.id}/reviews/stats",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 200
