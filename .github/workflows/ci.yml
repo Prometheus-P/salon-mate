@@ -215,7 +215,7 @@ jobs:
 
       - name: Run tests
         working-directory: src/backend
-        run: pytest --cov=. --cov-report=xml
+        run: PYTHONPATH=. pytest --cov=. --cov-report=xml
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/salonmate_test
           REDIS_URL: redis://localhost:6379
