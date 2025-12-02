@@ -117,9 +117,7 @@ class TestOAuthCallback:
         assert data["user"]["email"] == "existing@gmail.com"
 
     @pytest.mark.asyncio
-    async def test_should_return_error_on_invalid_oauth_code(
-        self, client: AsyncClient
-    ):
+    async def test_should_return_error_on_invalid_oauth_code(self, client: AsyncClient):
         """유효하지 않은 OAuth 코드로 에러를 반환해야 함"""
         with patch(
             "services.oauth_service.OAuthService.get_google_user_info",
@@ -169,6 +167,7 @@ class TestOAuthCallback:
         """이메일로 가입한 기존 사용자가 같은 이메일로 소셜 로그인 시 계정을 연동해야 함"""
         # 이메일로 가입한 기존 사용자
         from core.security import hash_password
+
         existing_user = User(
             email="user@example.com",
             name="Email User",
@@ -235,7 +234,9 @@ class TestSocialAccountModel:
 
         # 소셜 계정 정보가 저장되었는지 확인
         result = await db_session.execute(
-            select(SocialAccount).where(SocialAccount.provider_user_id == "google-store-test")
+            select(SocialAccount).where(
+                SocialAccount.provider_user_id == "google-store-test"
+            )
         )
         social_account = result.scalar_one_or_none()
 

@@ -93,9 +93,7 @@ class TestCreateShop:
         assert response.status_code == 422
 
     @pytest.mark.asyncio
-    async def test_should_return_401_without_authentication(
-        self, client: AsyncClient
-    ):
+    async def test_should_return_401_without_authentication(self, client: AsyncClient):
         """인증 없이 매장 생성 시 401을 반환해야 함"""
         response = await client.post(
             "/v1/shops",
