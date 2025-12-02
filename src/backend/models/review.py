@@ -5,12 +5,12 @@ Google 리뷰 및 AI 답변 정보를 저장합니다.
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Text, Integer, DateTime, ForeignKey, Enum as SQLEnum
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.base import BaseModel, GUID
+from models.base import GUID, BaseModel
 
 if TYPE_CHECKING:
     from models.shop import Shop

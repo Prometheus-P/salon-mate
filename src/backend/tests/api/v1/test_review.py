@@ -2,15 +2,16 @@
 리뷰 CRUD API 테스트
 """
 
+from datetime import UTC, datetime
+from uuid import uuid4
+
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
-from datetime import datetime, timezone
 
-from models.user import User
-from models.shop import Shop
+from core.security import create_tokens, hash_password
 from models.review import Review
-from core.security import hash_password, create_tokens
+from models.shop import Shop
+from models.user import User
 
 
 @pytest.fixture
@@ -140,14 +141,14 @@ class TestGetReviews:
             reviewer_name="고객1",
             rating=5,
             content="좋아요",
-            review_date=datetime.now(timezone.utc),
+            review_date=datetime.now(UTC),
         )
         review2 = Review(
             shop_id=shop.id,
             reviewer_name="고객2",
             rating=4,
             content="괜찮아요",
-            review_date=datetime.now(timezone.utc),
+            review_date=datetime.now(UTC),
         )
         db_session.add_all([review1, review2])
         await db_session.commit()
@@ -174,14 +175,14 @@ class TestGetReviews:
             shop_id=shop.id,
             reviewer_name="대기 고객",
             rating=5,
-            review_date=datetime.now(timezone.utc),
+            review_date=datetime.now(UTC),
             status="pending",
         )
         replied_review = Review(
             shop_id=shop.id,
             reviewer_name="답변 고객",
             rating=4,
-            review_date=datetime.now(timezone.utc),
+            review_date=datetime.now(UTC),
             status="replied",
         )
         db_session.add_all([pending_review, replied_review])
@@ -213,7 +214,7 @@ class TestGetReviewById:
             reviewer_name="상세 고객",
             rating=5,
             content="상세 리뷰 내용",
-            review_date=datetime.now(timezone.utc),
+            review_date=datetime.now(UTC),
         )
         db_session.add(review)
         await db_session.commit()
@@ -259,7 +260,7 @@ class TestUpdateReview:
             shop_id=shop.id,
             reviewer_name="상태 테스트",
             rating=3,
-            review_date=datetime.now(timezone.utc),
+            review_date=datetime.now(UTC),
             status="pending",
         )
         db_session.add(review)
@@ -287,7 +288,7 @@ class TestUpdateReview:
             shop_id=shop.id,
             reviewer_name="답변 테스트",
             rating=4,
-            review_date=datetime.now(timezone.utc),
+            review_date=datetime.now(UTC),
         )
         db_session.add(review)
         await db_session.commit()
@@ -322,7 +323,7 @@ class TestDeleteReview:
             shop_id=shop.id,
             reviewer_name="삭제 테스트",
             rating=2,
-            review_date=datetime.now(timezone.utc),
+            review_date=datetime.now(UTC),
         )
         db_session.add(review)
         await db_session.commit()
@@ -355,10 +356,10 @@ class TestReviewStatistics:
 
         # 다양한 평점의 리뷰 생성
         reviews = [
-            Review(shop_id=shop.id, reviewer_name="고객1", rating=5, review_date=datetime.now(timezone.utc)),
-            Review(shop_id=shop.id, reviewer_name="고객2", rating=5, review_date=datetime.now(timezone.utc)),
-            Review(shop_id=shop.id, reviewer_name="고객3", rating=4, review_date=datetime.now(timezone.utc)),
-            Review(shop_id=shop.id, reviewer_name="고객4", rating=3, review_date=datetime.now(timezone.utc)),
+            Review(shop_id=shop.id, reviewer_name="고객1", rating=5, review_date=datetime.now(UTC)),
+            Review(shop_id=shop.id, reviewer_name="고객2", rating=5, review_date=datetime.now(UTC)),
+            Review(shop_id=shop.id, reviewer_name="고객3", rating=4, review_date=datetime.now(UTC)),
+            Review(shop_id=shop.id, reviewer_name="고객4", rating=3, review_date=datetime.now(UTC)),
         ]
         db_session.add_all(reviews)
         await db_session.commit()

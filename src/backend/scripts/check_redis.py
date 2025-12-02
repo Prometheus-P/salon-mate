@@ -16,7 +16,7 @@ from config.settings import get_settings
 async def check_redis_connection() -> bool:
     """Check if Redis connection is successful."""
     settings = get_settings()
-    print(f"Checking Redis connection...")
+    print("Checking Redis connection...")
     print(f"Redis URL: {settings.redis_url}")
 
     try:
@@ -31,7 +31,7 @@ async def check_redis_connection() -> bool:
             print("Redis connection: FAILED (no pong)")
             return False
     except Exception as e:
-        print(f"Redis connection: FAILED")
+        print("Redis connection: FAILED")
         print(f"Error: {e}")
         return False
 
