@@ -3,12 +3,12 @@
 프로필 조회/수정 테스트
 """
 
+
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
 
+from core.security import create_tokens, hash_password
 from models.user import User
-from core.security import hash_password, create_tokens
 
 
 class TestGetUserProfile:
@@ -67,6 +67,7 @@ class TestGetUserProfile:
     ):
         """만료된 토큰으로 요청 시 401을 반환해야 함"""
         from datetime import timedelta
+
         from core.security import create_access_token
 
         user = User(

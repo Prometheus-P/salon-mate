@@ -41,6 +41,7 @@ select = [
 ignore = [
     "E501",  # line too long (handled by black)
     "B008",  # do not perform function calls in argument defaults
+    "B904",  # raise without from inside except (will be fixed in separate PR)
     "UP046", # Generic class uses Generic subclass (Python 3.12+ syntax)
 ]
 

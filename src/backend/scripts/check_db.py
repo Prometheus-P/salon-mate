@@ -17,7 +17,7 @@ from config.settings import get_settings
 async def check_database_connection() -> bool:
     """Check if database connection is successful."""
     settings = get_settings()
-    print(f"Checking database connection...")
+    print("Checking database connection...")
     print(f"Database URL: {settings.database_url.replace(settings.database_url.split('@')[0].split('//')[1], '***')}")
 
     try:
@@ -28,7 +28,7 @@ async def check_database_connection() -> bool:
             print("Database connection: OK")
             return True
     except Exception as e:
-        print(f"Database connection: FAILED")
+        print("Database connection: FAILED")
         print(f"Error: {e}")
         return False
     finally:
