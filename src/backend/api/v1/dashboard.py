@@ -10,6 +10,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
+from models.shop import Shop
 from models.user import User
 from schemas.dashboard import (
     CalendarResponse,
@@ -49,7 +50,7 @@ async def verify_shop_access(
     shop_id: UUID,
     current_user: User = Depends(get_current_user),
     service: DashboardService = Depends(get_dashboard_service),
-):
+) -> Shop:
     """Verify user has access to the shop"""
     shop = await service.verify_shop_ownership(shop_id, current_user.id)
     if not shop:
@@ -66,9 +67,9 @@ async def verify_shop_access(
 @router.get("/{shop_id}/stats", response_model=ReviewStatsResponse)
 async def get_dashboard_stats(
     shop_id: UUID,
-    _shop=Depends(verify_shop_access),
+    _shop: Shop = Depends(verify_shop_access),
     service: DashboardService = Depends(get_dashboard_service),
-):
+) -> ReviewStatsResponse:
     """
     Get review statistics for a shop.
 
@@ -88,9 +89,9 @@ async def get_posting_calendar(
     view: str = Query(
         "month", pattern="^(week|month)$", description="Calendar view type"
     ),
-    _shop=Depends(verify_shop_access),
+    _shop: Shop = Depends(verify_shop_access),
     service: DashboardService = Depends(get_dashboard_service),
-):
+) -> CalendarResponse:
     """
     Get posting calendar entries for a date range.
 
@@ -105,9 +106,9 @@ async def get_posting_calendar(
 @router.get("/{shop_id}/engagement", response_model=EngagementResponse)
 async def get_engagement_metrics(
     shop_id: UUID,
-    _shop=Depends(verify_shop_access),
+    _shop: Shop = Depends(verify_shop_access),
     service: DashboardService = Depends(get_dashboard_service),
-):
+) -> EngagementResponse:
     """
     Get engagement metrics summary.
 
@@ -123,9 +124,9 @@ async def get_engagement_metrics(
 async def get_trend_data(
     shop_id: UUID,
     period: str = Query(..., pattern="^(week|month|year)$", description="Time period"),
-    _shop=Depends(verify_shop_access),
+    _shop: Shop = Depends(verify_shop_access),
     service: DashboardService = Depends(get_dashboard_service),
-):
+) -> TrendResponse:
     """
     Get trend data for charts.
 
@@ -141,9 +142,9 @@ async def get_trend_data(
 async def get_pending_reviews(
     shop_id: UUID,
     limit: int = Query(10, ge=1, le=50, description="Maximum reviews to return"),
-    _shop=Depends(verify_shop_access),
+    _shop: Shop = Depends(verify_shop_access),
     service: DashboardService = Depends(get_dashboard_service),
-):
+) -> PendingReviewsResponse:
     """
     Get pending reviews requiring response.
 
@@ -159,9 +160,9 @@ async def get_pending_reviews(
 async def generate_review_response(
     shop_id: UUID,
     review_id: UUID,
-    _shop=Depends(verify_shop_access),
+    _shop: Shop = Depends(verify_shop_access),
     service: DashboardService = Depends(get_dashboard_service),
-):
+) -> GeneratedResponseResult:
     """
     Generate AI response for a review.
 
@@ -183,9 +184,9 @@ async def publish_review_response(
     shop_id: UUID,
     review_id: UUID,
     request: PublishResponseRequest,
-    _shop=Depends(verify_shop_access),
+    _shop: Shop = Depends(verify_shop_access),
     service: DashboardService = Depends(get_dashboard_service),
-):
+) -> PublishResponseResult:
     """
     Publish approved response to review.
 

@@ -555,13 +555,13 @@ class DashboardService:
             review_count = await self.db.execute(
                 select(func.count(Review.id)).where(Review.shop_id == shop.id)
             )
-            has_reviews = review_count.scalar() > 0
+            has_reviews = (review_count.scalar() or 0) > 0
 
             # Check if shop has posts
             post_count = await self.db.execute(
                 select(func.count(Post.id)).where(Post.shop_id == shop.id)
             )
-            has_posts = post_count.scalar() > 0
+            has_posts = (post_count.scalar() or 0) > 0
 
             shop_summaries.append(
                 ShopSummary(
