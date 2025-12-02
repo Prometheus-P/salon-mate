@@ -3,7 +3,6 @@
 프로필 조회/수정 테스트
 """
 
-
 import pytest
 from httpx import AsyncClient
 
@@ -97,9 +96,7 @@ class TestUpdateUserProfile:
     """사용자 프로필 수정 테스트"""
 
     @pytest.mark.asyncio
-    async def test_should_update_user_name(
-        self, client: AsyncClient, db_session
-    ):
+    async def test_should_update_user_name(self, client: AsyncClient, db_session):
         """사용자 이름을 수정할 수 있어야 함"""
         user = User(
             email="update@example.com",
@@ -124,9 +121,7 @@ class TestUpdateUserProfile:
         assert data["name"] == "새로운 이름"
 
     @pytest.mark.asyncio
-    async def test_should_update_avatar_url(
-        self, client: AsyncClient, db_session
-    ):
+    async def test_should_update_avatar_url(self, client: AsyncClient, db_session):
         """프로필 이미지 URL을 수정할 수 있어야 함"""
         user = User(
             email="avatar@example.com",
@@ -151,9 +146,7 @@ class TestUpdateUserProfile:
         assert data["avatarUrl"] == "https://example.com/new-avatar.jpg"
 
     @pytest.mark.asyncio
-    async def test_should_not_update_email(
-        self, client: AsyncClient, db_session
-    ):
+    async def test_should_not_update_email(self, client: AsyncClient, db_session):
         """이메일은 수정할 수 없어야 함"""
         user = User(
             email="noemail@example.com",
@@ -303,4 +296,7 @@ class TestChangePassword:
         )
 
         assert response.status_code == 400
-        assert "소셜" in response.json()["detail"] or "비밀번호" in response.json()["detail"]
+        assert (
+            "소셜" in response.json()["detail"]
+            or "비밀번호" in response.json()["detail"]
+        )
