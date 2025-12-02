@@ -65,9 +65,15 @@ function EmptyTrends() {
   );
 }
 
+interface TooltipPayloadEntry {
+  color: string;
+  name: string;
+  value: number;
+}
+
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: any[];
+  payload?: TooltipPayloadEntry[];
   label?: string;
 }
 
@@ -79,7 +85,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
       <p className="mb-2 text-sm font-medium text-gray-900">{label}</p>
-      {payload.map((entry: any, index: number) => (
+      {payload.map((entry, index: number) => (
         <p
           key={index}
           className="text-sm"

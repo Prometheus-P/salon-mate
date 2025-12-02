@@ -38,7 +38,7 @@ async def get_current_user(
     try:
         return await auth_service.get_current_user(credentials.credentials)
     except AuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 async def get_dashboard_service(db: AsyncSession = Depends(get_db)) -> DashboardService:
@@ -164,7 +164,7 @@ async def generate_review_response(
     try:
         return await service.generate_ai_response(shop_id, review_id)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.post(
@@ -186,7 +186,7 @@ async def publish_review_response(
     try:
         return await service.publish_response(shop_id, review_id, request.final_response)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 # ============== Shop Selector ==============

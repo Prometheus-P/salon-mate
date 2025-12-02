@@ -258,7 +258,7 @@ describe('PostingCalendar Component', () => {
 
       await waitFor(() => {
         // Caption should be accessible somewhere
-        const caption = screen.queryByText(/First post|Upcoming promotion|Failed post/i);
+        screen.queryByText(/First post|Upcoming promotion|Failed post/i);
         // May or may not be immediately visible
       });
     });

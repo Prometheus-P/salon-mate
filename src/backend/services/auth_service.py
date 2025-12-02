@@ -60,12 +60,12 @@ class AuthService:
             self.db.add(user)
             await self.db.commit()
             await self.db.refresh(user)
-        except IntegrityError:
+        except IntegrityError as e:
             await self.db.rollback()
             raise AuthException(
                 "이미 존재하는 이메일입니다.",
                 status_code=409,
-            )
+            ) from e
 
         # 토큰 생성
         access_token, refresh_token, expires_in = create_tokens(str(user.id))

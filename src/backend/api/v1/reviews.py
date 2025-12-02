@@ -36,7 +36,7 @@ async def get_current_user(
     try:
         return await auth_service.get_current_user(credentials.credentials)
     except AuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
 
 
 def get_review_service(db: AsyncSession = Depends(get_db)) -> ReviewService:
@@ -89,7 +89,7 @@ async def create_review(
             updatedAt=review.updated_at,
         )
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
 
 
 @router.get(
@@ -138,7 +138,7 @@ async def get_reviews(
             total=total,
         )
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
 
 
 @router.get(
@@ -162,7 +162,7 @@ async def get_review_stats(
             ignoredCount=stats["ignored_count"],
         )
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
 
 
 @router.get(
@@ -237,7 +237,7 @@ async def update_review(
             updatedAt=review.updated_at,
         )
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
 
 
 @router.delete(
@@ -256,7 +256,7 @@ async def delete_review(
         await review_service.delete_review(current_user, shop_id, review_id)
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except ReviewException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
 
 
 @router.post(
@@ -292,4 +292,4 @@ async def generate_ai_response(
             generatedAt=generated_at,
         )
     except AIResponseException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e

@@ -33,7 +33,7 @@ async def get_current_user(
     try:
         return await auth_service.get_current_user(credentials.credentials)
     except AuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
 
 
 def get_shop_service(db: AsyncSession = Depends(get_db)) -> ShopService:
@@ -71,7 +71,7 @@ async def create_shop(
             updatedAt=shop.updated_at,
         )
     except ShopException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
 
 
 @router.get(
@@ -157,7 +157,7 @@ async def update_shop(
             updatedAt=shop.updated_at,
         )
     except ShopException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
 
 
 @router.delete(
@@ -175,4 +175,4 @@ async def delete_shop(
         await shop_service.delete_shop(current_user, shop_id)
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except ShopException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e from e
