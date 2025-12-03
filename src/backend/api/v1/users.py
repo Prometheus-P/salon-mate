@@ -31,7 +31,7 @@ async def get_current_user(
     try:
         return await auth_service.get_current_user(credentials.credentials)
     except AuthException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 def get_user_service(db: AsyncSession = Depends(get_db)) -> UserService:
@@ -84,7 +84,7 @@ async def update_my_profile(
             createdAt=updated_user.created_at,
         )
     except UserException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
 
 
 @router.post(
@@ -110,4 +110,4 @@ async def change_password(
         )
         return MessageResponse(message="비밀번호가 변경되었습니다.")
     except UserException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e

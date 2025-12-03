@@ -6,15 +6,37 @@
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from config.settings import get_settings
 
 settings = get_settings()
 
-# 비밀번호 해싱 컨텍스트
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def _truncate_password(password: str, max_bytes: int = 72) -> bytes:
+    """비밀번호를 bcrypt 최대 바이트 제한에 맞게 잘라냅니다.
+
+    bcrypt는 72바이트 제한이 있습니다. UTF-8 문자열을 바이트로 인코딩한 후
+    최대 길이 이내에서 유효한 UTF-8 시퀀스를 유지하면서 자릅니다.
+    """
+    password_bytes = password.encode("utf-8")
+    if len(password_bytes) <= max_bytes:
+        return password_bytes
+    # 72바이트에서 잘라도 UTF-8 멀티바이트 문자가 깨지지 않도록 처리
+    truncated = password_bytes[:max_bytes]
+    # 깨진 UTF-8 시퀀스 제거 (마지막 불완전한 문자 제거)
+    while truncated and truncated[-1] & 0xC0 == 0x80:
+        truncated = truncated[:-1]
+    if truncated and truncated[-1] & 0x80:
+        # 멀티바이트 시작 바이트 확인 및 제거
+        if truncated[-1] & 0xE0 == 0xC0:  # 2바이트 시작
+            truncated = truncated[:-1]
+        elif truncated[-1] & 0xF0 == 0xE0:  # 3바이트 시작
+            truncated = truncated[:-1]
+        elif truncated[-1] & 0xF8 == 0xF0:  # 4바이트 시작
+            truncated = truncated[:-1]
+    return truncated
 
 
 def hash_password(password: str) -> str:
@@ -22,20 +44,19 @@ def hash_password(password: str) -> str:
 
     bcrypt는 최대 72바이트까지만 지원하므로 필요시 자동으로 잘라냅니다.
     """
-    # bcrypt는 72바이트 제한이 있으므로 UTF-8 인코딩 기준으로 자릅니다
-    password_bytes = password.encode('utf-8')
-    if len(password_bytes) > 72:
-        password = password_bytes[:72].decode('utf-8', errors='ignore')
-    return pwd_context.hash(password)
+    truncated = _truncate_password(password)
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(truncated, salt)
+    return hashed.decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """평문 비밀번호와 해시된 비밀번호를 비교합니다."""
-    # bcrypt는 72바이트 제한이 있으므로 UTF-8 인코딩 기준으로 자릅니다
-    password_bytes = plain_password.encode('utf-8')
-    if len(password_bytes) > 72:
-        plain_password = password_bytes[:72].decode('utf-8', errors='ignore')
-    return pwd_context.verify(plain_password, hashed_password)
+    truncated = _truncate_password(plain_password)
+    try:
+        return bcrypt.checkpw(truncated, hashed_password.encode("utf-8"))
+    except ValueError:
+        return False
 
 
 def create_access_token(

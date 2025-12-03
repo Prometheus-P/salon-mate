@@ -11,6 +11,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import GUID, BaseModel
 
 if TYPE_CHECKING:
+    from models.post import Post
     from models.review import Review
     from models.user import User
 
@@ -36,6 +37,9 @@ class Shop(BaseModel):
     owner: Mapped["User"] = relationship("User", back_populates="shops")
     reviews: Mapped[list["Review"]] = relationship(
         "Review", back_populates="shop", cascade="all, delete-orphan"
+    )
+    posts: Mapped[list["Post"]] = relationship(
+        "Post", back_populates="shop", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
