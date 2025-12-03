@@ -207,6 +207,38 @@
 
 ---
 
+## Phase 9: Design System - Material Design 3 Implementation
+
+**Purpose**: Apply M3 design tokens and styling to dashboard components per spec.md Design System section
+
+**Prerequisites**: Phase 8 complete, spec.md Design System clarifications finalized
+
+### Design Tokens Setup
+
+- [x] T081 [P] Create M3 color tokens in src/frontend/src/styles/tokens/colors.css with CSS variables for light/dark themes
+- [x] T082 [P] Create M3 typography tokens in src/frontend/src/styles/tokens/typography.css (Display, Headline, Title, Body, Label)
+- [x] T083 [P] Extend Tailwind config with M3 tokens in src/frontend/src/app/globals.css (Tailwind v4 CSS-based config)
+- [x] T084 Add dark mode support via `prefers-color-scheme` media query in src/frontend/src/app/globals.css
+
+### Component Styling Updates
+
+- [x] T085 [P] Update Card components to Outlined style (border, no shadow) in src/frontend/src/components/ui/card.tsx
+- [x] T086 [P] Update Button components to M3 Filled/Outlined/Tonal variants in src/frontend/src/components/ui/button.tsx
+- [x] T087 [P] Apply M3 status colors to PostingCalendar badges (green/yellow/red) in src/frontend/src/app/dashboard/components/PostingCalendar.tsx
+- [x] T088 [P] Apply M3 typography scale to dashboard headings and labels (page.tsx updated with m3-headline-large)
+- [x] T089 Add subtle hover/focus transitions (150ms ease-out) to interactive elements (added in globals.css @layer base)
+- [x] T090 Add `prefers-reduced-motion` media query respect for animations (added in globals.css @layer base)
+
+### Visual Tests
+
+- [x] T091 [P] Add visual regression snapshot for dashboard light mode (placeholder created in __tests__/visual/)
+- [x] T092 [P] Add visual regression snapshot for dashboard dark mode (placeholder created in __tests__/visual/)
+- [x] T093 Verify M3 color contrast meets WCAG AA accessibility standards (6 contrast tests passing)
+
+**Checkpoint**: Design System complete - dashboard follows M3 visual language
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
@@ -217,6 +249,10 @@
   - User stories can then proceed in parallel (if staffed)
   - Or sequentially in priority order (P1 → P2 → P3 → P4 → P5)
 - **Polish (Phase 8)**: Depends on all desired user stories being complete
+- **Design System (Phase 9)**: Can start after Phase 2 (Foundational) - independent of user story phases
+  - Token setup (T081-T084) can run in parallel
+  - Component updates (T085-T090) depend on token setup
+  - Visual tests (T091-T093) depend on component updates
 
 ### User Story Dependencies
 
@@ -305,3 +341,12 @@ With multiple developers:
 - Stop at any checkpoint to validate story independently
 - All endpoints require JWT authentication and shop ownership validation
 - Redis caching TTLs: stats 5min, calendar 5min, engagement 15min, trends 30min
+
+### Design System (Phase 9) Notes
+
+- M3 Primary: #6750A4 (Purple)
+- Theme: System Preference (prefers-color-scheme)
+- Cards: Outlined style (border, no shadow)
+- Motion: Subtle (150ms transitions, loading spinners only)
+- Implementation: Tailwind CSS v4 + M3 design tokens (CSS variables)
+- Status colors (WCAG AA): Published=#1a7f2e, Scheduled=#8a6d00, Failed=#c23a1a

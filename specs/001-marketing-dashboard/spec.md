@@ -149,6 +149,58 @@ As a salon owner, I want to quickly respond to pending reviews from the dashboar
 - **SC-007**: Quick action response generation completes within 10 seconds of user request.
 - **SC-008**: 85% of shop owners report the dashboard provides useful business insights (measured via in-app feedback).
 
+## Design System
+
+### Material Design 3 (M3) Foundation
+
+SalonMate 대시보드는 Material Design 3 디자인 시스템을 기반으로 구현됩니다.
+
+**Color System:**
+- **Primary**: #6750A4 (Purple) - 주요 CTA, 선택된 상태, 강조 요소
+- **Secondary**: M3 tonal palette에서 자동 생성
+- **Tertiary**: M3 tonal palette에서 자동 생성
+- **Error**: #B3261E (리뷰 실패, 게시 오류 등)
+- **Surface variants**: 카드 계층 구분에 사용
+
+**Status Colors (Semantic - WCAG AA compliant):**
+- Published (게시됨): Green tonal (#1a7f2e on #d4f5da)
+- Scheduled (예약됨): Amber tonal (#8a6d00 on #fff4cc)
+- Failed (실패): Error red (#c23a1a on #ffddd6)
+- Pending (대기중): Neutral (#605d66 on #e7e0ec)
+
+**Theme Mode:**
+- System Preference 자동 감지 (`prefers-color-scheme` 미디어 쿼리)
+- Light/Dark 테마 모두 M3 tonal palette 기반 자동 생성
+- 별도 사용자 토글 UI 없음 (OS 설정 따름)
+
+**Component Styles:**
+- **Cards**: Outlined 스타일 (border로 영역 구분, 그림자 없음)
+- **Buttons**: Primary에 Filled, Secondary에 Outlined/Tonal 적용
+- **Typography**: M3 Type Scale (Display, Headline, Title, Body, Label)
+
+**Motion & Animation:**
+- Subtle 수준 적용 (최소 트랜지션)
+- 호버/포커스 상태 변화: 150ms ease-out
+- 로딩 스피너: 회전 애니메이션
+- 페이지 전환, 카드 확장 등 복잡한 애니메이션 미적용
+- `prefers-reduced-motion` 미디어 쿼리 존중
+
+**Implementation Approach:**
+- 기존 Tailwind CSS 기반 유지
+- M3 색상 토큰을 Tailwind config에 추가 (예: `primary-40`, `surface-variant`)
+- M3 타이포그래피 스케일을 Tailwind extend로 정의
+- CSS 변수로 다크모드 자동 전환 지원
+- 별도 컴포넌트 라이브러리 도입 없음 (가벼운 구현)
+
+## Clarifications
+
+### Session 2025-12-02
+- Q: Primary Brand Color 선택 → A: Purple (#6750A4) - M3 기본값, 창의성과 프리미엄 표현
+- Q: Theme Mode 지원 범위 → A: System Preference - OS 설정 자동 감지
+- Q: Card Elevation Style → A: Outlined - 테두리선으로 구분, 미니멀하고 정보 밀도 높음
+- Q: Motion & Animation 수준 → A: Subtle - 호버/포커스 피드백, 로딩 스피너만 적용
+- Q: M3 구현 방식 → A: Tailwind + M3 Tokens - 기존 Tailwind CSS에 M3 색상/타이포 토큰 추가
+
 ## Assumptions
 
 - Shop owners have already completed onboarding and connected at least one review platform or Instagram account.
