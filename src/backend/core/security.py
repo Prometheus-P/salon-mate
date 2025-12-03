@@ -6,15 +6,12 @@
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from config.settings import get_settings
 
 settings = get_settings()
-
-# 비밀번호 해싱 컨텍스트
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def _truncate_password(password: str, max_bytes: int = 72) -> bytes:
@@ -48,13 +45,18 @@ def hash_password(password: str) -> str:
     bcrypt는 최대 72바이트까지만 지원하므로 필요시 자동으로 잘라냅니다.
     """
     truncated = _truncate_password(password)
-    return pwd_context.hash(truncated.decode("utf-8"))
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(truncated, salt)
+    return hashed.decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """평문 비밀번호와 해시된 비밀번호를 비교합니다."""
     truncated = _truncate_password(plain_password)
-    return pwd_context.verify(truncated.decode("utf-8"), hashed_password)
+    try:
+        return bcrypt.checkpw(truncated, hashed_password.encode("utf-8"))
+    except ValueError:
+        return False
 
 
 def create_access_token(
