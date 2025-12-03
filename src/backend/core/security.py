@@ -14,7 +14,12 @@ from config.settings import get_settings
 settings = get_settings()
 
 # 비밀번호 해싱 컨텍스트
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# bcrypt는 72바이트 제한이 있으므로 truncate_error=False로 설정하여 자동 처리
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto",
+    bcrypt__truncate_error=False,
+)
 
 
 def hash_password(password: str) -> str:
