@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Salon-mate – Light & Bold Identity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=Outfit:wght@300;400&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --ink-strong: #111827;
+            --ink-soft: #374151;
+            --blush-soft: #fecaca;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #ffffff;
+        }
+
+        .airy-bg {
+            background-image:
+                radial-gradient(circle at 100% 0%, #ffcccc 0%, transparent 10%),
+                radial-gradient(circle at 0% 100%, #f3f4f6 0%, transparent 10%);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-8 airy-bg">
+    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <!-- Left: Logo Presentation -->
+        <div
+            class="relative bg-white/50 backdrop-blur-xl rounded-[40px] border border-white/60 shadow-[0_20px_40px_rgba(0,0,0,0.03)] p-16 flex items-center justify-center hover:shadow-[0_30px_60px_rgba(0,0,0,0.06)] transition-shadow duration-500">
+
+            <svg id="salonmate-light-logo" width="300" height="300" viewBox="0 0 300 300" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="sharpGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#222222" />
+                        <stop offset="100%" stop-color="#444444" />
+                    </linearGradient>
+                    <filter id="subtle-grain" x="-50%" y="-50%" width="200%" height="200%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="1" result="noise" />
+                        <feComposite in="SourceGraphic" in2="noise" operator="arithmetic" k1="0" k2="1" k3="0.04"
+                            k4="0" />
+                    </filter>
+                </defs>
+
+                <!-- Light & Sharp S Symbol – Bold & Stable 버전 -->
+                <g transform="translate(150,120) scale(1.02,1.02)" filter="url(#subtle-grain)">
+                    <!-- Top Half -->
+                    <path d="M10,-60 
+                             C-30,-60 -60,-40 -60,-10 
+                             C-60,30 -20,40 0,20 
+                             C10,10 5,-5 -20,-5 
+                             C-35,-5 -42,5 -42,15 
+                             C-42,10 -38,-1 -20,-1
+                             C4,-1 16,12 8,26
+                             C-4,48 -50,38 -66,-8
+                             C-72,-50 -20,-68 10,-66
+                             Z" fill="url(#sharpGradient)" stroke="var(--ink-strong)" stroke-width="2.4"
+                        stroke-linecap="round" stroke-linejoin="round" />
+
+                    <!-- Bottom Half -->
+                    <path d="M-10,60 
+                             C30,60 60,40 60,10 
+                             C60,-30 20,-40 0,-20 
+                             C-10,-10 -5,5 20,5 
+                             C35,5 42,-5 42,-15 
+                             C42,-10 38,1 20,1
+                             C-4,1 -16,-12 -8,-26
+                             C4,-48 50,-38 66,8
+                             C72,50 20,68 -10,66
+                             Z" fill="url(#sharpGradient)" stroke="var(--ink-strong)" stroke-width="2.4"
+                        stroke-linecap="round" stroke-linejoin="round" />
+
+                    <!-- Spark -->
+                    <g transform="translate(38,-38)">
+                        <path d="M0,-5 L0,5 M-5,0 L5,0" stroke="var(--blush-soft)" stroke-width="2"
+                            stroke-linecap="round" />
+                        <circle cx="0" cy="0" r="2.2" fill="var(--blush-soft)" />
+                    </g>
+                </g>
+
+                <!-- Wordmark -->
+                <g filter="url(#subtle-grain)">
+                    <text x="150" y="250" text-anchor="middle" font-family="'Playfair Display', serif" font-weight="600"
+                        font-size="42" fill="var(--ink-strong)" letter-spacing="2.2">
+                        Salon-mate
+                    </text>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Right: Simple explainer -->
+        <div class="space-y-6 text-sm text-gray-600">
+            <h2 class="text-3xl font-serif text-gray-900">Salon-mate Light & Bold</h2>
+            <p>
+                볼드하지만 무겁지 않도록 선 두께와 비율을 정리한 최종 락업입니다.<br />
+                심벌 높이 : 워드마크 높이 ≈ 1.5 : 1, 자간은 2.2로 줄여 읽기성과 브랜드성 모두 확보했습니다.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

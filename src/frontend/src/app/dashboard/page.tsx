@@ -14,57 +14,83 @@ import { TrendCharts } from './components/TrendCharts';
 import { PendingReviews } from './components/PendingReviews';
 import { CardSkeleton } from './components/EmptyState';
 
+// Material UI imports
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid'; // Using Grid for layout
+
 export default function DashboardPage() {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
 
   return (
-    <div className="space-y-8">
-      {/* Header with Shop Selector - M3 Typography */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="m3-headline-large text-foreground">대시보드</h1>
-          <p className="m3-body-medium text-muted-foreground">마케팅 현황을 한눈에 확인하세요</p>
-        </div>
-        <Suspense fallback={<div className="h-10 w-48 animate-pulse rounded-md bg-gray-200" />}>
-          <ShopSelector
-            selectedShopId={selectedShopId}
-            onShopChange={setSelectedShopId}
-          />
-        </Suspense>
-      </div>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Box sx={{ flexGrow: 1 }}>
+        {/* Header with Shop Selector - M3 Typography */}
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' }, mb: 4 }}>
+          <Box>
+            <Typography variant="h4" component="h1" gutterBottom>
+              대시보드
+            </Typography>
+            <Typography variant="subtitle1" color="text.secondary">
+              마케팅 현황을 한눈에 확인하세요
+            </Typography>
+          </Box>
+          <Suspense fallback={<Box sx={{ height: 40, width: 192, bgcolor: 'grey.300', animation: 'pulse 1.5s infinite', borderRadius: 1 }} />}>
+            <ShopSelector
+              selectedShopId={selectedShopId}
+              onShopChange={setSelectedShopId}
+            />
+          </Suspense>
+        </Box>
 
-      {/* Dashboard Content */}
-      {!selectedShopId ? (
-        // Loading state while shop is being selected
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <CardSkeleton />
-          <CardSkeleton />
-          <CardSkeleton />
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {/* Row 1: Review Stats + Pending Reviews */}
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* ReviewStats component - US1 */}
-            <ReviewStats shopId={selectedShopId} />
+        {/* Dashboard Content */}
+        {!selectedShopId ? (
+          // Loading state while shop is being selected
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6} lg={4}>
+              <CardSkeleton />
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <CardSkeleton />
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <CardSkeleton />
+            </Grid>
+          </Grid>
+        ) : (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {/* Row 1: Review Stats + Pending Reviews */}
+            <Grid container spacing={3}>
+              {/* ReviewStats component - US1 */}
+              <Grid item xs={12} lg={6}>
+                <ReviewStats shopId={selectedShopId} />
+              </Grid>
 
-            {/* PendingReviews component - US5 */}
-            <PendingReviews shopId={selectedShopId} />
-          </div>
+              {/* PendingReviews component - US5 */}
+              <Grid item xs={12} lg={6}>
+                <PendingReviews shopId={selectedShopId} />
+              </Grid>
+            </Grid>
 
-          {/* Row 2: Posting Calendar - US2 */}
-          <PostingCalendar shopId={selectedShopId} />
+            {/* Row 2: Posting Calendar - US2 */}
+            <PostingCalendar shopId={selectedShopId} />
 
-          {/* Row 3: Engagement Metrics + Trend Charts */}
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* EngagementMetrics component - US3 */}
-            <EngagementMetrics shopId={selectedShopId} />
+            {/* Row 3: Engagement Metrics + Trend Charts */}
+            <Grid container spacing={3}>
+              {/* EngagementMetrics component - US3 */}
+              <Grid item xs={12} lg={6}>
+                <EngagementMetrics shopId={selectedShopId} />
+              </Grid>
 
-            {/* TrendCharts component - US4 */}
-            <TrendCharts shopId={selectedShopId} />
-          </div>
-        </div>
-      )}
-    </div>
+              {/* TrendCharts component - US4 */}
+              <Grid item xs={12} lg={6}>
+                <TrendCharts shopId={selectedShopId} />
+              </Grid>
+            </Grid>
+          </Box>
+        )}
+      </Box>
+    </Container>
   );
 }
