@@ -1,0 +1,54 @@
+<svg id="salonmate-logo" width="320" height="320" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Symbol Area (optical center slightly above) -->
+    <g transform="translate(160, 120) scale(0.95, 1.2)">
+        <!-- Top S-half -->
+        <path d="M6,-44
+           C-20,-44 -46,-28 -46,-8
+           C-46,18 -16,30 0,15
+           C10,5 6,-8 -16,-8
+           C-29,-8 -34,4 -34,10
+
+           C-34,4 -29,-6 -16,-6
+           C3,-6 12,9 8,21
+           C0,31 -33,26 -50,-5
+           C-57,-38 -14,-54 6,-48
+           Z" fill="#111827" fill-opacity="0.94" />
+
+        <!-- Bottom S-half -->
+        <path d="M-6,44
+           C20,44 46,28 46,8
+           C46,-18 16,-30 0,-15
+           C-10,-5 -6,8 16,8
+           C29,8 34,-4 34,-10
+
+           C34,-4 29,6 16,6
+           C-3,6 -12,-9 -8,-21
+           C0,-31 33,-26 50,5
+           C57,38 14,54 -6,48
+           Z" fill="#111827" fill-opacity="0.94" />
+
+        <!-- Automation Sparks: 3 posting dots -->
+        <g transform="translate(40, -34)">
+            <circle cx="0" cy="0" r="2.2" fill="#fecaca" />
+            <circle cx="9" cy="3" r="1.8" fill="#fecaca" />
+            <circle cx="-8" cy="4" r="1.6" fill="#fecaca" />
+        </g>
+    </g>
+
+    <!-- Wordmark & Tagline -->
+    <g>
+        <!-- Brand Name -->
+        <text x="160" y="245" text-anchor="middle"
+            font-family="Outfit, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+            font-weight="500" font-size="32" fill="#111827" letter-spacing="0.18em">
+            SALONMATE
+        </text>
+
+        <!-- Tagline -->
+        <text x="160" y="270" text-anchor="middle"
+            font-family="Outfit, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+            font-weight="300" font-size="13" fill="#6B7280" letter-spacing="0.24em">
+            AI MARKETING ASSISTANT FOR SALONS
+        </text>
+    </g>
+</svg>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon-mate Light Identity – Refined</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=Outfit:wght@300;400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ink-strong: #111827;
+            --ink-soft: #374151;
+            --blush-soft: #FECACA;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #FFFFFF;
+        }
+
+        .airy-bg {
+            background-image:
+                radial-gradient(circle at 100% 0%, #FFCCCC 0%, transparent 10%),
+                radial-gradient(circle at 0% 100%, #f3f4f6 0%, transparent 10%);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-8 airy-bg">
+
+    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+        <!-- Left: The Logo Presentation -->
+        <div
+            class="bg-white/50 backdrop-blur-xl rounded-[40px] border border-white/60 shadow-[0_20px_40px_rgba(0,0,0,0.03)] p-16 flex items-center justify-center relative hover:shadow-[0_30px_60px_rgba(0,0,0,0.06)] transition-shadow duration-500">
+
+            <svg id="salonmate-light-logo" width="300" height="300" viewBox="0 0 300 300" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+
+                <!-- Texture & gradient defs -->
+                <defs>
+                    <linearGradient id="sharpGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#222222" />
+                        <stop offset="100%" stop-color="#444444" />
+                    </linearGradient>
+
+                    <filter id="subtle-grain" x="-50%" y="-50%" width="200%" height="200%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="1" result="noise" />
+                        <feComposite in="SourceGraphic" in2="noise" operator="arithmetic" k1="0" k2="1" k3="0.04"
+                            k4="0" />
+                    </filter>
+                </defs>
+
+                <!-- LIGHT & SHARP S SYMBOL (정리된 비율/두께/질감) -->
+                <g transform="translate(150, 122) scale(0.92, 1.02)" filter="url(#subtle-grain)">
+                    <!-- Top Half -->
+                    <path d="M10,-60 
+                             C-30,-60 -60,-40 -60,-10 
+                             C-60,30 -20,40 0,20 
+                             C10,10 5,-5 -20,-5 
+                             C-35,-5 -42,5 -42,15 
+                             
+                             C-42,10 -38,-1 -20,-1
+                             C4,-1 16,12 8,26
+                             C-4,48 -50,38 -66,-8
+                             C-72,-50 -20,-68 10,-66
+                             Z" fill="url(#sharpGradient)" stroke="var(--ink-soft)" stroke-width="1.4"
+                        stroke-linejoin="round" />
+
+                    <!-- Bottom Half (Rotated Symmetry) -->
+                    <path d="M-10,60 
+                             C30,60 60,40 60,10 
+                             C60,-30 20,-40 0,-20 
+                             C-10,-10 -5,5 20,5 
+                             C35,5 42,-5 42,-15 
+                             
+                             C42,-10 38,1 20,1
+                             C-4,1 -16,-12 -8,-26
+                             C4,-48 50,-38 66,8
+                             C72,50 20,68 -10,66
+                             Z" fill="url(#sharpGradient)" stroke="var(--ink-soft)" stroke-width="1.4"
+                        stroke-linejoin="round" />
+
+                    <!-- Light Spark (조금 더 컴팩트 & 중심 가까이) -->
+                    <g transform="translate(40, -40)">
+                        <path d="M0,-6 L0,6 M-6,0 L6,0" stroke="var(--blush-soft)" stroke-width="1.8"
+                            stroke-linecap="round" />
+                        <circle cx="0" cy="0" r="2" fill="var(--blush-soft)" />
+                    </g>
+                </g>
+
+                <!-- TYPOGRAPHY LOCKUP -->
+                <g filter="url(#subtle-grain)">
+                    <text x="150" y="246" text-anchor="middle" font-family="'Playfair Display', serif" font-weight="500"
+                        font-size="40" fill="var(--ink-strong)" letter-spacing="3">
+                        Salon-mate
+                    </text>
+                </g>
+            </svg>
+
+            <!-- Download Button Overlay -->
+            <button onclick="downloadSvg()"
+                class="absolute bottom-6 right-6 p-3 bg-white rounded-full shadow-lg text-gray-400 hover:text-black hover:scale-110 transition-all">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Right: Concept Explanation -->
+        <div class="space-y-8">
+            <div>
+                <h2 class="text-4xl font-serif text-gray-900 mb-4">
+                    Light<br><span class="text-gray-300">&</span> Sharp
+                </h2>
+                <div class="w-12 h-1 bg-[#FFCCCC] mb-6"></div>
+                <p class="text-gray-500 font-light leading-relaxed text-sm">
+                    이전 버전의 얇기만 남겨두고 흐릿한 부분은 정리했습니다.<br />
+                    상·하단 곡선은 동일한 실루엣을 공유하고, 굽이치는 구간에만 두께를 살짝 남겨<br />
+                    머리카락처럼 가벼운 흐름과, 브랜드 로고로서의 존재감을 동시에 잡았습니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-xs">
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-[11px] font-bold text-gray-900 uppercase mb-1 tracking-[0.18em]">Proportion</h3>
+                    <p class="text-gray-500">
+                        Symbol : Wordmark ≈ 1.5 : 1<br />
+                        실제 UI 헤더에 올려도 과하지 않은 비율.
+                    </p>
+                </div>
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-[11px] font-bold text-gray-900 uppercase mb-1 tracking-[0.18em]">Texture</h3>
+                    <p class="text-gray-500">
+                        Gradient × subtle grain으로<br />
+                        인쇄·디지털 모두에서 번거롭지 않은 질감.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function downloadSvg() {
+            const svgContent = document.getElementById('salonmate-light-logo').outerHTML;
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'salon-mate-light-refined.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+
+</html>

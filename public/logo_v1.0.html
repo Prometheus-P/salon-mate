@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon-mate Refined Spacing & Proportion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #FFFFFF;
+        }
+
+        .airy-bg {
+            background-image:
+                radial-gradient(circle at 100% 0%, #FFCCCC 0%, transparent 10%),
+                radial-gradient(circle at 0% 100%, #f3f4f6 0%, transparent 10%);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-8 airy-bg">
+
+    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+        <!-- Left: The Logo Presentation -->
+        <div
+            class="bg-white/50 backdrop-blur-xl rounded-[40px] border border-white/60 shadow-[0_20px_40px_rgba(0,0,0,0.03)] p-16 flex items-center justify-center relative hover:shadow-[0_30px_60px_rgba(0,0,0,0.06)] transition-shadow duration-500">
+
+            <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Texture Filter: For subtle paper grain effect on both symbol and text -->
+                    <filter id="subtle-grain" x="-50%" y="-50%" width="200%" height="200%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="1" result="noise" />
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R"
+                            yChannelSelector="G" />
+                    </filter>
+                </defs>
+
+                <!-- The Slender S Symbol - Adjusted Scale and Spacing -->
+                <!-- Scale: Increased height slightly (1.25) and reduced width slightly (0.9) -->
+                <g transform="translate(150, 115) scale(0.9, 1.25)" filter="url(#subtle-grain)">
+
+                    <!-- Top Half (Adjusted control points for wider negative space) -->
+                    <path d="M5,-40 
+                             C-20,-40 -45,-25 -45,-5 
+                             C-45,20 -15,30 0,15 
+                             C8,5 4,-8 -18,-8 
+                             C-30,-8 -35,5 -35,10 
+                             
+                             /* Return path for thickness variation */
+                             C-35,5 -30,-5 -18,-5
+                             C2,-5 10,10 6,20
+                             C-2,30 -35,25 -50,-5
+                             C-55,-35 -15,-50 5,-45
+                             Z" fill="#222" opacity="0.9" />
+
+                    <!-- Bottom Half (Rotated Symmetry, Adjusted control points) -->
+                    <path d="M-5,40 
+                             C20,40 45,25 45,5 
+                             C45,-20 15,-30 0,-15 
+                             C-8,-5 -4,8 18,8 
+                             C30,8 35,-5 35,-10 
+                             
+                             /* Return path */
+                             C35,-5 30,5 18,5
+                             C-2,5 -10,-10 -6,-20
+                             C2,-30 35,-25 50,5
+                             C55,35 15,50 -5,45
+                             Z" fill="#222" opacity="0.9" />
+
+                    <!-- The Light Spark -->
+                    <g transform="translate(35, -35)">
+                        <path d="M0,-6 L0,6 M-6,0 L6,0" stroke="#FFCCCC" stroke-width="1.5" stroke-linecap="round" />
+                        <circle cx="0" cy="0" r="1" fill="#FFCCCC" />
+                    </g>
+                </g>
+
+                <!-- Typography: Textured, Spaced, and Sized for Balance -->
+                <g filter="url(#subtle-grain)">
+                    <text x="150" y="260" text-anchor="middle" font-family="'Playfair Display', serif" font-weight="400"
+                        font-size="40" fill="#222" letter-spacing="3">
+                        Salon-mate
+                    </text>
+                </g>
+
+                <!-- Download Button Overlay -->
+                <button onclick="downloadSvg()"
+                    class="absolute bottom-6 right-6 p-3 bg-white rounded-full shadow-lg text-gray-400 hover:text-black hover:scale-110 transition-all">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                </button>
+        </div>
+
+        <!-- Right: Concept Explanation -->
+        <div class="space-y-8">
+            <div>
+                <h2 class="text-4xl font-serif text-gray-900 mb-4">Refined<br><span class="text-gray-300">&</span>
+                    Spacious</h2>
+                <div class="w-12 h-1 bg-[#FFCCCC] mb-6"></div>
+                <p class="text-gray-500 font-light leading-relaxed">
+                    "여백의 미를 살린 최종 균형."<br><br>
+                    로고 심볼 내부의 획 간격을 조정하여 답답함을 해소하고 시원한 여백을 확보했습니다. 늘씬한 비율과 미세한 질감, 넓은 타이포그래피 간격이 조화롭게 어우러져 우아함과 전문성을
+                    극대화한 최종 디자인입니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-xs font-bold text-gray-900 uppercase mb-1">Spacing</h3>
+                    <p class="text-xs text-gray-500">Increased (시원한 여백)</p>
+                </div>
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-xs font-bold text-gray-900 uppercase mb-1">Texture/Weight</h3>
+                    <p class="text-xs text-gray-500">Thin & Grained (가는 질감)</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function downloadSvg() {
+            const svgContent = document.querySelector('svg').outerHTML;
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'salon-mate-refined-spacing.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+
+</html>
