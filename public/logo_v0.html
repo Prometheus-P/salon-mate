@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon-mate Light Identity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #FFFFFF;
+        }
+
+        .airy-bg {
+            background-image:
+                radial-gradient(circle at 100% 0%, #FFCCCC 0%, transparent 10%),
+                radial-gradient(circle at 0% 100%, #f3f4f6 0%, transparent 10%);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-8 airy-bg">
+
+    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+        <!-- Left: The Logo Presentation -->
+        <div
+            class="bg-white/50 backdrop-blur-xl rounded-[40px] border border-white/60 shadow-[0_20px_40px_rgba(0,0,0,0.03)] p-16 flex items-center justify-center relative hover:shadow-[0_30px_60px_rgba(0,0,0,0.06)] transition-shadow duration-500">
+
+            <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Guide Lines (Invisible) -->
+                <defs>
+                    <linearGradient id="sharpGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#222" />
+                        <stop offset="100%" stop-color="#444" />
+                    </linearGradient>
+                </defs>
+
+                <!-- The "Light & Sharp" S Symbol -->
+                <!-- Crafted with high contrast: Thin horizontals, Medium verticals -->
+                <g transform="translate(150, 130)">
+
+                    <!-- The Main Curve -->
+                    <!-- Notice the "d" path: it creates a shape that starts at 0 width, swells slightly, then goes back to 0. -->
+                    <!-- This simulates a flexible nib pen moving lightly. -->
+
+                    <!-- Top Half -->
+                    <path d="M10,-60 
+                             C-30,-60 -60,-40 -60,-10 
+                             C-60,30 -20,40 0,20 
+                             C10,10 5,-5 -20,-5 
+                             C-35,-5 -42,5 -42,15 
+                             
+                             /* Return path for thickness variation */
+                             C-42,10 -38,-1 -20,-1
+                             C4,-1 16,12 8,26
+                             C-4,48 -50,38 -66,-8
+                             C-72,-50 -20,-68 10,-66
+                             Z" fill="#222" opacity="0.95" />
+
+                    <!-- Bottom Half (Rotated Symmetry) -->
+                    <path d="M-10,60 
+                             C30,60 60,40 60,10 
+                             C60,-30 20,-40 0,-20 
+                             C-10,-10 -5,5 20,5 
+                             C35,5 42,-5 42,-15 
+                             
+                             /* Return path */
+                             C42,-10 38,1 20,1
+                             C-4,1 -16,-12 -8,-26
+                             C4,-48 50,-38 66,8
+                             C72,50 20,68 -10,66
+                             Z" fill="#222" opacity="0.95" />
+
+                    <!-- The Light Spark (Wireframe style) -->
+                    <!-- Instead of a filled shape, we use thin strokes for lightness -->
+                    <g transform="translate(50, -50)">
+                        <path d="M0,-8 L0,8 M-8,0 L8,0" stroke="#FFCCCC" stroke-width="2" stroke-linecap="round" />
+                        <circle cx="0" cy="0" r="1.5" fill="#FFCCCC" />
+                    </g>
+                </g>
+
+                <!-- Typography -->
+                <!-- Using a lighter weight (400) instead of Bold -->
+                <text x="150" y="240" text-anchor="middle" font-family="'Playfair Display', serif" font-weight="400"
+                    font-size="38" fill="#222" letter-spacing="1.5">
+                    Salon-mate
+                </text>
+            </svg>
+
+            <!-- Download Button Overlay -->
+            <button onclick="downloadSvg()"
+                class="absolute bottom-6 right-6 p-3 bg-white rounded-full shadow-lg text-gray-400 hover:text-black hover:scale-110 transition-all">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Right: Concept Explanation -->
+        <div class="space-y-8">
+            <div>
+                <h2 class="text-4xl font-serif text-gray-900 mb-4">Light<br><span class="text-gray-300">&</span> Sharp
+                </h2>
+                <div class="w-12 h-1 bg-[#FFCCCC] mb-6"></div>
+                <p class="text-gray-500 font-light leading-relaxed">
+                    "무게는 빼고, 엣지는 살리다."<br><br>
+                    이전의 두터운 리본 형태를 버리고, <strong>High Contrast(고대비)</strong> 스타일의 얇은 획으로 변경했습니다.
+                    곡선이 꺾이는 부분만 아주 미세하게 두께를 남기고, 끝은 바늘처럼 날렵하게 처리하여 공기 중에 떠 있는 듯한 가벼움과 긴장감을 동시에 줍니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-xs font-bold text-gray-900 uppercase mb-1">Shape</h3>
+                    <p class="text-xs text-gray-500">Needle Taper (바늘 끝처리)</p>
+                </div>
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-xs font-bold text-gray-900 uppercase mb-1">Weight</h3>
+                    <p class="text-xs text-gray-500">Ultra Light (초경량)</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function downloadSvg() {
+            const svgContent = document.querySelector('svg').outerHTML;
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'salon-mate-light.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+
+</html>

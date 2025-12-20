@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SalonMate – Brand Mark Refined</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --ink: #111827;
+            --blush: #fecaca;
+            --ivory: #fff7f7;
+            --gray-soft: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #ffffff;
+        }
+
+        .airy-bg {
+            background-image:
+                radial-gradient(circle at 110% 0%, #ffe4e6 0%, transparent 40%),
+                radial-gradient(circle at -10% 100%, #f3f4f6 0%, transparent 45%);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-8 airy-bg">
+    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+        <!-- Left: Logo Card -->
+        <div
+            class="relative bg-[color:var(--ivory)]/70 backdrop-blur-2xl rounded-[40px] border border-white/80 shadow-[0_20px_40px_rgba(15,23,42,0.06)] p-12 flex items-center justify-center">
+
+            <!-- Primary Logo (Hero Version) -->
+            <svg id="salonmate-logo" width="320" height="320" viewBox="0 0 320 320" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Subtle paper grain -->
+                    <filter id="subtle-grain" x="-50%" y="-50%" width="200%" height="200%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="1" result="noise" />
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R"
+                            yChannelSelector="G" />
+                    </filter>
+                </defs>
+
+                <!-- Symbol Area (optical center slightly above) -->
+                <g transform="translate(160, 120) scale(0.95, 1.2)" filter="url(#subtle-grain)">
+                    <!-- Top S-half -->
+                    <path d="M6,-44
+               C-20,-44 -46,-28 -46,-8
+               C-46,18 -16,30 0,15
+               C10,5 6,-8 -16,-8
+               C-29,-8 -34,4 -34,10
+
+               C-34,4 -29,-6 -16,-6
+               C3,-6 12,9 8,21
+               C0,31 -33,26 -50,-5
+               C-57,-38 -14,-54 6,-48
+               Z" fill="var(--ink)" fill-opacity="0.94" />
+
+                    <!-- Bottom S-half -->
+                    <path d="M-6,44
+               C20,44 46,28 46,8
+               C46,-18 16,-30 0,-15
+               C-10,-5 -6,8 16,8
+               C29,8 34,-4 34,-10
+
+               C34,-4 29,6 16,6
+               C-3,6 -12,-9 -8,-21
+               C0,-31 33,-26 50,5
+               C57,38 14,54 -6,48
+               Z" fill="var(--ink)" fill-opacity="0.94" />
+
+                    <!-- Automation Sparks: 3 posting dots -->
+                    <g transform="translate(40, -34)">
+                        <circle cx="0" cy="0" r="2.2" fill="var(--blush)" />
+                        <circle cx="9" cy="3" r="1.8" fill="var(--blush)" />
+                        <circle cx="-8" cy="4" r="1.6" fill="var(--blush)" />
+                    </g>
+                </g>
+
+                <!-- Wordmark & Tagline -->
+                <g filter="url(#subtle-grain)">
+                    <!-- Brand Name -->
+                    <text x="160" y="245" text-anchor="middle"
+                        font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+                        font-weight="500" font-size="32" fill="var(--ink)" letter-spacing="0.18em">
+                        SALONMATE
+                    </text>
+
+                    <!-- Tagline -->
+                    <text x="160" y="270" text-anchor="middle"
+                        font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+                        font-weight="300" font-size="13" fill="#6B7280" letter-spacing="0.24em">
+                        AI MARKETING ASSISTANT FOR SALONS
+                    </text>
+                </g>
+            </svg>
+
+            <!-- Download Button (outside SVG, correct structure) -->
+            <button onclick="downloadSvg()"
+                class="absolute bottom-6 right-6 p-3 bg-white rounded-full shadow-lg text-gray-400 hover:text-gray-900 hover:scale-110 transition-all"
+                aria-label="Download SalonMate Logo (SVG)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Right: Concept Explanation -->
+        <div class="space-y-8">
+            <div>
+                <h2 class="text-4xl font-serif text-gray-900 mb-4">
+                    SalonMate<br />
+                    <span class="text-sm tracking-[0.3em] text-gray-400 uppercase">
+                        AI MARKETING FOR BEAUTY SALONS
+                    </span>
+                </h2>
+                <div class="w-12 h-1 bg-[color:var(--blush)] mb-6"></div>
+                <p class="text-gray-600 font-light leading-relaxed text-sm">
+                    뷰티/살롱 사장님들의 시간을 아끼는<br />
+                    <span class="font-medium text-gray-900">AI 마케팅 비서 &amp; 자동화 대시보드</span>라는
+                    포지션에 맞춰,<br />
+                    심벌은 흐르는 머리카락과 자동화 루프를 결합했고,<br />
+                    워드마크는 SaaS 서비스답게 선명한 산세리프로 정리했습니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-xs">
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-[color:var(--gray-soft)]">
+                    <h3 class="font-bold text-gray-900 uppercase mb-1 tracking-[0.15em]">Proportion</h3>
+                    <p class="text-gray-500">
+                        Symbol 1 : Wordmark 2.6<br />
+                        전체 락업 약 3.5:1 가로 비율
+                    </p>
+                </div>
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-[color:var(--gray-soft)]">
+                    <h3 class="font-bold text-gray-900 uppercase mb-1 tracking-[0.15em]">System</h3>
+                    <p class="text-gray-500">
+                        Clean / Hero 심벌 분리,<br />
+                        Ink · Blush · Ivory 3톤 팔레트
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function downloadSvg() {
+            const svgElement = document.getElementById('salonmate-logo');
+            const svgContent = svgElement.outerHTML;
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'salonmate-logo-hero.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+
+</html>

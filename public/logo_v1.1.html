@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalonMate Refined Swirl Logo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ink-strong: #111827;
+            --blush-soft: #FECACA;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #FFFFFF;
+        }
+
+        .airy-bg {
+            background-image:
+                radial-gradient(circle at 100% 0%, #FFCCCC 0%, transparent 10%),
+                radial-gradient(circle at 0% 100%, #f3f4f6 0%, transparent 10%);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-8 airy-bg">
+
+    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+        <!-- Left: The Logo Presentation -->
+        <div
+            class="relative bg-white/50 backdrop-blur-xl rounded-[40px] border border-white/60 shadow-[0_20px_40px_rgba(0,0,0,0.03)] p-16 flex items-center justify-center hover:shadow-[0_30px_60px_rgba(0,0,0,0.06)] transition-shadow duration-500">
+
+            <svg id="salonmate-logo" width="300" height="300" viewBox="0 0 300 300" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Texture Filter: subtle paper grain -->
+                    <filter id="subtle-grain" x="-50%" y="-50%" width="200%" height="200%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="1" result="noise" />
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R"
+                            yChannelSelector="G" />
+                    </filter>
+                </defs>
+
+                <!-- Swirl Symbol (원점 소용돌이 실루엣 유지 + 비율/하이라이트 업그레이드) -->
+                <!-- 심벌 간격/비율만 조정한 버전 -->
+                <g transform="translate(150, 112) scale(0.78, 0.98)" filter="url(#subtle-grain)">
+
+                    <!-- Top Half – 기존 path 그대로, fill만 색상 토큰으로 -->
+                    <path d="M5,-40 
+                   C-20,-40 -45,-25 -45,-5 
+                   C-45,20 -15,30 0,15 
+                   C8,5 4,-8 -18,-8 
+                   C-30,-8 -35,5 -35,10 
+                   
+                   /* Return path for thickness variation */
+                   C-35,5 -30,-5 -18,-5
+                   C2,-5 10,10 6,20
+                   C-2,30 -35,25 -50,-5
+                   C-55,-35 -15,-50 5,-45
+                   Z" fill="var(--ink-strong)" opacity="0.94" />
+
+                    <!-- Bottom Half – 기존 path 그대로 -->
+                    <path d="M-5,40 
+                   C20,40 45,25 45,5 
+                   C45,-20 15,-30 0,-15 
+                   C-8,-5 -4,8 18,8 
+                   C30,8 35,-5 35,-10 
+                   
+                   /* Return path */
+                   C35,-5 30,5 18,5
+                   C-2,5 -10,-10 -6,-20
+                   C2,-30 35,-25 50,5
+                   C55,35 15,50 -5,45
+                   Z" fill="var(--ink-strong)" opacity="0.94" />
+
+                    <!-- 리본 하이라이트: 실루엣은 그대로 두고, 흐름만 강조 -->
+                    <!-- Top highlight -->
+                    <path d="M5,-40 
+                   C-20,-40 -45,-25 -45,-5 
+                   C-45,20 -15,30 0,15" fill="none" stroke="var(--blush-soft)" stroke-width="3" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-dasharray="70 999" />
+
+                    <!-- Bottom highlight -->
+                    <path d="M-5,40 
+                   C20,40 45,25 45,5 
+                   C45,-20 15,-30 0,-15" fill="none" stroke="var(--blush-soft)" stroke-width="3" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-dasharray="60 999" />
+
+                    <!-- The Light Spark (원본 위치 유지, 사이즈만 살짝 키움) -->
+                    <g transform="translate(30, -26)">
+                        <path d="M0,-6 L0,6 M-6,0 L6,0" stroke="var(--blush-soft)" stroke-width="1.6"
+                            stroke-linecap="round" />
+                        <circle cx="0" cy="0" r="1.4" fill="var(--blush-soft)" />
+                    </g>
+                </g>
+
+                <!-- Typography: 비율/레터스페이싱 정리 -->
+                <g filter="url(#subtle-grain)">
+                    <!-- 브랜드명: SalonMate / Salon-mate 중 택1 -->
+
+                    <text x="150" y="238" text-anchor="middle" font-family="'Playfair Display', serif" font-weight="400"
+                        font-size="36" fill="var(--ink-strong)" letter-spacing="4">SalonMate</text>
+
+                    <!-- 선택 옵션: 태그라인 추가하고 싶으면 주석 해제
+          <text x="150" y="274" text-anchor="middle"
+                font-family="'Outfit', sans-serif"
+                font-weight="300"
+                font-size="11"
+                fill="#9CA3AF"
+                letter-spacing="4.5">
+            AI MARKETING ASSISTANT FOR SALON
+          </text>
+          -->
+                </g>
+            </svg>
+
+            <!-- Download Button Overlay (SVG 밖으로 이동해서 구조 정상화) -->
+            <button onclick="downloadSvg()"
+                class="absolute bottom-6 right-6 p-3 bg-white rounded-full shadow-lg text-gray-400 hover:text-black hover:scale-110 transition-all"
+                aria-label="Download SalonMate logo (SVG)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Right: Concept Explanation -->
+        <div class="space-y-8">
+            <div>
+                <h2 class="text-4xl font-serif text-gray-900 mb-4">
+                    Swirl Kept,<br><span class="text-gray-300">Ribboned</span>
+                </h2>
+                <div class="w-12 h-1 bg-[#FFCCCC] mb-6"></div>
+                <p class="text-gray-500 font-light leading-relaxed text-sm">
+                    원래 소용돌이 심벌의 실루엣은 그대로 유지하면서,<br />
+                    상·하단 곡선 일부에만 Blush 하이라이트를 더해<br />
+                    리본처럼 펴지고 접히는 흐름을 강조했습니다.<br /><br />
+                    심벌은 전체 높이의 약 40% 영역만 사용하고,<br />
+                    워드마크와 1.7:1 비율로 맞춰<br />
+                    작은 사이즈에서도 벌레처럼 보이지 않고<br />
+                    깨끗하게 읽히도록 비율을 재정렬했습니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-xs">
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-[11px] font-bold text-gray-900 uppercase mb-1 tracking-[0.18em]">Proportion</h3>
+                    <p class="text-gray-500">
+                        Symbol : Wordmark 높이 ≈ 1.7 : 1<br />
+                        Swirl 중심은 캔버스 세로 중앙보다 조금 위.
+                    </p>
+                </div>
+                <div class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-[11px] font-bold text-gray-900 uppercase mb-1 tracking-[0.18em]">Color System</h3>
+                    <p class="text-gray-500">
+                        Ink (#111827) × Blush (#FECACA) × White.<br />
+                        Hero 버전(그레인) / 클린 버전(무그레인)으로 확장 가능.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function downloadSvg() {
+            const svgElement = document.getElementById('salonmate-logo');
+            const svgContent = svgElement.outerHTML;
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'salonmate-swirl-logo.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+
+</html>

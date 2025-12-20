@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon-mate Typographic Logo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Outfit:wght@300;400&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #fdfdfd;
+        }
+
+        .presentation-bg {
+            background: radial-gradient(circle at 50% 50%, #fff 0%, #fff5f5 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="max-w-3xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-red-50">
+
+        <!-- Header area -->
+        <div class="p-6 border-b border-gray-50 flex justify-between items-center">
+            <div>
+                <h1 class="text-lg font-serif text-gray-800">Salon-mate</h1>
+                <p class="text-xs text-gray-400">Typographic Artistry Edition</p>
+            </div>
+            <div class="flex gap-2">
+                <div class="w-3 h-3 rounded-full bg-[#1a1a1a]"></div>
+                <div class="w-3 h-3 rounded-full bg-[#ffcccc]"></div>
+            </div>
+        </div>
+
+        <!-- Main Presentation -->
+        <div class="presentation-bg p-16 flex flex-col items-center justify-center relative">
+
+            <!-- Decorative Background Element -->
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 border border-[#ffcccc] rounded-full opacity-30"
+                style="border-width: 1px;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] border border-[#ffcccc] rounded-full opacity-20"
+                style="border-width: 1px;"></div>
+
+            <!-- THE SVG LOGO -->
+            <svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="goldGradient" x1="0" y1="0" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2a2a2a" />
+                        <stop offset="100%" stop-color="#4a4a4a" />
+                    </linearGradient>
+                </defs>
+
+                <!-- 1. The Calligraphic 'S' Symbol -->
+                <!-- Designed to look like a variable-width brush stroke forming an S / Hair curl -->
+                <g transform="translate(200, 110)">
+                    <!-- Main Curve -->
+                    <path d="M-40,-50 
+                             C-70,-50 -90,-20 -90,10 
+                             C-90,60 -40,70 0,30 
+                             C40,-10 70,-10 70,20 
+                             C70,45 50,60 30,60" stroke="#1a1a1a" stroke-width="0" fill="none" /> <!-- Path guide -->
+
+                    <!-- The Variable Stroke Shape (Artistic S) -->
+                    <path d="M-20,-60 
+                             C-60,-60 -100,-20 -100,20 
+                             C-100,80 -30,100 20,50 
+                             C60,10 90,10 90,40 
+                             C90,60 75,75 55,80
+                             L58,86
+                             C85,80 105,60 105,35
+                             C105,-10 60,-15 10,35
+                             C-30,75 -85,60 -85,20
+                             C-85,-10 -50,-48 -20,-48
+                             Z" fill="#1a1a1a" />
+
+                    <!-- The AI Spark (Accent) -->
+                    <!-- Placing a spark at the visual origin/end of the flow -->
+                    <path d="M50,85 L55,75 L60,85 L70,90 L60,95 L55,105 L50,95 L40,90 Z" fill="#FFCCCC" />
+
+                    <!-- Secondary Spark (Smaller) -->
+                    <circle cx="85" cy="20" r="3" fill="#FFCCCC" />
+                </g>
+
+                <!-- 2. Typography -->
+                <!-- Cinzel Decorative for SALON -->
+                <text x="200" y="240" text-anchor="middle" font-family="'Cinzel Decorative', cursive" font-weight="700"
+                    font-size="46" fill="#1a1a1a" letter-spacing="4">
+                    SALON
+                </text>
+
+                <!-- Outfit for MATE (Small, clean support) -->
+                <text x="200" y="270" text-anchor="middle" font-family="'Outfit', sans-serif" font-weight="400"
+                    font-size="16" fill="#888888" letter-spacing="10" text-transform="uppercase">
+                    MATE
+                </text>
+            </svg>
+
+        </div>
+
+        <!-- Context & Controls -->
+        <div class="grid grid-cols-2 bg-gray-50 border-t border-gray-100 divide-x divide-gray-100">
+            <div class="p-8">
+                <h3 class="font-serif text-gray-900 mb-2">Design Concept</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                    "글씨가 그림이 되다."<br>
+                    폰트의 <strong>Serif(장식)</strong>와 <strong>Curve(곡선)</strong>를 심볼로 확장했습니다.
+                    부드러운 머릿결처럼 흐르는 'S' 곡선 속에 AI의 '빛(Spark)'을 담아,
+                    기술이 예술을 서포트한다는 의미를 표현했습니다.
+                </p>
+            </div>
+            <div class="p-8 flex flex-col justify-center items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="text-center">
+                        <span class="block text-2xl font-serif">S</span>
+                        <span class="text-[10px] text-gray-400 uppercase">Serif</span>
+                    </div>
+                    <div class="h-8 w-[1px] bg-gray-300"></div>
+                    <div class="text-center">
+                        <span class="block text-2xl font-serif text-[#ffcccc]">✦</span>
+                        <span class="text-[10px] text-gray-400 uppercase">Spark</span>
+                    </div>
+                </div>
+                <button onclick="downloadSvg()"
+                    class="mt-2 text-xs font-bold text-gray-800 border-b-2 border-gray-800 pb-1 hover:text-[#ffcccc] hover:border-[#ffcccc] transition-colors">
+                    SVG 다운로드
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function downloadSvg() {
+            const svgContent = document.querySelector('svg').outerHTML;
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'salon-mate-calligraphy.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+
+</html>
