@@ -8,9 +8,11 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 from api.v1 import router as api_v1_router
 from config.settings import get_settings
+from middleware.timing import TimingMiddleware
 
 settings = get_settings()
 
@@ -34,7 +36,8 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # CORS 미들웨어 설정
+    # 미들웨어 설정 (역순으로 실행됨)
+    # 1. CORS
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
@@ -42,6 +45,12 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # 2. GZip 압축 (1KB 이상 응답)
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+    # 3. API 타이밍 측정
+    app.add_middleware(TimingMiddleware)
 
     # API 라우터 등록
     app.include_router(api_v1_router, prefix=settings.api_v1_prefix)
