@@ -142,7 +142,9 @@ class ReviewAnalyticsResponse(BaseModel):
 
     # Distributions
     rating_distribution: list[RatingDistribution] = Field(alias="ratingDistribution")
-    platform_distribution: list[PlatformDistribution] = Field(alias="platformDistribution")
+    platform_distribution: list[PlatformDistribution] = Field(
+        alias="platformDistribution"
+    )
 
     # Trend data
     trend_data: list[TrendDataPoint] = Field(alias="trendData")

@@ -48,10 +48,14 @@ class StyleTag(BaseModel):
     )
 
     # 서비스 유형 (네일, 헤어, 메이크업, 속눈썹 등)
-    service_type: Mapped[str | None] = mapped_column(String(50), nullable=True, index=True)
+    service_type: Mapped[str | None] = mapped_column(
+        String(50), nullable=True, index=True
+    )
 
     # 스타일 카테고리 (미니멀, 럭셔리, 트렌디, 클래식, 내추럴 등)
-    style_category: Mapped[str | None] = mapped_column(String(50), nullable=True, index=True)
+    style_category: Mapped[str | None] = mapped_column(
+        String(50), nullable=True, index=True
+    )
 
     # 시즌/트렌드 (S/S 2025, F/W 2024, 웨딩, 파티 등)
     season_trend: Mapped[str | None] = mapped_column(String(100), nullable=True)

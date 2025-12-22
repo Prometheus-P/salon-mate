@@ -13,7 +13,6 @@ from schemas.onboarding import (
     EmailVerificationResponse,
     OnboardingCompleteResponse,
     OnboardingStatus,
-    OnboardingStep,
     OnboardingStepUpdate,
 )
 from services.onboarding_service import OnboardingService
@@ -32,7 +31,7 @@ def get_onboarding_service(db: AsyncSession = Depends(get_db)) -> OnboardingServ
 async def get_onboarding_status(
     current_user: User = Depends(get_current_user),
     service: OnboardingService = Depends(get_onboarding_service),
-):
+) -> OnboardingStatus:
     """온보딩 상태 조회"""
     return await service.get_status(current_user.id)
 
@@ -42,7 +41,7 @@ async def update_onboarding_step(
     data: OnboardingStepUpdate,
     current_user: User = Depends(get_current_user),
     service: OnboardingService = Depends(get_onboarding_service),
-):
+) -> OnboardingStatus:
     """온보딩 스텝 업데이트"""
     return await service.update_step(current_user.id, data.step, data.data)
 
@@ -51,7 +50,7 @@ async def update_onboarding_step(
 async def skip_onboarding(
     current_user: User = Depends(get_current_user),
     service: OnboardingService = Depends(get_onboarding_service),
-):
+) -> OnboardingStatus:
     """온보딩 건너뛰기"""
     return await service.skip_onboarding(current_user.id)
 
@@ -63,7 +62,7 @@ async def skip_onboarding(
 async def send_verification_email(
     data: EmailVerificationRequest,
     service: OnboardingService = Depends(get_onboarding_service),
-):
+) -> dict[str, str | bool]:
     """인증 이메일 발송"""
     success = await service.send_verification_email(data.email)
     if not success:
@@ -78,7 +77,7 @@ async def send_verification_email(
 async def confirm_email_verification(
     data: EmailVerificationConfirm,
     service: OnboardingService = Depends(get_onboarding_service),
-):
+) -> EmailVerificationResponse:
     """이메일 인증 확인"""
     result = await service.verify_email(data.email, data.code)
     if not result.is_verified:
@@ -96,6 +95,6 @@ async def confirm_email_verification(
 async def complete_onboarding(
     current_user: User = Depends(get_current_user),
     service: OnboardingService = Depends(get_onboarding_service),
-):
+) -> OnboardingCompleteResponse:
     """온보딩 완료"""
     return await service.complete_onboarding(current_user.id)

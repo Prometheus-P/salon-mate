@@ -3,13 +3,12 @@
 리뷰 CRUD 및 통계 비즈니스 로직
 """
 
-import re
 from collections import Counter
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import and_, cast, func, select, Date, Integer
+from sqlalchemy import Date, Integer, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.review import Review
@@ -248,7 +247,11 @@ class ReviewService:
             },
             "rating_distribution": rating_distribution,
             "platform_distribution": [
-                {"platform": "google", "count": current_metrics["total"], "percent": 100.0}
+                {
+                    "platform": "google",
+                    "count": current_metrics["total"],
+                    "percent": 100.0,
+                }
             ],  # Single platform for now
             "trend_data": trend_data,
             "keywords": keywords,
@@ -348,8 +351,21 @@ class ReviewService:
         # Simple Korean keyword extraction
         # Positive keywords commonly found in salon reviews
         positive_keywords = [
-            "친절", "만족", "좋", "최고", "추천", "감사", "편안", "깔끔",
-            "스타일", "서비스", "분위기", "재방문", "가격", "실력", "전문",
+            "친절",
+            "만족",
+            "좋",
+            "최고",
+            "추천",
+            "감사",
+            "편안",
+            "깔끔",
+            "스타일",
+            "서비스",
+            "분위기",
+            "재방문",
+            "가격",
+            "실력",
+            "전문",
         ]
 
         word_counts: Counter[str] = Counter()
@@ -385,9 +401,13 @@ class ReviewService:
             "positive": positive,
             "neutral": neutral,
             "negative": negative,
-            "positive_percent": round((positive / total * 100), 1) if total > 0 else 0.0,
+            "positive_percent": round((positive / total * 100), 1)
+            if total > 0
+            else 0.0,
             "neutral_percent": round((neutral / total * 100), 1) if total > 0 else 0.0,
-            "negative_percent": round((negative / total * 100), 1) if total > 0 else 0.0,
+            "negative_percent": round((negative / total * 100), 1)
+            if total > 0
+            else 0.0,
         }
 
     async def export_reviews(
@@ -426,7 +446,9 @@ class ReviewService:
                 "status": review.status,
                 "platform": "google",  # Single platform for now
                 "response": review.final_response,
-                "responded_at": review.replied_at.isoformat() if review.replied_at else None,
+                "responded_at": review.replied_at.isoformat()
+                if review.replied_at
+                else None,
             }
             for review in reviews
         ]

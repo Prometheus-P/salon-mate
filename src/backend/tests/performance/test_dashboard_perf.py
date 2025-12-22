@@ -69,9 +69,7 @@ class TestDashboardPerformance:
         print(f"\n✓ Review stats: {elapsed_ms:.2f}ms")
 
     @pytest.mark.asyncio
-    async def test_calendar_response_time(
-        self, client: AsyncClient, perf_test_user
-    ):
+    async def test_calendar_response_time(self, client: AsyncClient, perf_test_user):
         """캘린더 API 응답 시간 < 500ms"""
         shop_id = perf_test_user["shop"].id
         headers = {"Authorization": f"Bearer {perf_test_user['token']}"}
@@ -91,9 +89,7 @@ class TestDashboardPerformance:
         print(f"\n✓ Calendar: {elapsed_ms:.2f}ms")
 
     @pytest.mark.asyncio
-    async def test_engagement_response_time(
-        self, client: AsyncClient, perf_test_user
-    ):
+    async def test_engagement_response_time(self, client: AsyncClient, perf_test_user):
         """인게이지먼트 API 응답 시간 < 500ms"""
         shop_id = perf_test_user["shop"].id
         headers = {"Authorization": f"Bearer {perf_test_user['token']}"}
@@ -112,9 +108,7 @@ class TestDashboardPerformance:
         print(f"\n✓ Engagement: {elapsed_ms:.2f}ms")
 
     @pytest.mark.asyncio
-    async def test_trends_response_time(
-        self, client: AsyncClient, perf_test_user
-    ):
+    async def test_trends_response_time(self, client: AsyncClient, perf_test_user):
         """트렌드 API 응답 시간 < 500ms"""
         shop_id = perf_test_user["shop"].id
         headers = {"Authorization": f"Bearer {perf_test_user['token']}"}
@@ -155,17 +149,13 @@ class TestDashboardPerformance:
         print(f"\n✓ Pending reviews: {elapsed_ms:.2f}ms")
 
     @pytest.mark.asyncio
-    async def test_parallel_dashboard_load(
-        self, client: AsyncClient, perf_test_user
-    ):
+    async def test_parallel_dashboard_load(self, client: AsyncClient, perf_test_user):
         """병렬 대시보드 로드 < 3초 (모든 API 동시 호출)"""
         shop_id = perf_test_user["shop"].id
         headers = {"Authorization": f"Bearer {perf_test_user['token']}"}
 
         async def fetch_stats():
-            return await client.get(
-                f"/v1/dashboard/{shop_id}/stats", headers=headers
-            )
+            return await client.get(f"/v1/dashboard/{shop_id}/stats", headers=headers)
 
         async def fetch_calendar():
             return await client.get(
@@ -203,12 +193,16 @@ class TestDashboardPerformance:
 
         # 모든 응답이 성공인지 확인
         for i, response in enumerate(results):
-            assert response.status_code == 200, f"API {i} failed with {response.status_code}"
+            assert response.status_code == 200, (
+                f"API {i} failed with {response.status_code}"
+            )
 
         assert total_ms < self.TARGET_TOTAL_LOAD_MS, (
             f"Parallel load took {total_ms:.2f}ms, target is {self.TARGET_TOTAL_LOAD_MS}ms"
         )
-        print(f"\n✓ Parallel dashboard load: {total_ms:.2f}ms (target: <{self.TARGET_TOTAL_LOAD_MS}ms)")
+        print(
+            f"\n✓ Parallel dashboard load: {total_ms:.2f}ms (target: <{self.TARGET_TOTAL_LOAD_MS}ms)"
+        )
 
     @pytest.mark.asyncio
     async def test_response_has_timing_header(

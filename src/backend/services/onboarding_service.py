@@ -80,7 +80,11 @@ class OnboardingService:
             "complete",
         ]
         current_idx = step_order.index(step)
-        next_step = step_order[current_idx + 1] if current_idx < len(step_order) - 1 else "complete"
+        next_step = (
+            step_order[current_idx + 1]
+            if current_idx < len(step_order) - 1
+            else "complete"
+        )
 
         is_completed = next_step == "complete"
 
@@ -93,9 +97,7 @@ class OnboardingService:
             completedAt=datetime.utcnow() if is_completed else None,
         )
 
-    async def _process_profile_step(
-        self, user_id: UUID, data: ProfileStepData
-    ) -> None:
+    async def _process_profile_step(self, user_id: UUID, data: ProfileStepData) -> None:
         """프로필 스텝 처리"""
         result = await self.db.execute(select(User).where(User.id == user_id))
         user = result.scalar_one_or_none()

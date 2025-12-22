@@ -6,7 +6,7 @@ Instagram Business 계정 OAuth 및 연결 관리
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -136,7 +136,7 @@ async def instagram_oauth_callback(
         error_redirect = f"{frontend_redirect}?error={e.message}"
         return RedirectResponse(url=error_redirect)
 
-    except Exception as e:
+    except Exception:
         error_redirect = f"{frontend_redirect}?error=unknown_error"
         return RedirectResponse(url=error_redirect)
 
@@ -165,7 +165,7 @@ async def get_instagram_connection_status(
     )
     social_account = result.scalar_one_or_none()
 
-    if not social_account:
+    if not social_account or not social_account.access_token:
         return InstagramConnectionStatus(connected=False)
 
     # Instagram 계정 정보 조회
@@ -178,8 +178,12 @@ async def get_instagram_connection_status(
         return InstagramConnectionStatus(
             connected=True,
             username=ig_account.get("username") if ig_account else None,
-            profile_picture_url=ig_account.get("profile_picture_url") if ig_account else None,
-            expires_at=social_account.token_expires_at.isoformat() if social_account.token_expires_at else None,
+            profile_picture_url=ig_account.get("profile_picture_url")
+            if ig_account
+            else None,
+            expires_at=social_account.token_expires_at.isoformat()
+            if social_account.token_expires_at
+            else None,
         )
     except InstagramAPIError:
         # 토큰이 유효하지 않으면 연결 해제 상태로 표시
@@ -229,6 +233,9 @@ async def get_shop_instagram_status(
 
         social_account, ig_info = ig_connection
 
+        if not social_account.access_token:
+            return InstagramConnectionStatus(connected=False)
+
         # 계정 정보 조회
         ig_account = await instagram_service.get_instagram_business_account(
             social_account.access_token
@@ -237,8 +244,12 @@ async def get_shop_instagram_status(
         return InstagramConnectionStatus(
             connected=True,
             username=ig_account.get("username") if ig_account else None,
-            profile_picture_url=ig_account.get("profile_picture_url") if ig_account else None,
-            expires_at=social_account.token_expires_at.isoformat() if social_account.token_expires_at else None,
+            profile_picture_url=ig_account.get("profile_picture_url")
+            if ig_account
+            else None,
+            expires_at=social_account.token_expires_at.isoformat()
+            if social_account.token_expires_at
+            else None,
         )
 
     except InstagramAPIError:

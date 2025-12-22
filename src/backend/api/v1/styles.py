@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.deps import get_current_user, get_db
+from models.style_tag import StyleTag
 from models.user import User
 from services.vision_service import VisionService, VisionServiceError
 
@@ -89,9 +90,9 @@ class ContentSuggestionResponse(BaseModel):
 # ============== Helper ==============
 
 
-def style_tag_to_response(style_tag) -> StyleTagBase:
+def style_tag_to_response(style_tag: StyleTag) -> StyleTagResponse:
     """StyleTag 모델을 응답 스키마로 변환"""
-    return StyleTagBase(
+    return StyleTagResponse(
         id=str(style_tag.id),
         image_url=style_tag.image_url,
         thumbnail_url=style_tag.thumbnail_url,
@@ -105,7 +106,9 @@ def style_tag_to_response(style_tag) -> StyleTagBase:
         ai_description=style_tag.ai_description,
         suggested_hashtags=style_tag.suggested_hashtags or [],
         confidence_score=style_tag.confidence_score,
-        analyzed_at=style_tag.analyzed_at.isoformat() if style_tag.analyzed_at else None,
+        analyzed_at=style_tag.analyzed_at.isoformat()
+        if style_tag.analyzed_at
+        else None,
         created_at=style_tag.created_at.isoformat() if style_tag.created_at else "",
     )
 

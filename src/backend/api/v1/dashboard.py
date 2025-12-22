@@ -54,10 +54,12 @@ async def verify_shop_access(
 ) -> Shop:
     """Verify user has access to the shop and set Sentry context"""
     # Set Sentry user context
-    sentry_sdk.set_user({
-        "id": str(current_user.id),
-        "email": current_user.email,
-    })
+    sentry_sdk.set_user(
+        {
+            "id": str(current_user.id),
+            "email": current_user.email,
+        }
+    )
     sentry_sdk.set_tag("shop_id", str(shop_id))
 
     shop = await service.verify_shop_ownership(shop_id, current_user.id)
@@ -68,11 +70,14 @@ async def verify_shop_access(
         )
 
     # Add shop name to context
-    sentry_sdk.set_context("shop", {
-        "id": str(shop.id),
-        "name": shop.name,
-        "type": shop.type,
-    })
+    sentry_sdk.set_context(
+        "shop",
+        {
+            "id": str(shop.id),
+            "name": shop.name,
+            "type": shop.type,
+        },
+    )
 
     return shop
 
