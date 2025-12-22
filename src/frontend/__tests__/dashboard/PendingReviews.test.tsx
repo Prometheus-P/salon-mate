@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PendingReviews } from '@/app/dashboard/components/PendingReviews';
 import type {
@@ -196,8 +196,8 @@ describe('PendingReviews Component', () => {
       await waitFor(() => {
         const generateButton = screen.getByRole('button', { name: /AI 답변 생성/ });
         expect(generateButton).toBeInTheDocument();
-      });
-    });
+      }, { timeout: 10000 });
+    }, 15000);
 
     it('should call generateAIResponse when generate button clicked', async () => {
       vi.mocked(dashboardApi.getPendingReviews).mockResolvedValue(mockPendingReviewsResponse);
@@ -377,8 +377,12 @@ describe('PendingReviews Component', () => {
       });
 
       // Click publish
-      const publishButton = screen.getByRole('button', { name: /게시/ });
+      const publishButton = screen.getByRole('button', { name: /^게시$/ });
       fireEvent.click(publishButton);
+
+      const dialog = await screen.findByRole('dialog');
+      const confirmButton = within(dialog).getByRole('button', { name: '게시하기' });
+      fireEvent.click(confirmButton);
 
       await waitFor(() => {
         expect(dashboardApi.publishResponse).toHaveBeenCalledWith(

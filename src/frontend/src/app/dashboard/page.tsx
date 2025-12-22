@@ -18,7 +18,7 @@ import { CardSkeleton } from './components/EmptyState';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid'; // Using Grid for layout
+import Grid from '@mui/material/Grid'; // Using Grid with v2 API (size prop)
 
 export default function DashboardPage() {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
@@ -48,13 +48,13 @@ export default function DashboardPage() {
         {!selectedShopId ? (
           // Loading state while shop is being selected
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
               <CardSkeleton />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
               <CardSkeleton />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
               <CardSkeleton />
             </Grid>
           </Grid>
@@ -63,12 +63,12 @@ export default function DashboardPage() {
             {/* Row 1: Review Stats + Pending Reviews */}
             <Grid container spacing={3}>
               {/* ReviewStats component - US1 */}
-              <Grid item xs={12} lg={6}>
+              <Grid size={{ xs: 12, lg: 6 }}>
                 <ReviewStats shopId={selectedShopId} />
               </Grid>
 
               {/* PendingReviews component - US5 */}
-              <Grid item xs={12} lg={6}>
+              <Grid size={{ xs: 12, lg: 6 }}>
                 <PendingReviews shopId={selectedShopId} />
               </Grid>
             </Grid>
@@ -79,12 +79,12 @@ export default function DashboardPage() {
             {/* Row 3: Engagement Metrics + Trend Charts */}
             <Grid container spacing={3}>
               {/* EngagementMetrics component - US3 */}
-              <Grid item xs={12} lg={6}>
+              <Grid size={{ xs: 12, lg: 6 }}>
                 <EngagementMetrics shopId={selectedShopId} />
               </Grid>
 
               {/* TrendCharts component - US4 */}
-              <Grid item xs={12} lg={6}>
+              <Grid size={{ xs: 12, lg: 6 }}>
                 <TrendCharts shopId={selectedShopId} />
               </Grid>
             </Grid>

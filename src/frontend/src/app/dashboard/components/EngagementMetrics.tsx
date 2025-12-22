@@ -5,9 +5,12 @@
  * Implements FR-008, FR-009
  */
 
+import Image from 'next/image';
 import { useEngagementMetrics } from '../hooks/useDashboard';
 import { CardSkeleton, ErrorState, FreshnessIndicator } from './EmptyState';
 import type { TopPost } from '@/lib/api/dashboard';
+
+const PLACEHOLDER_IMAGE = '/placeholder-image.svg';
 
 interface EngagementMetricsProps {
   shopId: string;
@@ -54,13 +57,17 @@ function TopPostCard({ post, rank }: { post: TopPost; rank: number }) {
       </div>
 
       {/* Thumbnail */}
-      <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded bg-gray-100">
-        <img
-          src={post.image_url}
+      <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded bg-gray-100">
+        <Image
+          src={post.image_url || PLACEHOLDER_IMAGE}
           alt={`Top post ${rank}`}
-          className="h-full w-full object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = '/placeholder-image.png';
+          fill
+          sizes="48px"
+          className="object-cover"
+          onError={(event) => {
+            if (event.currentTarget.src !== PLACEHOLDER_IMAGE) {
+              event.currentTarget.src = PLACEHOLDER_IMAGE;
+            }
           }}
         />
       </div>
