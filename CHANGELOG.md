@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.1] - 2025-12-22
+
+### Changed
+- License changed from MIT to Proprietary Business License
+- Updated license contact email
+
+---
+
 ## [0.4.0] - 2025-12-22
 
 ### Added
@@ -140,6 +148,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Description |
 |---------|------|-------------|
+| 0.4.1 | 2025-12-22 | 라이센스 변경 (MIT → Proprietary) |
 | 0.4.0 | 2025-12-22 | Sprint 5 - Instagram API, Vision AI, E2E 테스트, 모니터링 |
 | 0.3.0 | 2025-12-02 | Sprint 3-4 - Marketing Dashboard, Reviews, Settings, Onboarding |
 | 0.2.0 | 2025-11-27 | Sprint 2 - 이메일 인증 시스템 (회원가입, 로그인, JWT) |
@@ -147,7 +156,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.1.0...v0.2.0
