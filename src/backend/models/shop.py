@@ -13,6 +13,7 @@ from models.base import GUID, BaseModel
 if TYPE_CHECKING:
     from models.post import Post
     from models.review import Review
+    from models.style_tag import StyleTag
     from models.user import User
 
 
@@ -40,6 +41,9 @@ class Shop(BaseModel):
     )
     posts: Mapped[list["Post"]] = relationship(
         "Post", back_populates="shop", cascade="all, delete-orphan"
+    )
+    style_tags: Mapped[list["StyleTag"]] = relationship(
+        "StyleTag", back_populates="shop", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:

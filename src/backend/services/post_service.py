@@ -14,6 +14,7 @@ from models.post import Post
 from models.shop import Shop
 from models.user import User
 from schemas.post import PostCreate, PostUpdate
+from services.instagram_service import InstagramAPIError, InstagramService
 
 
 class PostException(Exception):
@@ -143,7 +144,11 @@ class PostService:
         await self.db.commit()
 
     async def publish_post(self, user: User, shop_id: UUID, post_id: UUID) -> Post:
-        """포스트를 즉시 발행합니다."""
+        """포스트를 Instagram에 즉시 발행합니다.
+
+        Instagram Graph API를 통해 실제 포스트를 발행합니다.
+        Instagram 계정이 연결되어 있지 않으면 예외가 발생합니다.
+        """
         post = await self.get_post_by_id(user, shop_id, post_id)
         if not post:
             raise PostException("포스트를 찾을 수 없습니다.", status_code=404)
@@ -151,15 +156,60 @@ class PostService:
         if post.status == "published":
             raise PostException("이미 게시된 포스트입니다.", status_code=400)
 
-        # TODO: 실제 Instagram API 호출
-        # 지금은 상태만 변경
-        post.status = "published"
-        post.published_at = datetime.now(UTC)
-        post.instagram_post_id = f"ig_{post.id}"  # Placeholder
+        if not post.image_url:
+            raise PostException("이미지가 없는 포스트는 발행할 수 없습니다.", status_code=400)
 
-        await self.db.commit()
-        await self.db.refresh(post)
-        return post
+        # Instagram 서비스 초기화
+        instagram_service = InstagramService(self.db)
+
+        try:
+            # Shop에 연결된 Instagram 계정 조회
+            ig_connection = await instagram_service.get_shop_instagram_account(shop_id)
+
+            if not ig_connection:
+                raise PostException(
+                    "Instagram 계정이 연결되어 있지 않습니다. 설정에서 Instagram을 연결해주세요.",
+                    status_code=400,
+                )
+
+            social_account, ig_info = ig_connection
+
+            # 캡션 생성 (해시태그 포함)
+            caption = post.caption or ""
+            if post.hashtags:
+                hashtag_str = " ".join(f"#{tag}" for tag in post.hashtags)
+                caption = f"{caption}\n\n{hashtag_str}".strip()
+
+            # Instagram에 발행
+            instagram_post_id = await instagram_service.publish_post(
+                ig_user_id=ig_info["ig_user_id"],
+                access_token=ig_info["page_access_token"],
+                image_url=post.image_url,
+                caption=caption,
+            )
+
+            # 성공 시 상태 업데이트
+            post.status = "published"
+            post.published_at = datetime.now(UTC)
+            post.instagram_post_id = instagram_post_id
+
+            await self.db.commit()
+            await self.db.refresh(post)
+
+            return post
+
+        except InstagramAPIError as e:
+            # Instagram API 오류 시 상태를 failed로 변경
+            post.status = "failed"
+            await self.db.commit()
+
+            raise PostException(
+                f"Instagram 발행 실패: {e.message}",
+                status_code=e.status_code,
+            ) from e
+
+        finally:
+            await instagram_service.close()
 
     async def get_post_stats(self, user: User, shop_id: UUID) -> dict[str, Any]:
         """포스트 통계를 조회합니다."""

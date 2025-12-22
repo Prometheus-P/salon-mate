@@ -14,9 +14,11 @@ from sqlalchemy.pool import StaticPool
 
 from config.database import Base, get_db
 from main import app
+from models.post import Post  # noqa: F401
 from models.review import Review  # noqa: F401
 from models.shop import Shop  # noqa: F401
 from models.social_account import SocialAccount  # noqa: F401
+from models.style_tag import StyleTag  # noqa: F401
 
 # 모든 모델 임포트 (테이블 생성을 위해 필요)
 from models.user import User  # noqa: F401
