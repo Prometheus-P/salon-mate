@@ -141,6 +141,26 @@ async def get_post_stats(
 
 
 @router.get(
+    "/optimal-times",
+    response_model=OptimalTimeResponse,
+    summary="최적 발행 시간 추천",
+)
+async def get_optimal_times(
+    shop_id: UUID,
+    current_user: User = Depends(get_current_user),
+) -> OptimalTimeResponse:
+    """최적의 포스트 발행 시간을 추천합니다."""
+    # TODO: 실제 인게이지먼트 데이터 기반 분석
+    return OptimalTimeResponse(
+        times=[
+            {"day": "화", "time": "10:00", "reason": "인게이지먼트 최고"},
+            {"day": "목", "time": "19:00", "reason": "도달률 최고"},
+            {"day": "토", "time": "14:00", "reason": "주말 활성 시간"},
+        ]
+    )
+
+
+@router.get(
     "/{post_id}",
     response_model=PostResponse,
     summary="포스트 상세 조회",
@@ -284,24 +304,4 @@ async def recommend_hashtags(
         location=["#강남미용실", "#홍대헤어", "#신촌미용실"],
         trending=["#오늘의헤어", "#헤어스타그램", "#데일리룩"],
         aiRecommended=["#펌스타일", "#염색", "#커트", "#트렌드헤어"],
-    )
-
-
-@router.get(
-    "/optimal-times",
-    response_model=OptimalTimeResponse,
-    summary="최적 발행 시간 추천",
-)
-async def get_optimal_times(
-    shop_id: UUID,
-    current_user: User = Depends(get_current_user),
-) -> OptimalTimeResponse:
-    """최적의 포스트 발행 시간을 추천합니다."""
-    # TODO: 실제 인게이지먼트 데이터 기반 분석
-    return OptimalTimeResponse(
-        times=[
-            {"day": "화", "time": "10:00", "reason": "인게이지먼트 최고"},
-            {"day": "목", "time": "19:00", "reason": "도달률 최고"},
-            {"day": "토", "time": "14:00", "reason": "주말 활성 시간"},
-        ]
     )

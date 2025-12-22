@@ -114,9 +114,9 @@ class OnboardingService:
         """샵 스텝 처리"""
         shop = Shop(
             id=uuid4(),
-            owner_id=user_id,
+            user_id=user_id,
             name=data.name,
-            business_type=data.business_type,
+            type=data.business_type,
             address=data.address,
             phone=data.phone,
             created_at=datetime.utcnow(),
@@ -129,7 +129,7 @@ class OnboardingService:
         return ShopResponse(
             id=shop.id,
             name=shop.name,
-            businessType=shop.business_type,
+            businessType=shop.type,
             address=shop.address,
             phone=shop.phone,
         )
@@ -180,7 +180,7 @@ class OnboardingService:
         """온보딩 완료"""
         # Get user's shop
         result = await self.db.execute(
-            select(Shop).where(Shop.owner_id == user_id).limit(1)
+            select(Shop).where(Shop.user_id == user_id).limit(1)
         )
         shop = result.scalar_one_or_none()
 
