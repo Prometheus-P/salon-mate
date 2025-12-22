@@ -1,10 +1,10 @@
 ---
 title: SalonMate - 프로젝트 컨텍스트
-version: 1.0.0
+version: 0.4.2
 status: Approved
 owner: "@core-team"
 created: 2025-11-25
-updated: 2025-11-25
+updated: 2025-12-22
 reviewers: ["@tech-lead", "@product-owner"]
 language: Korean (한국어)
 ---
@@ -15,6 +15,7 @@ language: Korean (한국어)
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 |------|------|--------|----------|
+| 0.4.2 | 2025-12-22 | @core-team | 기술 스택 및 프로젝트 구조 업데이트 |
 | 1.0.0 | 2025-11-25 | @core-team | 최초 작성 |
 
 ## 관련 문서 (Related Documents)
@@ -167,10 +168,12 @@ graph TB
 ┌─────────────────────────────────────────────────────────────────┐
 │                        FRONTEND                                  │
 ├─────────────────────────────────────────────────────────────────┤
-│  Framework    │  Next.js 14 (App Router)                        │
+│  Framework    │  Next.js 16 (App Router)                        │
 │  Language     │  TypeScript 5.x                                  │
-│  Styling      │  Tailwind CSS + shadcn/ui                        │
-│  State        │  Zustand + TanStack Query                        │
+│  Runtime      │  React 19                                        │
+│  Styling      │  Tailwind CSS 4.x + shadcn/ui                    │
+│  State        │  Zustand 5.x + TanStack Query 5.x                │
+│  Testing      │  Vitest + Playwright                             │
 │  Mobile       │  Capacitor (iOS/Android 패키징)                   │
 └─────────────────────────────────────────────────────────────────┘
 
@@ -182,12 +185,15 @@ graph TB
 │  Validation   │  Pydantic v2                                     │
 │  Auth         │  JWT + OAuth 2.0 (Google, Kakao)                 │
 │  Task Queue   │  Celery + Redis                                  │
+│  Linting      │  Ruff + Mypy                                     │
+│  Testing      │  pytest + pytest-asyncio                         │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────┐
 │                      AI / WORKER                                 │
 ├─────────────────────────────────────────────────────────────────┤
 │  LLM          │  OpenAI GPT-4o (품질 우선)                        │
+│  Vision       │  OpenAI GPT-4 Vision (스타일북 분석)              │
 │  Fallback     │  Claude Haiku / GPT-4o-mini (비용 최적화)         │
 │  Embedding    │  OpenAI text-embedding-3-small                   │
 │  Framework    │  LangChain + LangGraph                           │
@@ -200,7 +206,8 @@ graph TB
 │  Hosting      │  Vercel (Frontend) + Railway/Render (Backend)    │
 │  Cache        │  Redis (Upstash)                                 │
 │  CDN          │  Cloudflare                                      │
-│  Monitoring   │  Sentry + Datadog (Free tier)                    │
+│  Monitoring   │  Sentry                                          │
+│  Security     │  CodeQL (GitHub Security Scanning)               │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -396,10 +403,10 @@ graph LR
 
 | 리소스 | URL |
 |--------|-----|
-| GitHub Repository | [TBD] |
+| GitHub Repository | https://github.com/Prometheus-P/salon-mate |
 | Design System (Figma) | [TBD] |
-| API Documentation | [TBD] |
-| Monitoring Dashboard | [TBD] |
+| API Documentation | http://localhost:8000/docs (개발 환경) |
+| Monitoring Dashboard | Sentry (프로덕션 환경) |
 
 ### 11.2 외부 서비스 문서
 
