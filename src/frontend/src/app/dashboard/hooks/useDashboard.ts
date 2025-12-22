@@ -121,12 +121,47 @@ export function usePublishResponse(shopId: string) {
   return useMutation<
     PublishResponseResult,
     Error,
-    { reviewId: string; finalResponse: string }
+    { reviewId: string; finalResponse: string },
+    { previousReviews: PendingReviewsResponse | undefined }
   >({
     mutationFn: ({ reviewId, finalResponse }) =>
       publishResponse(shopId, reviewId, finalResponse),
-    onSuccess: () => {
-      // Invalidate multiple queries after publishing
+    // Optimistic update: remove review from list immediately
+    onMutate: async ({ reviewId }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: dashboardKeys.pendingReviews(shopId) });
+
+      // Snapshot the previous value
+      const previousReviews = queryClient.getQueryData<PendingReviewsResponse>(
+        dashboardKeys.pendingReviews(shopId)
+      );
+
+      // Optimistically update to the new value
+      if (previousReviews) {
+        queryClient.setQueryData<PendingReviewsResponse>(
+          dashboardKeys.pendingReviews(shopId),
+          {
+            ...previousReviews,
+            reviews: previousReviews.reviews.filter((r) => r.id !== reviewId),
+            total_pending: Math.max(0, previousReviews.total_pending - 1),
+          }
+        );
+      }
+
+      // Return a context object with the snapshotted value
+      return { previousReviews };
+    },
+    // If the mutation fails, use the context returned from onMutate to roll back
+    onError: (_err, _variables, context) => {
+      if (context?.previousReviews) {
+        queryClient.setQueryData(
+          dashboardKeys.pendingReviews(shopId),
+          context.previousReviews
+        );
+      }
+    },
+    // Always refetch after error or success
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: dashboardKeys.pendingReviews(shopId) });
       queryClient.invalidateQueries({ queryKey: dashboardKeys.stats(shopId) });
     },

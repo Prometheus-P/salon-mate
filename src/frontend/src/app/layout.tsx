@@ -4,6 +4,7 @@ import './globals.css';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { Providers } from './providers';
 import Header from '../components/common/Header';
+import { Toaster } from '@/components/ui/sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -34,6 +35,7 @@ export default function RootLayout({
           <Providers>
             <Header /> {/* Add the Header component here */}
             {children}
+            <Toaster position="top-right" richColors />
           </Providers>
         </AppRouterCacheProvider>
       </body>

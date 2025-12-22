@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   usePendingReviews,
   useGenerateAIResponse,
@@ -106,8 +107,14 @@ function ReviewCard({ review, shopId, isExpanded, onToggle }: ReviewCardProps) {
       });
       setPublishDialogOpen(false);
       setIsEditing(false);
+      toast.success('답변이 성공적으로 게시되었습니다!', {
+        description: `${review.reviewer_name}님의 리뷰에 답변을 게시했습니다.`,
+      });
     } catch (error) {
       console.error('Failed to publish response:', error);
+      toast.error('답변 게시에 실패했습니다', {
+        description: '잠시 후 다시 시도해주세요.',
+      });
     } finally {
       setIsPublishing(false);
     }
@@ -279,22 +286,10 @@ function ReviewCard({ review, shopId, isExpanded, onToggle }: ReviewCardProps) {
               )}
             </div>
 
-            {/* Error Messages */}
+            {/* Error Message for AI Generation */}
             {generateMutation.isError && (
               <p className="text-sm text-red-600">
                 AI 답변 생성에 실패했습니다. 다시 시도해주세요.
-              </p>
-            )}
-            {publishMutation.isError && (
-              <p className="text-sm text-red-600">
-                답변 게시에 실패했습니다. 다시 시도해주세요.
-              </p>
-            )}
-
-            {/* Success Message */}
-            {publishMutation.isSuccess && (
-              <p className="text-sm text-green-600">
-                답변이 성공적으로 게시되었습니다!
               </p>
             )}
           </div>
