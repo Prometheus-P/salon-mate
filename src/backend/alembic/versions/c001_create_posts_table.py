@@ -9,7 +9,7 @@ Create Date: 2025-12-02
 from collections.abc import Sequence
 
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
+from sqlalchemy import inspect
 
 from alembic import op
 
@@ -22,17 +22,34 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     """Create posts table for Instagram posts."""
+    # Get dialect name for conditional logic
+    bind = op.get_bind()
+    dialect = bind.dialect.name
+
+    # Use GUID type from models.base for UUID compatibility
+    from models.base import GUID
+
+    # Choose JSON type based on dialect
+    if dialect == "postgresql":
+        from sqlalchemy.dialects import postgresql
+
+        uuid_type = postgresql.UUID(as_uuid=True)
+        json_type = postgresql.JSONB(astext_type=sa.Text())
+    else:
+        uuid_type = GUID()
+        json_type = sa.JSON()
+
     op.create_table(
         "posts",
-        sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column("shop_id", postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column("id", uuid_type, nullable=False),
+        sa.Column("shop_id", uuid_type, nullable=False),
         sa.Column("instagram_post_id", sa.String(255), nullable=True),
         sa.Column("status", sa.String(20), nullable=False, server_default="draft"),
         sa.Column("image_url", sa.String(500), nullable=False),
         sa.Column("caption", sa.Text(), nullable=True),
         sa.Column(
             "hashtags",
-            postgresql.JSONB(astext_type=sa.Text()),
+            json_type,
             nullable=False,
             server_default="[]",
         ),
@@ -57,36 +74,57 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(["shop_id"], ["shops.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
-        sa.CheckConstraint(
-            "status IN ('draft', 'scheduled', 'published', 'failed')",
-            name="chk_post_status",
-        ),
     )
+
+    # Add check constraint for status (SQLite-compatible syntax)
+    if dialect != "sqlite":
+        op.create_check_constraint(
+            "chk_post_status",
+            "posts",
+            "status IN ('draft', 'scheduled', 'published', 'failed')",
+        )
 
     # Create indexes
     op.create_index("idx_posts_shop_id", "posts", ["shop_id"])
     op.create_index("idx_posts_status", "posts", ["status"])
     op.create_index("idx_posts_scheduled_at", "posts", ["scheduled_at"])
-    op.create_index(
-        "idx_posts_instagram_post_id",
-        "posts",
-        ["instagram_post_id"],
-        unique=True,
-        postgresql_where=sa.text("instagram_post_id IS NOT NULL"),
-    )
 
-    # Create updated_at trigger
-    op.execute("""
-        CREATE TRIGGER set_posts_updated_at
-            BEFORE UPDATE ON posts
-            FOR EACH ROW
-            EXECUTE FUNCTION update_updated_at_column();
-    """)
+    # Conditional unique index with WHERE clause (PostgreSQL only)
+    if dialect == "postgresql":
+        op.create_index(
+            "idx_posts_instagram_post_id",
+            "posts",
+            ["instagram_post_id"],
+            unique=True,
+            postgresql_where=sa.text("instagram_post_id IS NOT NULL"),
+        )
+
+        # Create updated_at trigger (PostgreSQL only)
+        op.execute("""
+            CREATE TRIGGER set_posts_updated_at
+                BEFORE UPDATE ON posts
+                FOR EACH ROW
+                EXECUTE FUNCTION update_updated_at_column();
+        """)
+    else:
+        # SQLite: simple unique index without WHERE clause
+        op.create_index(
+            "idx_posts_instagram_post_id",
+            "posts",
+            ["instagram_post_id"],
+            unique=True,
+        )
 
 
 def downgrade() -> None:
     """Drop posts table."""
-    op.execute("DROP TRIGGER IF EXISTS set_posts_updated_at ON posts")
+    bind = op.get_bind()
+    dialect = bind.dialect.name
+
+    if dialect == "postgresql":
+        op.execute("DROP TRIGGER IF EXISTS set_posts_updated_at ON posts")
+        op.drop_constraint("chk_post_status", "posts", type_="check")
+
     op.drop_index("idx_posts_instagram_post_id", table_name="posts")
     op.drop_index("idx_posts_scheduled_at", table_name="posts")
     op.drop_index("idx_posts_status", table_name="posts")
