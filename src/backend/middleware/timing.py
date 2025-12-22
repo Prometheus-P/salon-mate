@@ -18,7 +18,9 @@ logger = logging.getLogger(__name__)
 class TimingMiddleware(BaseHTTPMiddleware):
     """API 응답 시간을 측정하고 로깅하는 미들웨어."""
 
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
         start_time = time.perf_counter()
 
         response = await call_next(request)
