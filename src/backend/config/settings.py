@@ -69,6 +69,11 @@ class Settings(BaseSettings):
     rate_limit_auth: int = 10
     rate_limit_ai: int = 20
 
+    # Sentry 설정
+    sentry_dsn: str = ""
+    sentry_traces_sample_rate: float = 1.0
+    sentry_profiles_sample_rate: float = 1.0
+
 
 @lru_cache
 def get_settings() -> Settings:

@@ -6,15 +6,33 @@ FastAPI 애플리케이션 설정 및 라우터 등록
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
+import sentry_sdk
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from sentry_sdk.integrations.fastapi import FastApiIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from api.v1 import router as api_v1_router
 from config.settings import get_settings
 from middleware.timing import TimingMiddleware
 
 settings = get_settings()
+
+# Initialize Sentry
+if settings.sentry_dsn:
+    sentry_sdk.init(
+        dsn=settings.sentry_dsn,
+        environment=settings.environment,
+        release=f"salonmate-api@{settings.app_version}",
+        traces_sample_rate=settings.sentry_traces_sample_rate,
+        profiles_sample_rate=settings.sentry_profiles_sample_rate,
+        integrations=[
+            FastApiIntegration(transaction_style="endpoint"),
+            SqlalchemyIntegration(),
+        ],
+        send_default_pii=False,  # GDPR compliance
+    )
 
 
 @asynccontextmanager

@@ -5,6 +5,7 @@ Dashboard API endpoints
 from datetime import date
 from uuid import UUID
 
+import sentry_sdk
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -51,13 +52,28 @@ async def verify_shop_access(
     current_user: User = Depends(get_current_user),
     service: DashboardService = Depends(get_dashboard_service),
 ) -> Shop:
-    """Verify user has access to the shop"""
+    """Verify user has access to the shop and set Sentry context"""
+    # Set Sentry user context
+    sentry_sdk.set_user({
+        "id": str(current_user.id),
+        "email": current_user.email,
+    })
+    sentry_sdk.set_tag("shop_id", str(shop_id))
+
     shop = await service.verify_shop_ownership(shop_id, current_user.id)
     if not shop:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied: you do not own this shop",
         )
+
+    # Add shop name to context
+    sentry_sdk.set_context("shop", {
+        "id": str(shop.id),
+        "name": shop.name,
+        "type": shop.type,
+    })
+
     return shop
 
 
