@@ -23,13 +23,9 @@ router.include_router(shops_router, prefix="/shops", tags=["shops"])
 router.include_router(
     reviews_router, prefix="/shops/{shop_id}/reviews", tags=["reviews"]
 )
-router.include_router(
-    posts_router, prefix="/shops/{shop_id}/posts", tags=["posts"]
-)
+router.include_router(posts_router, prefix="/shops/{shop_id}/posts", tags=["posts"])
 router.include_router(dashboard_router)
 router.include_router(settings_router, prefix="/settings", tags=["settings"])
 router.include_router(onboarding_router, prefix="/onboarding", tags=["onboarding"])
 router.include_router(instagram_router, prefix="/instagram", tags=["instagram"])
-router.include_router(
-    styles_router, prefix="/shops/{shop_id}/styles", tags=["styles"]
-)
+router.include_router(styles_router, prefix="/shops/{shop_id}/styles", tags=["styles"])

@@ -178,8 +178,12 @@ async def get_instagram_connection_status(
         return InstagramConnectionStatus(
             connected=True,
             username=ig_account.get("username") if ig_account else None,
-            profile_picture_url=ig_account.get("profile_picture_url") if ig_account else None,
-            expires_at=social_account.token_expires_at.isoformat() if social_account.token_expires_at else None,
+            profile_picture_url=ig_account.get("profile_picture_url")
+            if ig_account
+            else None,
+            expires_at=social_account.token_expires_at.isoformat()
+            if social_account.token_expires_at
+            else None,
         )
     except InstagramAPIError:
         # 토큰이 유효하지 않으면 연결 해제 상태로 표시
@@ -237,8 +241,12 @@ async def get_shop_instagram_status(
         return InstagramConnectionStatus(
             connected=True,
             username=ig_account.get("username") if ig_account else None,
-            profile_picture_url=ig_account.get("profile_picture_url") if ig_account else None,
-            expires_at=social_account.token_expires_at.isoformat() if social_account.token_expires_at else None,
+            profile_picture_url=ig_account.get("profile_picture_url")
+            if ig_account
+            else None,
+            expires_at=social_account.token_expires_at.isoformat()
+            if social_account.token_expires_at
+            else None,
         )
 
     except InstagramAPIError:

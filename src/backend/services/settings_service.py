@@ -41,9 +41,7 @@ class SettingsService:
         result = await self.db.execute(select(User).where(User.id == user_id))
         return result.scalar_one_or_none()
 
-    async def update_profile(
-        self, user_id: UUID, data: dict[str, Any]
-    ) -> User | None:
+    async def update_profile(self, user_id: UUID, data: dict[str, Any]) -> User | None:
         """프로필 업데이트"""
         user = await self.get_profile(user_id)
         if not user:
@@ -67,7 +65,9 @@ class SettingsService:
             channels=NotificationChannels(email=True, push=True, kakao=False),
             newReview=NotificationType(email=True, push=True, kakao=False),
             negativeReview=NotificationType(email=True, push=True, kakao=False),
-            reviewResponseComplete=NotificationType(email=True, push=False, kakao=False),
+            reviewResponseComplete=NotificationType(
+                email=True, push=False, kakao=False
+            ),
             postPublished=NotificationType(email=False, push=True, kakao=False),
             postFailed=NotificationType(email=True, push=True, kakao=False),
             weeklyReport=NotificationType(email=True, push=False, kakao=False),
@@ -151,9 +151,7 @@ class SettingsService:
             createdAt=datetime.utcnow(),
         )
 
-    async def disconnect_integration(
-        self, user_id: UUID, integration_id: UUID
-    ) -> bool:
+    async def disconnect_integration(self, user_id: UUID, integration_id: UUID) -> bool:
         """플랫폼 연동 해제 (Mock)"""
         # TODO: 실제 연동 해제 구현
         return True
@@ -213,7 +211,7 @@ class SettingsService:
             PaymentHistoryItem(
                 id=uuid4(),
                 date=now - timedelta(days=i * 30),
-                description=f"Pro 플랜 - {"연간" if i == 0 else "월간"} 구독",
+                description=f"Pro 플랜 - {'연간' if i == 0 else '월간'} 구독",
                 amount=29000,
                 status="completed",
                 receiptUrl=f"https://example.com/receipts/{uuid4()}",
@@ -356,16 +354,12 @@ class SettingsService:
             isPending=False,
         )
 
-    async def remove_team_member(
-        self, user_id: UUID, member_id: UUID
-    ) -> bool:
+    async def remove_team_member(self, user_id: UUID, member_id: UUID) -> bool:
         """팀원 제거 (Mock)"""
         # TODO: 실제 팀원 제거
         return True
 
-    async def resend_invite(
-        self, user_id: UUID, member_id: UUID
-    ) -> bool:
+    async def resend_invite(self, user_id: UUID, member_id: UUID) -> bool:
         """초대 재발송 (Mock)"""
         # TODO: 실제 초대 이메일 재발송
         return True

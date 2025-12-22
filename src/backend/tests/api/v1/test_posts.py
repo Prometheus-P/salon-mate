@@ -49,7 +49,9 @@ class TestCreatePost:
         shop_id = authenticated_user_with_shop["shop"].id
         response = await client.post(
             f"/v1/shops/{shop_id}/posts",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={
                 "imageUrl": "https://example.com/image.jpg",
                 "caption": "테스트 캡션입니다.",
@@ -71,7 +73,9 @@ class TestCreatePost:
         shop_id = authenticated_user_with_shop["shop"].id
         response = await client.post(
             f"/v1/shops/{shop_id}/posts",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={
                 "imageUrl": "https://example.com/image.jpg",
                 "caption": "예약 포스트",
@@ -105,7 +109,9 @@ class TestGetPosts:
         shop_id = authenticated_user_with_shop["shop"].id
         response = await client.get(
             f"/v1/shops/{shop_id}/posts",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 200
@@ -122,7 +128,9 @@ class TestGetPosts:
         shop_id = authenticated_user_with_shop["shop"].id
         response = await client.get(
             f"/v1/shops/{shop_id}/posts?status=draft",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 200
@@ -143,7 +151,9 @@ class TestGetPostStats:
         shop_id = authenticated_user_with_shop["shop"].id
         response = await client.get(
             f"/v1/shops/{shop_id}/posts/stats",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 200
@@ -167,7 +177,9 @@ class TestUpdatePost:
         # 먼저 포스트 생성
         create_response = await client.post(
             f"/v1/shops/{shop_id}/posts",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={
                 "imageUrl": "https://example.com/image.jpg",
                 "caption": "원래 캡션",
@@ -178,7 +190,9 @@ class TestUpdatePost:
         # 포스트 수정
         response = await client.patch(
             f"/v1/shops/{shop_id}/posts/{post_id}",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={"caption": "수정된 캡션"},
         )
 
@@ -200,7 +214,9 @@ class TestDeletePost:
         # 먼저 포스트 생성
         create_response = await client.post(
             f"/v1/shops/{shop_id}/posts",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={
                 "imageUrl": "https://example.com/image.jpg",
                 "caption": "삭제할 포스트",
@@ -211,7 +227,9 @@ class TestDeletePost:
         # 포스트 삭제
         response = await client.delete(
             f"/v1/shops/{shop_id}/posts/{post_id}",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 204
@@ -228,7 +246,9 @@ class TestAICaption:
         shop_id = authenticated_user_with_shop["shop"].id
         response = await client.post(
             f"/v1/shops/{shop_id}/posts/ai/generate-caption",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
             json={
                 "prompt": "헤어 스타일 변신",
                 "includeEmoji": True,
@@ -254,7 +274,9 @@ class TestHashtagRecommendation:
         shop_id = authenticated_user_with_shop["shop"].id
         response = await client.get(
             f"/v1/shops/{shop_id}/posts/ai/recommend-hashtags",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 200
@@ -274,7 +296,9 @@ class TestOptimalTimes:
         shop_id = authenticated_user_with_shop["shop"].id
         response = await client.get(
             f"/v1/shops/{shop_id}/posts/optimal-times",
-            headers={"Authorization": f"Bearer {authenticated_user_with_shop['token']}"},
+            headers={
+                "Authorization": f"Bearer {authenticated_user_with_shop['token']}"
+            },
         )
 
         assert response.status_code == 200

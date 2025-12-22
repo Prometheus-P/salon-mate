@@ -105,7 +105,9 @@ def style_tag_to_response(style_tag) -> StyleTagBase:
         ai_description=style_tag.ai_description,
         suggested_hashtags=style_tag.suggested_hashtags or [],
         confidence_score=style_tag.confidence_score,
-        analyzed_at=style_tag.analyzed_at.isoformat() if style_tag.analyzed_at else None,
+        analyzed_at=style_tag.analyzed_at.isoformat()
+        if style_tag.analyzed_at
+        else None,
         created_at=style_tag.created_at.isoformat() if style_tag.created_at else "",
     )
 

@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 # ============== Notification Settings ==============
 
+
 class NotificationChannels(BaseModel):
     """알림 채널 설정"""
 
@@ -49,7 +50,9 @@ class NotificationSettingsUpdate(BaseModel):
 
     channels: NotificationChannels | None = None
     new_review: NotificationType | None = Field(default=None, alias="newReview")
-    negative_review: NotificationType | None = Field(default=None, alias="negativeReview")
+    negative_review: NotificationType | None = Field(
+        default=None, alias="negativeReview"
+    )
     review_response_complete: NotificationType | None = Field(
         default=None, alias="reviewResponseComplete"
     )
@@ -66,7 +69,9 @@ class NotificationSettingsUpdate(BaseModel):
 
 # ============== Integration ==============
 
-IntegrationPlatform = Literal["google", "naver", "kakao", "instagram", "facebook", "openai"]
+IntegrationPlatform = Literal[
+    "google", "naver", "kakao", "instagram", "facebook", "openai"
+]
 IntegrationStatus = Literal["connected", "disconnected", "error", "syncing"]
 
 

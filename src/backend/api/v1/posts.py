@@ -260,6 +260,7 @@ async def duplicate_post(
 
 # AI Content Generation Endpoints
 
+
 @router.post(
     "/ai/generate-caption",
     response_model=AICaptionResponse,

@@ -157,7 +157,9 @@ class PostService:
             raise PostException("이미 게시된 포스트입니다.", status_code=400)
 
         if not post.image_url:
-            raise PostException("이미지가 없는 포스트는 발행할 수 없습니다.", status_code=400)
+            raise PostException(
+                "이미지가 없는 포스트는 발행할 수 없습니다.", status_code=400
+            )
 
         # Instagram 서비스 초기화
         instagram_service = InstagramService(self.db)
@@ -239,9 +241,7 @@ class PostService:
             "failed_count": status_counts.get("failed", 0),
         }
 
-    async def duplicate_post(
-        self, user: User, shop_id: UUID, post_id: UUID
-    ) -> Post:
+    async def duplicate_post(self, user: User, shop_id: UUID, post_id: UUID) -> Post:
         """포스트를 복제합니다."""
         original = await self.get_post_by_id(user, shop_id, post_id)
         if not original:

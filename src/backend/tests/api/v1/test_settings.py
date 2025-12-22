@@ -30,9 +30,7 @@ class TestProfileSettings:
     """프로필 설정 테스트"""
 
     @pytest.mark.asyncio
-    async def test_should_get_profile(
-        self, client: AsyncClient, authenticated_user
-    ):
+    async def test_should_get_profile(self, client: AsyncClient, authenticated_user):
         """프로필을 조회할 수 있어야 함"""
         response = await client.get(
             "/v1/settings/profile",

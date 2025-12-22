@@ -21,7 +21,9 @@ settings = get_settings()
 class InstagramAPIError(Exception):
     """Instagram API 관련 예외"""
 
-    def __init__(self, message: str, status_code: int = 400, error_code: str | None = None):
+    def __init__(
+        self, message: str, status_code: int = 400, error_code: str | None = None
+    ):
         self.message = message
         self.status_code = status_code
         self.error_code = error_code
@@ -166,7 +168,9 @@ class InstagramService:
 
         if "error" in pages_data:
             raise InstagramAPIError(
-                message=pages_data.get("error", {}).get("message", "Failed to get pages"),
+                message=pages_data.get("error", {}).get(
+                    "message", "Failed to get pages"
+                ),
                 error_code=pages_data.get("error", {}).get("code"),
             )
 
@@ -383,7 +387,10 @@ class InstagramService:
         social_account, shop = row
 
         # 토큰 만료 확인
-        if social_account.token_expires_at and social_account.token_expires_at < datetime.now(UTC):
+        if (
+            social_account.token_expires_at
+            and social_account.token_expires_at < datetime.now(UTC)
+        ):
             raise InstagramAPIError(
                 message="Instagram 토큰이 만료되었습니다. 다시 연결해주세요.",
                 status_code=401,

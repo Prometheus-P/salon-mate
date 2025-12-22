@@ -55,9 +55,9 @@ class ShopStepData(BaseModel):
     """샵 스텝 데이터"""
 
     name: str = Field(min_length=1, max_length=100)
-    business_type: Literal["hairsalon", "nailshop", "skincare", "barbershop", "other"] = Field(
-        alias="businessType"
-    )
+    business_type: Literal[
+        "hairsalon", "nailshop", "skincare", "barbershop", "other"
+    ] = Field(alias="businessType")
     address: str | None = None
     phone: str | None = None
     operating_hours: str | None = Field(default=None, alias="operatingHours")
