@@ -6,8 +6,9 @@
 
 | 버전 | 지원 여부 |
 | ------- | ------------------ |
-| 1.x.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+| 0.4.x   | :white_check_mark: |
+| 0.3.x   | :white_check_mark: |
+| < 0.3   | :x:                |
 
 ## 보안 취약점 신고
 
@@ -19,7 +20,7 @@
 
 1. **이메일 신고**: [security@salonmate.kr](mailto:security@salonmate.kr)로 이메일을 보내주세요.
 
-2. **GitHub Security Advisories**: [Security Advisories](https://github.com/your-org/salon-mate/security/advisories)를 통해 비공개로 신고할 수 있습니다.
+2. **GitHub Security Advisories**: [Security Advisories](https://github.com/Prometheus-P/salon-mate/security/advisories)를 통해 비공개로 신고할 수 있습니다.
 
 ### 신고 시 포함해야 할 정보
 
