@@ -12,9 +12,8 @@ language: Korean (한국어)
 
 > 뷰티/살롱 사장님을 위한 AI 마케팅 자동화 플랫폼
 
-[![CI](https://github.com/your-org/salon-mate/workflows/CI/badge.svg)](https://github.com/your-org/salon-mate/actions)
-[![codecov](https://codecov.io/gh/your-org/salon-mate/branch/main/graph/badge.svg)](https://codecov.io/gh/your-org/salon-mate)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/Prometheus-P/salon-mate/workflows/CI/badge.svg)](https://github.com/Prometheus-P/salon-mate/actions)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](./LICENSE)
 
 ---
 
@@ -54,7 +53,7 @@ SalonMate는 **네일샵, 헤어샵, 피부관리샵** 등 뷰티 업종 사장�
 ### 1. 저장소 클론
 
 ```bash
-git clone https://github.com/your-org/salon-mate.git
+git clone https://github.com/Prometheus-P/salon-mate.git
 cd salon-mate
 ```
 
@@ -216,15 +215,20 @@ docs(readme): update installation instructions
 
 ## 라이선스
 
-MIT License - 자세한 내용은 [LICENSE](./LICENSE) 파일을 참조하세요.
+**Proprietary Software License** - 이 소프트웨어는 SalonMate의 독점 소유입니다.
+
+무단 복제, 배포, 수정이 금지되며, 상업적 사용을 위해서는 별도의 라이센스 계약이 필요합니다.
+
+자세한 내용은 [LICENSE](./LICENSE) 파일을 참조하세요.
 
 ---
 
 ## 연락처
 
-- **이슈 리포트**: [GitHub Issues](https://github.com/your-org/salon-mate/issues)
-- **보안 취약점**: security@salonmate.kr
+- **라이센스 문의**: parkdavid31@gmail.com
+- **이슈 리포트**: [GitHub Issues](https://github.com/Prometheus-P/salon-mate/issues)
+- **보안 취약점**: parkdavid31@gmail.com
 
 ---
 
-*Made with love for Korean beauty business owners*
+*Copyright (c) 2025 SalonMate. All Rights Reserved.*
