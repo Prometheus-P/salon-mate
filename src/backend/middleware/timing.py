@@ -4,7 +4,6 @@ API 응답 시간 측정 미들웨어
 
 import logging
 import time
-
 from collections.abc import Awaitable, Callable
 
 from starlette.middleware.base import BaseHTTPMiddleware

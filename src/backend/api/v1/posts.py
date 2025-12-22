@@ -11,6 +11,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
+from models.post import Post
 from models.user import User
 from schemas.post import (
     AICaptionRequest,
@@ -23,7 +24,6 @@ from schemas.post import (
     PostStatsResponse,
     PostUpdate,
 )
-from models.post import Post
 from services.auth_service import AuthException, AuthService
 from services.post_service import PostException, PostService
 
