@@ -1,10 +1,10 @@
 ---
 title: SalonMate - README
-version: 1.0.0
+version: 0.4.2
 status: Approved
 owner: "@core-team"
 created: 2025-11-25
-updated: 2025-11-25
+updated: 2025-12-22
 language: Korean (한국어)
 ---
 
@@ -113,29 +113,47 @@ pnpm test:e2e
 📦 salon-mate/
 ├── 📄 CONTEXT.md              # 프로젝트 Single Source of Truth
 ├── 📄 README.md               # 이 파일
+├── 📄 CHANGELOG.md            # 버전 변경 이력
 ├── 📄 plan.md                 # TDD 개발 계획
 ├── 📄 ENVIRONMENT.md          # 환경 설정 가이드
 ├── 📄 CONTRIBUTING.md         # 기여 가이드
+├── 📄 LICENSE                 # Proprietary 라이센스
+│
+├── 📁 .github/                # GitHub 설정
+│   ├── 📁 workflows/          # CI/CD 워크플로우
+│   ├── 📁 ISSUE_TEMPLATE/     # 이슈 템플릿
+│   ├── 📄 CODEOWNERS          # 코드 소유자
+│   └── 📄 SECURITY.md         # 보안 정책
 │
 ├── 📁 docs/                   # 문서
-│   ├── 📁 specs/              # 기술 스펙 (PRD, 아키텍처, API 등)
-│   ├── 📁 guides/             # 개발 가이드
-│   ├── 📁 business/           # 비즈니스 문서
-│   └── 📁 operations/         # 운영 문서
+│   └── 📁 specs/              # 기술 스펙 (PRD, 아키텍처, API 등)
+│
+├── 📁 specs/                  # 기능 스펙 문서
+│   └── 📄 *.md                # 각 기능별 스펙
 │
 ├── 📁 src/                    # 소스 코드
-│   ├── 📁 frontend/           # Next.js 웹앱
-│   ├── 📁 backend/            # FastAPI 서버
-│   ├── 📁 worker/             # AI Worker (Celery)
-│   └── 📁 shared/             # 공유 코드
+│   ├── 📁 frontend/           # Next.js 16 웹앱
+│   │   └── 📁 src/
+│   │       ├── 📁 app/        # Next.js App Router 페이지
+│   │       ├── 📁 components/ # React 컴포넌트
+│   │       ├── 📁 lib/        # 유틸리티 및 API 클라이언트
+│   │       ├── 📁 stores/     # Zustand 상태 관리
+│   │       └── 📁 types/      # TypeScript 타입 정의
+│   │
+│   └── 📁 backend/            # FastAPI 서버
+│       ├── 📁 api/            # API 라우터
+│       ├── 📁 models/         # SQLAlchemy 모델
+│       ├── 📁 schemas/        # Pydantic 스키마
+│       ├── 📁 services/       # 비즈니스 로직
+│       ├── 📁 core/           # 핵심 유틸리티 (보안 등)
+│       ├── 📁 config/         # 설정 모듈
+│       ├── 📁 middleware/     # 미들웨어
+│       ├── 📁 alembic/        # DB 마이그레이션
+│       ├── 📁 worker/         # AI Worker (Celery)
+│       └── 📁 tests/          # 백엔드 테스트
 │
-├── 📁 tests/                  # 테스트
-│   ├── 📁 unit/               # 단위 테스트
-│   ├── 📁 integration/        # 통합 테스트
-│   └── 📁 e2e/                # E2E 테스트
-│
-├── 📁 scripts/                # 유틸리티 스크립트
-└── 📁 infra/                  # 인프라 코드 (IaC)
+├── 📁 public/                 # 정적 파일
+└── 📁 scripts/                # 유틸리티 스크립트
 ```
 
 ---
@@ -143,27 +161,34 @@ pnpm test:e2e
 ## 기술 스택
 
 ### Frontend
-- **Framework**: Next.js 14 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript 5.x
-- **Styling**: Tailwind CSS + shadcn/ui
-- **State**: Zustand + TanStack Query
+- **Runtime**: React 19
+- **Styling**: Tailwind CSS 4.x + shadcn/ui
+- **State**: Zustand 5.x + TanStack Query 5.x
 - **Mobile**: Capacitor (iOS/Android)
+- **Testing**: Vitest + Playwright
 
 ### Backend
 - **Framework**: FastAPI (Python 3.12)
 - **ORM**: SQLAlchemy 2.0 + Alembic
+- **Validation**: Pydantic v2
 - **Auth**: JWT + OAuth 2.0
 - **Queue**: Celery + Redis
+- **Linting**: Ruff + Mypy
+- **Testing**: pytest + pytest-asyncio
 
 ### AI / Worker
 - **LLM**: OpenAI GPT-4o
+- **Vision**: OpenAI GPT-4 Vision (스타일북)
 - **Framework**: LangChain + LangGraph
 
 ### Infrastructure
 - **Database**: Supabase (PostgreSQL)
 - **Hosting**: Vercel + Railway
 - **Cache**: Redis (Upstash)
-- **Monitoring**: Sentry + Datadog
+- **Monitoring**: Sentry
+- **Security**: CodeQL
 
 ---
 
