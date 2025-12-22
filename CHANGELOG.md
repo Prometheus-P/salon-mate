@@ -7,18 +7,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+- 구글 리뷰 자동 답변 기능
+- 네이버 리뷰 답변 생성 기능
+- Google OAuth 인증
+- Kakao OAuth 인증
+
+---
+
+## [0.4.0] - 2025-12-22
+
 ### Added
-- (예정) 구글 리뷰 자동 답변 기능
-- (예정) 네이버 리뷰 답변 생성 기능
-- (예정) 인스타그램 콘텐츠 생성 기능
-- (예정) Google OAuth 인증
-- (예정) Kakao OAuth 인증
+- Instagram Graph API integration for direct posting and engagement sync
+- Vision AI stylebook features for automatic style tag detection
+- Sentry error tracking integration for backend monitoring
+- Performance monitoring and verification system
+- CodeQL security scanning workflow
+- Playwright E2E tests for main user flows (dashboard, onboarding, reviews, settings)
+- API tests for Settings, Onboarding, and Posts endpoints
+- Toast notifications with optimistic updates for publish actions
 
 ### Changed
-- (없음)
+- Enhanced dashboard with shop selector improvements
+- Updated frontend dependencies and vitest config
+- Improved migrations for SQLite compatibility
 
 ### Fixed
-- (없음)
+- Mypy type annotations for CI compliance
+- Ruff linter import sorting issues
+- bcrypt password handling for cross-version compatibility
+
+### Security
+- Added CodeQL analysis for vulnerability scanning
+
+---
+
+## [0.3.0] - 2025-12-02
+
+### Added
+- Marketing Dashboard feature implementation (#47)
+- Material Design 3 tokens and theme support
+- WCAG AA color contrast verification
+- Reviews, Content Studio, Settings, and Onboarding phases (1-4)
+- Complete frontend component library (Badge, Dialog, Dropdown, Tabs, etc.)
+- API endpoints for reviews, settings, onboarding, posts, styles
+- Instagram and Stylebook pages with full CRUD
+- Screen definition documents for all features
+
+### Changed
+- Updated M3 design system styling across components
+- Enhanced UI component inventory
+- Migrated from MUI to shadcn/ui components
 
 ---
 
@@ -101,9 +140,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Description |
 |---------|------|-------------|
+| 0.4.0 | 2025-12-22 | Sprint 5 - Instagram API, Vision AI, E2E 테스트, 모니터링 |
+| 0.3.0 | 2025-12-02 | Sprint 3-4 - Marketing Dashboard, Reviews, Settings, Onboarding |
 | 0.2.0 | 2025-11-27 | Sprint 2 - 이메일 인증 시스템 (회원가입, 로그인, JWT) |
 | 0.1.0 | 2025-11-27 | 초기 프로젝트 설정 및 인프라 구축 |
 
 ---
+
+[Unreleased]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/Prometheus-P/salon-mate/releases/tag/v0.1.0
 
 *🤖 Generated with [Claude Code](https://claude.com/claude-code)*
