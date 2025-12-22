@@ -165,7 +165,7 @@ async def get_instagram_connection_status(
     )
     social_account = result.scalar_one_or_none()
 
-    if not social_account:
+    if not social_account or not social_account.access_token:
         return InstagramConnectionStatus(connected=False)
 
     # Instagram 계정 정보 조회
@@ -232,6 +232,9 @@ async def get_shop_instagram_status(
             return InstagramConnectionStatus(connected=False)
 
         social_account, ig_info = ig_connection
+
+        if not social_account.access_token:
+            return InstagramConnectionStatus(connected=False)
 
         # 계정 정보 조회
         ig_account = await instagram_service.get_instagram_business_account(

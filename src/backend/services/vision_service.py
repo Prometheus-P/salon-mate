@@ -59,7 +59,7 @@ class VisionService:
         self.api_key = settings.openai_api_key
         self.model = settings.openai_model  # gpt-4o
 
-    async def close(self):
+    async def close(self) -> None:
         """HTTP 클라이언트 종료"""
         await self.client.aclose()
 

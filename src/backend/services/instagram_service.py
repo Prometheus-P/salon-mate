@@ -50,7 +50,7 @@ class InstagramService:
         self.db = db
         self.client = httpx.AsyncClient(timeout=30.0)
 
-    async def close(self):
+    async def close(self) -> None:
         """HTTP 클라이언트 종료"""
         await self.client.aclose()
 
