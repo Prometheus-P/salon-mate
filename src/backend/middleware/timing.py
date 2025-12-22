@@ -5,9 +5,13 @@ API 응답 시간 측정 미들웨어
 import logging
 import time
 
+from collections.abc import Awaitable, Callable
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
+
+RequestResponseEndpoint = Callable[[Request], Awaitable[Response]]
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +19,7 @@ logger = logging.getLogger(__name__)
 class TimingMiddleware(BaseHTTPMiddleware):
     """API 응답 시간을 측정하고 로깅하는 미들웨어."""
 
-    async def dispatch(self, request: Request, call_next) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         start_time = time.perf_counter()
 
         response = await call_next(request)

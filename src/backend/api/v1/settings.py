@@ -38,7 +38,7 @@ def get_settings_service(db: AsyncSession = Depends(get_db)) -> SettingsService:
 async def get_profile(
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> dict[str, Any]:
     """현재 사용자 프로필 조회"""
     user = await service.get_profile(current_user.id)
     if not user:
@@ -61,7 +61,7 @@ async def update_profile(
     data: dict[str, Any],
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> dict[str, Any]:
     """프로필 업데이트"""
     # camelCase to snake_case conversion
     update_data = {}
@@ -97,7 +97,7 @@ async def update_profile(
 async def get_notification_settings(
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> NotificationSettings:
     """알림 설정 조회"""
     return await service.get_notification_settings(current_user.id)
 
@@ -107,7 +107,7 @@ async def update_notification_settings(
     data: NotificationSettingsUpdate,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> NotificationSettings:
     """알림 설정 업데이트"""
     return await service.update_notification_settings(current_user.id, data)
 
@@ -119,7 +119,7 @@ async def update_notification_settings(
 async def get_integrations(
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> list[IntegrationResponse]:
     """연동 목록 조회"""
     return await service.get_integrations(current_user.id)
 
@@ -129,7 +129,7 @@ async def connect_integration(
     platform: IntegrationPlatform,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> IntegrationResponse:
     """플랫폼 연동"""
     return await service.connect_integration(current_user.id, platform)
 
@@ -139,7 +139,7 @@ async def disconnect_integration(
     integration_id: UUID,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> dict[str, bool]:
     """플랫폼 연동 해제"""
     success = await service.disconnect_integration(current_user.id, integration_id)
     if not success:
@@ -155,7 +155,7 @@ async def sync_integration(
     integration_id: UUID,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> IntegrationResponse:
     """플랫폼 동기화"""
     return await service.sync_integration(current_user.id, integration_id)
 
@@ -167,7 +167,7 @@ async def sync_integration(
 async def get_subscription(
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> SubscriptionResponse:
     """구독 정보 조회"""
     return await service.get_subscription(current_user.id)
 
@@ -177,7 +177,7 @@ async def get_payment_history(
     limit: int = 10,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> list[PaymentHistoryItem]:
     """결제 내역 조회"""
     return await service.get_payment_history(current_user.id, limit)
 
@@ -187,7 +187,7 @@ async def update_subscription(
     plan: PlanType,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> SubscriptionResponse:
     """구독 플랜 변경"""
     return await service.update_subscription(current_user.id, plan)
 
@@ -199,7 +199,7 @@ async def update_subscription(
 async def get_team_members(
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> list[TeamMemberResponse]:
     """팀원 목록 조회"""
     return await service.get_team_members(current_user.id)
 
@@ -209,7 +209,7 @@ async def invite_team_member(
     data: TeamInviteRequest,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> TeamMemberResponse:
     """팀원 초대"""
     return await service.invite_team_member(current_user.id, data)
 
@@ -220,7 +220,7 @@ async def update_team_member(
     data: TeamMemberUpdate,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> TeamMemberResponse:
     """팀원 정보 수정"""
     member = await service.update_team_member(current_user.id, member_id, data)
     if not member:
@@ -236,7 +236,7 @@ async def remove_team_member(
     member_id: UUID,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> dict[str, bool]:
     """팀원 제거"""
     success = await service.remove_team_member(current_user.id, member_id)
     if not success:
@@ -252,7 +252,7 @@ async def resend_invite(
     member_id: UUID,
     current_user: User = Depends(get_current_user),
     service: SettingsService = Depends(get_settings_service),
-):
+) -> dict[str, bool]:
     """초대 재발송"""
     success = await service.resend_invite(current_user.id, member_id)
     if not success:

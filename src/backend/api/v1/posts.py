@@ -23,6 +23,7 @@ from schemas.post import (
     PostStatsResponse,
     PostUpdate,
 )
+from models.post import Post
 from services.auth_service import AuthException, AuthService
 from services.post_service import PostException, PostService
 
@@ -47,7 +48,7 @@ def get_post_service(db: AsyncSession = Depends(get_db)) -> PostService:
     return PostService(db)
 
 
-def _post_to_response(post) -> PostResponse:
+def _post_to_response(post: Post) -> PostResponse:
     """Post 모델을 응답 스키마로 변환합니다."""
     return PostResponse(
         id=post.id,
