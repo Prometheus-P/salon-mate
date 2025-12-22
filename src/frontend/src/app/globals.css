@@ -78,75 +78,71 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  /* M3 Primary Purple #6750A4 */
-  --primary: oklch(0.494 0.146 284.8);
-  --primary-foreground: oklch(0.985 0 0);
-  /* M3 Secondary */
-  --secondary: oklch(0.455 0.043 286);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --background: var(--brand-cloud);
+  --foreground: var(--brand-ink);
+  --card: var(--brand-snow);
+  --card-foreground: var(--brand-ink);
+  --popover: var(--brand-snow);
+  --popover-foreground: var(--brand-ink);
+  --primary: var(--brand-ink);
+  --primary-foreground: var(--brand-snow);
+  --secondary: var(--brand-blush);
+  --secondary-foreground: var(--brand-ink);
+  --muted: #f0f2f7;
+  --muted-foreground: #6b7280;
+  --accent: var(--brand-blush);
+  --accent-foreground: var(--brand-ink);
+  --destructive: var(--brand-error);
+  --border: var(--brand-outline);
+  --input: var(--brand-outline);
+  --ring: rgba(17, 24, 39, 0.08);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: var(--brand-snow);
+  --sidebar-foreground: var(--brand-ink);
+  --sidebar-primary: var(--brand-ink);
+  --sidebar-primary-foreground: var(--brand-snow);
+  --sidebar-accent: var(--brand-blush);
+  --sidebar-accent-foreground: var(--brand-ink);
+  --sidebar-border: var(--brand-outline);
+  --sidebar-ring: rgba(17, 24, 39, 0.08);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  /* M3 Primary Purple (light variant for dark mode) #D0BCFF */
-  --primary: oklch(0.818 0.097 286);
-  --primary-foreground: oklch(0.245 0.097 286);
-  /* M3 Secondary (dark mode) */
-  --secondary: oklch(0.812 0.043 286);
-  --secondary-foreground: oklch(0.245 0.043 286);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --background: var(--brand-cloud);
+  --foreground: var(--brand-ink);
+  --card: var(--brand-snow);
+  --card-foreground: var(--brand-ink);
+  --popover: var(--brand-snow);
+  --popover-foreground: var(--brand-ink);
+  --primary: var(--brand-ink);
+  --primary-foreground: var(--brand-cloud);
+  --secondary: var(--brand-blush);
+  --secondary-foreground: var(--brand-ink);
+  --muted: #1f2937;
+  --muted-foreground: #9ca3af;
+  --accent: var(--brand-blush);
+  --accent-foreground: var(--brand-ink);
+  --destructive: var(--brand-error);
+  --border: var(--brand-outline);
+  --input: var(--brand-outline);
+  --ring: rgba(255, 255, 255, 0.08);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: var(--brand-cloud);
+  --sidebar-foreground: var(--brand-ink);
+  --sidebar-primary: var(--brand-ink);
+  --sidebar-primary-foreground: var(--brand-cloud);
+  --sidebar-accent: var(--brand-blush);
+  --sidebar-accent-foreground: var(--brand-ink);
+  --sidebar-border: var(--brand-outline);
+  --sidebar-ring: rgba(255, 255, 255, 0.08);
 }
 
 @layer base {

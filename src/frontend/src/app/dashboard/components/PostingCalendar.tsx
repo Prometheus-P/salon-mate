@@ -5,6 +5,7 @@
  * Implements FR-005, FR-006, FR-007
  */
 
+import Image from 'next/image';
 import { useState, useMemo } from 'react';
 import { usePostingCalendar } from '../hooks/useDashboard';
 import { CardSkeleton, ErrorState, FreshnessIndicator } from './EmptyState';
@@ -15,6 +16,8 @@ interface PostingCalendarProps {
 }
 
 type ViewMode = 'week' | 'month';
+
+const PLACEHOLDER_IMAGE = '/placeholder-image.svg';
 
 // M3 Status colors for FR-007 (spec.md Design System)
 const statusColors: Record<string, { bg: string; text: string; dot: string; label: string }> = {
@@ -82,13 +85,17 @@ function PostCard({ post }: { post: PostSummary }) {
     <div className="group relative rounded-md border border-gray-200 bg-white p-2 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start gap-2">
         {/* Thumbnail */}
-        <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded bg-gray-100">
-          <img
-            src={post.image_url}
+        <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded bg-gray-100">
+          <Image
+            src={post.image_url || PLACEHOLDER_IMAGE}
             alt="Post thumbnail"
-            className="h-full w-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = '/placeholder-image.png';
+            fill
+            sizes="40px"
+            className="object-cover"
+            onError={(event) => {
+              if (event.currentTarget.src !== PLACEHOLDER_IMAGE) {
+                event.currentTarget.src = PLACEHOLDER_IMAGE;
+              }
             }}
           />
         </div>

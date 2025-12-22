@@ -3,6 +3,8 @@
 리뷰 CRUD 및 통계 API
 """
 
+from datetime import datetime
+from typing import Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
@@ -13,11 +15,19 @@ from config.database import get_db
 from models.user import User
 from schemas.ai_response import AIResponseRequest, AIResponseResult
 from schemas.review import (
+    KeywordFrequency,
+    MetricComparison,
+    PlatformDistribution,
+    RatingDistribution,
+    ReviewAnalyticsResponse,
     ReviewCreate,
+    ReviewExportItem,
     ReviewListResponse,
     ReviewResponse,
     ReviewStatsResponse,
     ReviewUpdate,
+    SentimentAnalysis,
+    TrendDataPoint,
 )
 from services.ai_response_service import AIResponseException, AIResponseService
 from services.auth_service import AuthException, AuthService
@@ -290,4 +300,119 @@ async def generate_ai_response(
             generatedAt=generated_at,
         )
     except AIResponseException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
+
+
+@router.get(
+    "/analytics",
+    response_model=ReviewAnalyticsResponse,
+    summary="리뷰 분석 조회",
+)
+async def get_review_analytics(
+    shop_id: UUID,
+    period: Literal["week", "month", "year"] = Query(default="month"),
+    current_user: User = Depends(get_current_user),
+    review_service: ReviewService = Depends(get_review_service),
+) -> ReviewAnalyticsResponse:
+    """매장의 리뷰 분석 데이터를 조회합니다.
+
+    - **period**: 분석 기간 (week, month, year)
+    """
+    try:
+        analytics = await review_service.get_analytics(current_user, shop_id, period)
+        return ReviewAnalyticsResponse(
+            totalReviews=MetricComparison(
+                current=analytics["total_reviews"]["current"],
+                previous=analytics["total_reviews"]["previous"],
+                changePercent=analytics["total_reviews"]["change_percent"],
+            ),
+            averageRating=MetricComparison(
+                current=analytics["average_rating"]["current"],
+                previous=analytics["average_rating"]["previous"],
+                changePercent=analytics["average_rating"]["change_percent"],
+            ),
+            responseRate=MetricComparison(
+                current=analytics["response_rate"]["current"],
+                previous=analytics["response_rate"]["previous"],
+                changePercent=analytics["response_rate"]["change_percent"],
+            ),
+            ratingDistribution=[
+                RatingDistribution(
+                    rating=item["rating"],
+                    count=item["count"],
+                    percent=item["percent"],
+                )
+                for item in analytics["rating_distribution"]
+            ],
+            platformDistribution=[
+                PlatformDistribution(
+                    platform=item["platform"],
+                    count=item["count"],
+                    percent=item["percent"],
+                )
+                for item in analytics["platform_distribution"]
+            ],
+            trendData=[
+                TrendDataPoint(
+                    date=item["date"],
+                    reviewCount=item["review_count"],
+                    averageRating=item["average_rating"],
+                )
+                for item in analytics["trend_data"]
+            ],
+            keywords=[
+                KeywordFrequency(keyword=item["keyword"], count=item["count"])
+                for item in analytics["keywords"]
+            ],
+            sentiment=SentimentAnalysis(
+                positive=analytics["sentiment"]["positive"],
+                neutral=analytics["sentiment"]["neutral"],
+                negative=analytics["sentiment"]["negative"],
+                positivePercent=analytics["sentiment"]["positive_percent"],
+                neutralPercent=analytics["sentiment"]["neutral_percent"],
+                negativePercent=analytics["sentiment"]["negative_percent"],
+            ),
+        )
+    except ReviewException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
+
+
+@router.get(
+    "/export",
+    response_model=list[ReviewExportItem],
+    summary="리뷰 내보내기",
+)
+async def export_reviews(
+    shop_id: UUID,
+    status_filter: str | None = Query(default=None, alias="status"),
+    date_from: datetime | None = Query(default=None, alias="dateFrom"),
+    date_to: datetime | None = Query(default=None, alias="dateTo"),
+    current_user: User = Depends(get_current_user),
+    review_service: ReviewService = Depends(get_review_service),
+) -> list[ReviewExportItem]:
+    """리뷰 데이터를 내보냅니다.
+
+    - **status**: 상태 필터 (pending, replied, ignored)
+    - **dateFrom**: 시작일
+    - **dateTo**: 종료일
+    """
+    try:
+        reviews = await review_service.export_reviews(
+            current_user, shop_id, status_filter, date_from, date_to
+        )
+        return [
+            ReviewExportItem(
+                id=item["id"],
+                reviewerName=item["reviewer_name"],
+                rating=item["rating"],
+                content=item["content"],
+                reviewDate=item["review_date"],
+                status=item["status"],
+                platform=item["platform"],
+                response=item["response"],
+                respondedAt=item["responded_at"],
+            )
+            for item in reviews
+        ]
+    except ReviewException as e:
         raise HTTPException(status_code=e.status_code, detail=e.message) from e

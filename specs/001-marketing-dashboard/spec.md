@@ -155,18 +155,21 @@ As a salon owner, I want to quickly respond to pending reviews from the dashboar
 
 SalonMate 대시보드는 Material Design 3 디자인 시스템을 기반으로 구현됩니다.
 
-**Color System:**
-- **Primary**: #6750A4 (Purple) - 주요 CTA, 선택된 상태, 강조 요소
-- **Secondary**: M3 tonal palette에서 자동 생성
-- **Tertiary**: M3 tonal palette에서 자동 생성
-- **Error**: #B3261E (리뷰 실패, 게시 오류 등)
-- **Surface variants**: 카드 계층 구분에 사용
+**Color System (Clinical & Airy):**
+- **Primary Ink**: `#1A1A1A` (charcoal) – 헤더, 본문 텍스트, 주요 CTA
+- **Accent Blush**: `#FFCCCC` – 포커스 상태, 하이라이트, 로딩 인디케이터
+- **Surface Cloud**: `#F5F6FA` / `#FFFFFF` – 카드/배경 계층, 4.5:1 대비 확보
+- **Support Slate**: `#6B7280` – 보조 텍스트, 아이콘
+- **Error**: `#D8402B` – 실패/경고
+- **Success**: `#2D8A4B`
+- **Info**: `#3F72C8`
+- **Shadow Overlay**: `rgba(17, 24, 39, 0.03)` – 얇고 부드러운 음영
 
 **Status Colors (Semantic - WCAG AA compliant):**
-- Published (게시됨): Green tonal (#1a7f2e on #d4f5da)
-- Scheduled (예약됨): Amber tonal (#8a6d00 on #fff4cc)
-- Failed (실패): Error red (#c23a1a on #ffddd6)
-- Pending (대기중): Neutral (#605d66 on #e7e0ec)
+- Published (게시됨): `#2D8A4B` on `#DDF5E3`
+- Scheduled (예약됨): `#B58103` on `#FFF2CC`
+- Failed (실패): `#D8402B` on `#FFE1DC`
+- Pending (대기중): `#6B7280` on `#F3F4F6`
 
 **Theme Mode:**
 - System Preference 자동 감지 (`prefers-color-scheme` 미디어 쿼리)

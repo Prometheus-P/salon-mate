@@ -1,185 +1,123 @@
 /**
- * Material Design 3 Color Tokens
- * Primary: Purple (#6750A4)
- * Generated from M3 tonal palette
+ * SalonMate Clinical Color System
+ * Inspired by the refined spacing presentation (ink + blush + airy whites)
  */
 
 :root {
-  /* Primary Purple Tonal Palette */
-  --m3-primary-0: #000000;
-  --m3-primary-10: #21005d;
-  --m3-primary-20: #381e72;
-  --m3-primary-30: #4f378b;
-  --m3-primary-40: #6750a4;
-  --m3-primary-50: #7f67be;
-  --m3-primary-60: #9a82db;
-  --m3-primary-70: #b69df8;
-  --m3-primary-80: #d0bcff;
-  --m3-primary-90: #eaddff;
-  --m3-primary-95: #f6edff;
-  --m3-primary-99: #fffbfe;
-  --m3-primary-100: #ffffff;
+  /* Brand Core */
+  --brand-ink: #111827;
+  --brand-ink-soft: #374151;
+  --brand-cloud: #f5f6fa;
+  --brand-snow: #ffffff;
+  --brand-blush: #ffcccc;
+  --brand-blush-strong: #f7a9b8;
+  --brand-outline: #e5e7eb;
+  --brand-shadow: 0px 20px 40px rgba(17, 24, 39, 0.03);
 
-  /* Secondary Tonal Palette (auto-generated from primary) */
-  --m3-secondary-10: #1d192b;
-  --m3-secondary-20: #332d41;
-  --m3-secondary-30: #4a4458;
-  --m3-secondary-40: #625b71;
-  --m3-secondary-50: #7a7289;
-  --m3-secondary-60: #948ba3;
-  --m3-secondary-70: #aea6bd;
-  --m3-secondary-80: #cac4d9;
-  --m3-secondary-90: #e6dff5;
-  --m3-secondary-95: #f4eeff;
-  --m3-secondary-99: #fffbfe;
-  --m3-secondary-100: #ffffff;
+  /* Semantic */
+  --brand-success: #2d8a4b;
+  --brand-success-container: #ddf5e3;
+  --brand-warning: #b58103;
+  --brand-warning-container: #fff2cc;
+  --brand-error: #d8402b;
+  --brand-error-container: #ffe1dc;
+  --brand-pending: #6b7280;
+  --brand-pending-container: #f3f4f6;
 
-  /* Tertiary Tonal Palette */
-  --m3-tertiary-10: #31111d;
-  --m3-tertiary-20: #4a2532;
-  --m3-tertiary-30: #633b48;
-  --m3-tertiary-40: #7d5260;
-  --m3-tertiary-50: #986977;
-  --m3-tertiary-60: #b48391;
-  --m3-tertiary-70: #d09dab;
-  --m3-tertiary-80: #efb8c8;
-  --m3-tertiary-90: #ffd8e4;
-  --m3-tertiary-95: #ffecf1;
-  --m3-tertiary-99: #fffbfa;
-  --m3-tertiary-100: #ffffff;
+  /* Map to existing design tokens */
+  --m3-primary: var(--brand-ink);
+  --m3-on-primary: var(--brand-snow);
+  --m3-primary-container: var(--brand-cloud);
+  --m3-on-primary-container: var(--brand-ink);
 
-  /* Error Tonal Palette */
-  --m3-error-10: #410e0b;
-  --m3-error-20: #601410;
-  --m3-error-30: #8c1d18;
-  --m3-error-40: #b3261e;
-  --m3-error-50: #dc362e;
-  --m3-error-60: #e46962;
-  --m3-error-70: #ec928e;
-  --m3-error-80: #f2b8b5;
-  --m3-error-90: #f9dedc;
-  --m3-error-95: #fceeee;
-  --m3-error-99: #fffbf9;
-  --m3-error-100: #ffffff;
+  --m3-secondary: var(--brand-blush);
+  --m3-on-secondary: var(--brand-ink);
+  --m3-secondary-container: var(--brand-blush-strong);
+  --m3-on-secondary-container: var(--brand-snow);
 
-  /* Neutral Tonal Palette */
-  --m3-neutral-0: #000000;
-  --m3-neutral-10: #1c1b1f;
-  --m3-neutral-20: #313033;
-  --m3-neutral-30: #484649;
-  --m3-neutral-40: #605d62;
-  --m3-neutral-50: #79767d;
-  --m3-neutral-60: #938f96;
-  --m3-neutral-70: #aea9b1;
-  --m3-neutral-80: #c9c5cd;
-  --m3-neutral-90: #e6e1e9;
-  --m3-neutral-95: #f4eff7;
-  --m3-neutral-99: #fffbfe;
-  --m3-neutral-100: #ffffff;
+  --m3-tertiary: #d9dce5;
+  --m3-on-tertiary: var(--brand-ink);
+  --m3-tertiary-container: var(--brand-cloud);
+  --m3-on-tertiary-container: var(--brand-ink);
 
-  /* Neutral Variant Tonal Palette */
-  --m3-neutral-variant-10: #1d1a22;
-  --m3-neutral-variant-20: #322f37;
-  --m3-neutral-variant-30: #49454f;
-  --m3-neutral-variant-40: #605d66;
-  --m3-neutral-variant-50: #79747e;
-  --m3-neutral-variant-60: #938f99;
-  --m3-neutral-variant-70: #aea9b4;
-  --m3-neutral-variant-80: #cac4d0;
-  --m3-neutral-variant-90: #e7e0ec;
-  --m3-neutral-variant-95: #f5eefa;
-  --m3-neutral-variant-99: #fffbfe;
-  --m3-neutral-variant-100: #ffffff;
+  --m3-error: var(--brand-error);
+  --m3-on-error: var(--brand-snow);
+  --m3-error-container: var(--brand-error-container);
+  --m3-on-error-container: var(--brand-error);
 
-  /* Semantic Status Colors - WCAG AA compliant (3:1 min for UI) */
-  --m3-status-published: #1a7f2e;  /* Darker green for better contrast */
-  --m3-status-published-container: #d4f5da;
-  --m3-status-scheduled: #8a6d00;  /* Darker amber for better contrast */
-  --m3-status-scheduled-container: #fff4cc;
-  --m3-status-failed: #c23a1a;  /* Darker red for better contrast */
-  --m3-status-failed-container: #ffddd6;
-  --m3-status-pending: #605d66;  /* Slightly darker for contrast */
-  --m3-status-pending-container: #e7e0ec;
+  --m3-surface: var(--brand-cloud);
+  --m3-on-surface: var(--brand-ink);
+  --m3-surface-variant: var(--brand-snow);
+  --m3-on-surface-variant: var(--brand-ink-soft);
 
-  /* Light Theme Semantic Colors */
-  --m3-primary: var(--m3-primary-40);
-  --m3-on-primary: var(--m3-primary-100);
-  --m3-primary-container: var(--m3-primary-90);
-  --m3-on-primary-container: var(--m3-primary-10);
+  --m3-outline: var(--brand-outline);
+  --m3-outline-variant: #d1d5db;
 
-  --m3-secondary: var(--m3-secondary-40);
-  --m3-on-secondary: var(--m3-secondary-100);
-  --m3-secondary-container: var(--m3-secondary-90);
-  --m3-on-secondary-container: var(--m3-secondary-10);
-
-  --m3-tertiary: var(--m3-tertiary-40);
-  --m3-on-tertiary: var(--m3-tertiary-100);
-  --m3-tertiary-container: var(--m3-tertiary-90);
-  --m3-on-tertiary-container: var(--m3-tertiary-10);
-
-  --m3-error: var(--m3-error-40);
-  --m3-on-error: var(--m3-error-100);
-  --m3-error-container: var(--m3-error-90);
-  --m3-on-error-container: var(--m3-error-10);
-
-  --m3-surface: var(--m3-neutral-99);
-  --m3-on-surface: var(--m3-neutral-10);
-  --m3-surface-variant: var(--m3-neutral-variant-90);
-  --m3-on-surface-variant: var(--m3-neutral-variant-30);
-
-  --m3-outline: var(--m3-neutral-variant-50);
-  --m3-outline-variant: var(--m3-neutral-variant-80);
-
-  --m3-surface-container-lowest: var(--m3-neutral-100);
-  --m3-surface-container-low: var(--m3-neutral-95);
-  --m3-surface-container: var(--m3-neutral-95);
-  --m3-surface-container-high: var(--m3-neutral-90);
-  --m3-surface-container-highest: var(--m3-neutral-90);
+  --m3-status-published: var(--brand-success);
+  --m3-status-published-container: var(--brand-success-container);
+  --m3-status-scheduled: var(--brand-warning);
+  --m3-status-scheduled-container: var(--brand-warning-container);
+  --m3-status-failed: var(--brand-error);
+  --m3-status-failed-container: var(--brand-error-container);
+  --m3-status-pending: var(--brand-pending);
+  --m3-status-pending-container: var(--brand-pending-container);
 }
 
-/* Dark Theme */
 @media (prefers-color-scheme: dark) {
   :root {
-    --m3-primary: var(--m3-primary-80);
-    --m3-on-primary: var(--m3-primary-20);
-    --m3-primary-container: var(--m3-primary-30);
-    --m3-on-primary-container: var(--m3-primary-90);
+    --brand-ink: #f9fafb;
+    --brand-ink-soft: #d1d5db;
+    --brand-cloud: #111827;
+    --brand-snow: #1f2937;
+    --brand-blush: #f7a9b8;
+    --brand-blush-strong: #f48ca3;
+    --brand-outline: #374151;
+    --brand-shadow: 0px 8px 16px rgba(0, 0, 0, 0.35);
 
-    --m3-secondary: var(--m3-secondary-80);
-    --m3-on-secondary: var(--m3-secondary-20);
-    --m3-secondary-container: var(--m3-secondary-30);
-    --m3-on-secondary-container: var(--m3-secondary-90);
+    --brand-success: #7de09c;
+    --brand-success-container: #174728;
+    --brand-warning: #ffd77a;
+    --brand-warning-container: #4d3600;
+    --brand-error: #ff8a7a;
+    --brand-error-container: #4d1912;
+    --brand-pending: #9ca3af;
+    --brand-pending-container: #1f2937;
 
-    --m3-tertiary: var(--m3-tertiary-80);
-    --m3-on-tertiary: var(--m3-tertiary-20);
-    --m3-tertiary-container: var(--m3-tertiary-30);
-    --m3-on-tertiary-container: var(--m3-tertiary-90);
+    --m3-primary: var(--brand-ink);
+    --m3-on-primary: var(--brand-cloud);
+    --m3-primary-container: var(--brand-snow);
+    --m3-on-primary-container: var(--brand-ink);
 
-    --m3-error: var(--m3-error-80);
-    --m3-on-error: var(--m3-error-20);
-    --m3-error-container: var(--m3-error-30);
-    --m3-on-error-container: var(--m3-error-90);
+    --m3-secondary: var(--brand-blush);
+    --m3-on-secondary: var(--brand-ink);
+    --m3-secondary-container: var(--brand-blush-strong);
+    --m3-on-secondary-container: var(--brand-snow);
 
-    --m3-surface: var(--m3-neutral-10);
-    --m3-on-surface: var(--m3-neutral-90);
-    --m3-surface-variant: var(--m3-neutral-variant-30);
-    --m3-on-surface-variant: var(--m3-neutral-variant-80);
+    --m3-tertiary: #313541;
+    --m3-on-tertiary: var(--brand-ink-soft);
+    --m3-tertiary-container: #1a1d24;
+    --m3-on-tertiary-container: var(--brand-ink);
 
-    --m3-outline: var(--m3-neutral-variant-60);
-    --m3-outline-variant: var(--m3-neutral-variant-30);
+    --m3-error: var(--brand-error);
+    --m3-on-error: var(--brand-snow);
+    --m3-error-container: var(--brand-error-container);
+    --m3-on-error-container: var(--brand-error);
 
-    --m3-surface-container-lowest: var(--m3-neutral-0);
-    --m3-surface-container-low: var(--m3-neutral-10);
-    --m3-surface-container: var(--m3-neutral-20);
-    --m3-surface-container-high: var(--m3-neutral-20);
-    --m3-surface-container-highest: var(--m3-neutral-30);
+    --m3-surface: var(--brand-cloud);
+    --m3-on-surface: var(--brand-ink);
+    --m3-surface-variant: var(--brand-snow);
+    --m3-on-surface-variant: var(--brand-ink-soft);
 
-    /* Status colors for dark mode - slightly adjusted for contrast */
-    --m3-status-published: #4cda67;
-    --m3-status-published-container: #1a4d24;
-    --m3-status-scheduled: #ffe066;
-    --m3-status-scheduled-container: #4d3d00;
-    --m3-status-failed: #ff8a70;
-    --m3-status-failed-container: #4d1a10;
+    --m3-outline: var(--brand-outline);
+    --m3-outline-variant: #4b5563;
+
+    --m3-status-published: var(--brand-success);
+    --m3-status-published-container: var(--brand-success-container);
+    --m3-status-scheduled: var(--brand-warning);
+    --m3-status-scheduled-container: var(--brand-warning-container);
+    --m3-status-failed: var(--brand-error);
+    --m3-status-failed-container: var(--brand-error-container);
+    --m3-status-pending: var(--brand-pending);
+    --m3-status-pending-container: var(--brand-pending-container);
   }
 }

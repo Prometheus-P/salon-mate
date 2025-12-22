@@ -101,8 +101,11 @@ describe('EngagementMetrics Component', () => {
       renderWithProviders(<EngagementMetrics shopId="shop-123" />);
 
       await waitFor(() => {
-        expect(screen.getByText(/340/)).toBeInTheDocument();
+        expect(screen.getByText('Total Comments')).toBeInTheDocument();
       });
+
+      // 340 is displayed via formatNumber which uses toLocaleString
+      expect(screen.getByText('340')).toBeInTheDocument();
     });
 
     it('should display total reach', async () => {
