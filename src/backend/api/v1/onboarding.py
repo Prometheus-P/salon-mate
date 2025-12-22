@@ -13,7 +13,6 @@ from schemas.onboarding import (
     EmailVerificationResponse,
     OnboardingCompleteResponse,
     OnboardingStatus,
-    OnboardingStep,
     OnboardingStepUpdate,
 )
 from services.onboarding_service import OnboardingService

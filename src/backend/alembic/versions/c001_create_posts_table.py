@@ -9,7 +9,6 @@ Create Date: 2025-12-02
 from collections.abc import Sequence
 
 import sqlalchemy as sa
-from sqlalchemy import inspect
 
 from alembic import op
 

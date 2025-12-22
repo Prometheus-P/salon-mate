@@ -8,7 +8,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
 # ============== Onboarding Step ==============
 
 OnboardingStep = Literal["welcome", "profile", "shop", "integrations", "complete"]

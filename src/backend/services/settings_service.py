@@ -13,12 +13,10 @@ from models.user import User
 from schemas.settings import (
     IntegrationPlatform,
     IntegrationResponse,
-    IntegrationSettingsUpdate,
-    IntegrationStatus,
+    NotificationChannels,
     NotificationSettings,
     NotificationSettingsUpdate,
     NotificationType,
-    NotificationChannels,
     PaymentHistoryItem,
     PlanFeatures,
     PlanType,
@@ -26,7 +24,6 @@ from schemas.settings import (
     TeamInviteRequest,
     TeamMemberResponse,
     TeamMemberUpdate,
-    TeamRole,
     UsageResponse,
 )
 

@@ -3,7 +3,7 @@
 Instagram 포스트 CRUD 및 발행 API
 """
 
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status

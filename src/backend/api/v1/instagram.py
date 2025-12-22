@@ -6,7 +6,7 @@ Instagram Business 계정 OAuth 및 연결 관리
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -136,7 +136,7 @@ async def instagram_oauth_callback(
         error_redirect = f"{frontend_redirect}?error={e.message}"
         return RedirectResponse(url=error_redirect)
 
-    except Exception as e:
+    except Exception:
         error_redirect = f"{frontend_redirect}?error=unknown_error"
         return RedirectResponse(url=error_redirect)
 

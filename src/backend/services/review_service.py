@@ -3,13 +3,12 @@
 리뷰 CRUD 및 통계 비즈니스 로직
 """
 
-import re
 from collections import Counter
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import and_, cast, func, select, Date, Integer
+from sqlalchemy import Date, Integer, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.review import Review

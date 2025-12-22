@@ -3,7 +3,6 @@ Vision AI 서비스
 OpenAI Vision API를 사용한 뷰티 시술 이미지 분석
 """
 
-import base64
 import json
 from datetime import UTC, datetime
 from typing import Any
@@ -14,7 +13,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.settings import get_settings
-from models.shop import Shop
 from models.style_tag import StyleTag
 
 settings = get_settings()
