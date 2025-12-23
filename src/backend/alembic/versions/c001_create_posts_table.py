@@ -35,8 +35,8 @@ def upgrade() -> None:
     if dialect == "postgresql":
         from sqlalchemy.dialects import postgresql
 
-        uuid_type: sa.types.TypeEngine = postgresql.UUID(as_uuid=True)
-        json_type: sa.types.TypeEngine = postgresql.JSONB(astext_type=sa.Text())
+        uuid_type = postgresql.UUID(as_uuid=True)
+        json_type = postgresql.JSONB(astext_type=sa.Text())
     else:
         uuid_type = GUID()
         json_type = sa.JSON()
