@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
-import { PostEditor } from '../components/PostEditor';
+import { AlertCircle, Loader2 } from 'lucide-react';
+import { PostEditor } from '../../components/PostEditor';
 import {
-  useCreatePost,
+  usePostDetail,
+  useUpdatePost,
   usePublishPost,
   useGenerateAICaption,
   useHashtagRecommendations,
   useOptimalTimes,
-} from '../hooks/usePosts';
+} from '../../hooks/usePosts';
 import { useShopStore } from '@/stores/shopStore';
 
 interface PostEditorData {
@@ -23,24 +24,53 @@ interface PostEditorData {
   scheduledAt: Date | null;
 }
 
-export default function CreatePostPage() {
+interface EditPostPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function EditPostPage({ params }: EditPostPageProps) {
+  const { id: postId } = use(params);
   const router = useRouter();
   const { selectedShopId, selectedShop } = useShopStore();
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
 
-  // Mutations
-  const createPostMutation = useCreatePost(selectedShopId ?? '');
-  const publishPostMutation = usePublishPost(selectedShopId ?? '');
-  const generateCaptionMutation = useGenerateAICaption(selectedShopId ?? '');
-
   // Queries
+  const {
+    data: post,
+    isLoading: isLoadingPost,
+    error: postError,
+  } = usePostDetail(selectedShopId, postId);
   const {
     data: hashtagData,
     refetch: refetchHashtags,
     isLoading: isLoadingHashtags,
   } = useHashtagRecommendations(selectedShopId);
   const { data: optimalTimesData } = useOptimalTimes(selectedShopId);
+
+  // Mutations
+  const updatePostMutation = useUpdatePost(selectedShopId ?? '');
+  const publishPostMutation = usePublishPost(selectedShopId ?? '');
+  const generateCaptionMutation = useGenerateAICaption(selectedShopId ?? '');
+
+  // Transform post data to editor format
+  const initialData: Partial<PostEditorData> | undefined = post
+    ? {
+        media: post.imageUrl
+          ? [
+              {
+                id: 'existing-image',
+                url: post.imageUrl,
+                type: 'image' as const,
+              },
+            ]
+          : [],
+        caption: post.caption ?? '',
+        hashtags: post.hashtags ?? [],
+        publishMode: post.status === 'scheduled' ? 'scheduled' : 'now',
+        scheduledAt: post.scheduledAt ? new Date(post.scheduledAt) : null,
+      }
+    : undefined;
 
   const handleSave = async (data: PostEditorData) => {
     if (!selectedShopId) {
@@ -52,11 +82,14 @@ export default function CreatePostPage() {
     try {
       const imageUrl = data.media[0]?.url ?? '';
 
-      await createPostMutation.mutateAsync({
-        imageUrl,
-        caption: data.caption,
-        hashtags: data.hashtags,
-        scheduledAt: data.scheduledAt?.toISOString(),
+      await updatePostMutation.mutateAsync({
+        postId,
+        data: {
+          imageUrl,
+          caption: data.caption,
+          hashtags: data.hashtags,
+          scheduledAt: data.scheduledAt?.toISOString(),
+        },
       });
 
       toast.success('포스트가 저장되었습니다');
@@ -79,17 +112,20 @@ export default function CreatePostPage() {
     try {
       const imageUrl = data.media[0]?.url ?? '';
 
-      // First create the post
-      const post = await createPostMutation.mutateAsync({
-        imageUrl,
-        caption: data.caption,
-        hashtags: data.hashtags,
-        scheduledAt: data.scheduledAt?.toISOString(),
+      // First update the post
+      await updatePostMutation.mutateAsync({
+        postId,
+        data: {
+          imageUrl,
+          caption: data.caption,
+          hashtags: data.hashtags,
+          scheduledAt: data.scheduledAt?.toISOString(),
+        },
       });
 
       // If publishing now, trigger publish
       if (data.publishMode === 'now') {
-        await publishPostMutation.mutateAsync(post.id);
+        await publishPostMutation.mutateAsync(postId);
         toast.success('포스트가 게시되었습니다');
       } else {
         toast.success('포스트가 예약되었습니다');
@@ -152,10 +188,46 @@ export default function CreatePostPage() {
     );
   }
 
+  if (postError) {
+    return (
+      <div className="p-6">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>포스트를 불러오는데 실패했습니다.</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  // Show loading state only if post is still loading
+  if (isLoadingPost) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  // Check if the post is already published
+  if (post?.status === 'published') {
+    return (
+      <div className="p-6">
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            이미 게시된 포스트는 수정할 수 없습니다.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
   return (
     <div className="container max-w-6xl py-6">
       <PostEditor
-        mode="create"
+        key={post?.id ?? 'loading'}
+        mode="edit"
+        initialData={initialData}
         shopName={selectedShop?.name ?? 'your_salon'}
         optimalTimes={optimalTimesData?.times ?? []}
         recommendedHashtags={recommendedHashtags}

@@ -71,6 +71,33 @@ export interface AICaptionResponse {
   generatedAt: string;
 }
 
+export type AIContentType = 'image' | 'reels' | 'caption' | 'story';
+export type AITone = 'professional' | 'trendy' | 'emotional' | 'humorous';
+export type AIMood = 'bright' | 'calm' | 'luxury' | 'casual';
+export type AIColorScheme = 'warm' | 'cool' | 'monochrome' | 'vivid';
+
+export interface AIImageRequest {
+  prompt: string;
+  contentType: AIContentType;
+  tone?: AITone;
+  mood?: AIMood;
+  colorScheme?: AIColorScheme;
+  count?: number;
+}
+
+export interface AIGeneratedImage {
+  id: string;
+  url: string;
+  prompt: string;
+  generatedAt: string;
+}
+
+export interface AIImageResponse {
+  images: AIGeneratedImage[];
+  suggestedCaption: string;
+  suggestedHashtags: string[];
+}
+
 export interface HashtagRecommendation {
   industry: string[];
   location: string[];
@@ -189,5 +216,18 @@ export async function getRecommendedHashtags(shopId: string): Promise<HashtagRec
 export async function getOptimalTimes(shopId: string): Promise<{ times: OptimalTime[] }> {
   return fetchWithAuth<{ times: OptimalTime[] }>(
     `${API_BASE_URL}/shops/${shopId}/posts/optimal-times`
+  );
+}
+
+export async function generateAIImage(
+  shopId: string,
+  request: AIImageRequest
+): Promise<AIImageResponse> {
+  return fetchWithAuth<AIImageResponse>(
+    `${API_BASE_URL}/shops/${shopId}/posts/ai/generate-image`,
+    {
+      method: 'POST',
+      body: JSON.stringify(request),
+    }
   );
 }

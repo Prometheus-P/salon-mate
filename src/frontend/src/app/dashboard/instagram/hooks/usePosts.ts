@@ -15,6 +15,7 @@ import {
   publishPost,
   duplicatePost,
   generateAICaption,
+  generateAIImage,
   getRecommendedHashtags,
   getOptimalTimes,
   type Post,
@@ -24,6 +25,8 @@ import {
   type PostUpdateRequest,
   type AICaptionRequest,
   type AICaptionResponse,
+  type AIImageRequest,
+  type AIImageResponse,
   type HashtagRecommendation,
   type PostStatus,
 } from '@/lib/api/posts';
@@ -162,6 +165,14 @@ export function useDuplicatePost(shopId: string) {
 export function useGenerateAICaption(shopId: string) {
   return useMutation<AICaptionResponse, Error, AICaptionRequest>({
     mutationFn: (request) => generateAICaption(shopId, request),
+  });
+}
+
+// ============== AI Image Generation ==============
+
+export function useGenerateAIImage(shopId: string) {
+  return useMutation<AIImageResponse, Error, AIImageRequest>({
+    mutationFn: (request) => generateAIImage(shopId, request),
   });
 }
 
