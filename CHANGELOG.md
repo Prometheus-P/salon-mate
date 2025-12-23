@@ -15,6 +15,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2025-12-23
+
+### Added
+- **Content Studio Editor Components**
+  - `InstagramPreview` - Instagram 앱 UI 시뮬레이션 (다크/라이트 모드)
+  - `CaptionEditor` - 이모지 피커 및 AI 캡션 생성 지원
+  - `HashtagInput` - 카테고리별 해시태그 추천 (업종, 위치, 트렌드, AI)
+  - `SchedulePicker` - 캘린더/시간 선택기 및 최적 시간 표시
+  - `MediaUploader` - 드래그앤드롭, 파일 검증, 그리드 재정렬
+  - `PostEditor` - 통합 2컬럼 레이아웃 에디터
+
+- **AI Studio Page** (`/dashboard/instagram/ai-studio`)
+  - 3단계 위자드: 콘텐츠 유형 → 주제 입력 → 스타일 선택
+  - AI 이미지 생성 및 캡션/해시태그 추천
+  - 생성 결과 그리드 및 포스트 작성 연동
+
+- **Media Library Page** (`/dashboard/instagram/media`)
+  - 미디어 파일 관리 (이미지/동영상/AI생성)
+  - 폴더 구조 및 생성 기능
+  - 다중 선택 및 일괄 작업 (삭제, 이동, 포스트 생성)
+  - 검색 및 필터 기능
+
+- **Post Edit Page** (`/dashboard/instagram/[id]/edit`)
+  - 기존 포스트 수정 기능
+  - PostEditor 컴포넌트 활용
+
+- **New UI Components**
+  - `calendar.tsx` - react-day-picker v9 기반 캘린더
+  - `radio-group.tsx` - Radix UI 라디오 그룹
+  - `separator.tsx` - Radix UI 구분선
+
+- **API & Hooks**
+  - AI 이미지 생성 API (`generateAIImage`)
+  - 미디어 CRUD API (`media.ts`)
+  - TanStack Query 훅 (`useMedia.ts`, `useGenerateAIImage`)
+
+### Changed
+- 포스트 생성 페이지 리팩토링 (PostEditor 컴포넌트 사용)
+
+---
+
 ## [0.4.3] - 2025-12-23
 
 ### Fixed
