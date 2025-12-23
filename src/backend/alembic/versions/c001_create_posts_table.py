@@ -7,6 +7,7 @@ Create Date: 2025-12-02
 """
 
 from collections.abc import Sequence
+from typing import Any
 
 import sqlalchemy as sa
 
@@ -29,11 +30,13 @@ def upgrade() -> None:
     from models.base import GUID
 
     # Choose JSON type based on dialect
+    uuid_type: Any
+    json_type: Any
     if dialect == "postgresql":
         from sqlalchemy.dialects import postgresql
 
-        uuid_type: sa.types.TypeEngine = postgresql.UUID(as_uuid=True)
-        json_type: sa.types.TypeEngine = postgresql.JSONB(astext_type=sa.Text())
+        uuid_type = postgresql.UUID(as_uuid=True)
+        json_type = postgresql.JSONB(astext_type=sa.Text())
     else:
         uuid_type = GUID()
         json_type = sa.JSON()

@@ -103,10 +103,8 @@ class OnboardingService:
         user = result.scalar_one_or_none()
         if user:
             user.name = data.name
-            if data.phone:
-                user.phone = data.phone
-            if data.profile_image:
-                user.profile_image = data.profile_image
+            # Note: phone and profile_image fields are not yet in User model
+            # TODO: Add phone and avatar_url fields to User model when needed
             user.updated_at = datetime.utcnow()
             await self.db.commit()
 
