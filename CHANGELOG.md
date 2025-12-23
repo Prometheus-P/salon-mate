@@ -15,6 +15,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.3] - 2025-12-23
+
+### Fixed
+- Added missing type annotations to 22+ API endpoint functions
+- Fixed mypy type errors across backend codebase
+- Resolved ruff lint errors (unused imports, formatting)
+- Added Suspense boundary for Next.js stylebook page
+- Fixed alembic migration duplicate type annotation error
+
+### Changed
+- Improved type safety in `api/v1/posts.py`, `api/v1/settings.py`, `api/v1/onboarding.py`
+- Enhanced middleware type annotations in `middleware/timing.py`
+- Cleaned up `services/onboarding_service.py` to remove non-existent User attributes
+
+---
+
 ## [0.4.2] - 2025-12-22
 
 ### Changed
@@ -157,6 +173,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Description |
 |---------|------|-------------|
+| 0.4.3 | 2025-12-23 | CI lint/type 오류 수정 |
 | 0.4.2 | 2025-12-22 | README 및 CI 수정 |
 | 0.4.1 | 2025-12-22 | 라이센스 변경 (MIT → Proprietary) |
 | 0.4.0 | 2025-12-22 | Sprint 5 - Instagram API, Vision AI, E2E 테스트, 모니터링 |
@@ -166,7 +183,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.3.0...v0.4.0
