@@ -77,9 +77,34 @@ function ReviewCard({ review, shopId, isExpanded, onToggle }: ReviewCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isPublishDialogOpen, setPublishDialogOpen] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const generateMutation = useGenerateAIResponse(shopId);
   const publishMutation = usePublishResponse(shopId);
+
+  // Copy to clipboard handler
+  const handleCopyToClipboard = async () => {
+    if (!response.trim()) return;
+
+    try {
+      await navigator.clipboard.writeText(response);
+      setIsCopied(true);
+      toast.success('클립보드에 복사되었습니다', {
+        description: '네이버 또는 카카오에 붙여넣기 하세요.',
+      });
+
+      // Reset copied state after 2 seconds
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy:', error);
+      toast.error('복사에 실패했습니다');
+    }
+  };
+
+  // Open Naver Place for manual response
+  const handleOpenNaver = () => {
+    window.open('https://m.place.naver.com/my/review', '_blank');
+  };
 
   const handleGenerate = async () => {
     try {
@@ -211,7 +236,7 @@ function ReviewCard({ review, shopId, isExpanded, onToggle }: ReviewCardProps) {
             )}
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {/* Generate AI Response Button */}
               <button
                 onClick={handleGenerate}
@@ -260,6 +285,78 @@ function ReviewCard({ review, shopId, isExpanded, onToggle }: ReviewCardProps) {
                   </>
                 )}
               </button>
+
+              {/* Copy to Clipboard Button */}
+              {response && (
+                <button
+                  onClick={handleCopyToClipboard}
+                  disabled={!response.trim()}
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                    isCopied
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {isCopied ? (
+                    <>
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span>복사됨</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span>복사</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Open Naver Button */}
+              {response && (
+                <button
+                  onClick={handleOpenNaver}
+                  className="flex items-center gap-1.5 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-100"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                  <span>네이버</span>
+                </button>
+              )}
 
               {/* Publish Button */}
               {response && (

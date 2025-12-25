@@ -170,3 +170,58 @@ class ReviewExportItem(BaseModel):
     responded_at: str | None = Field(default=None, alias="respondedAt")
 
     model_config = {"populate_by_name": True}
+
+
+# ============================================================
+# Global Inbox Schemas (Agency Mode)
+# ============================================================
+
+
+class InboxReviewItem(BaseModel):
+    """인박스 리뷰 항목 - 샵 정보 포함"""
+
+    id: UUID
+    shop_id: UUID = Field(alias="shopId")
+    shop_name: str = Field(alias="shopName")
+    reviewer_name: str = Field(alias="reviewerName")
+    reviewer_profile_url: str | None = Field(default=None, alias="reviewerProfileUrl")
+    rating: int
+    content: str | None = None
+    review_date: datetime = Field(alias="reviewDate")
+    status: str
+    ai_response: str | None = Field(default=None, alias="aiResponse")
+    ai_response_generated_at: datetime | None = Field(
+        default=None, alias="aiResponseGeneratedAt"
+    )
+    platform: str = "google"
+    created_at: datetime = Field(alias="createdAt")
+
+    model_config = {"from_attributes": True, "populate_by_name": True}
+
+
+class GlobalInboxResponse(BaseModel):
+    """전체 샵 인박스 응답"""
+
+    total_pending: int = Field(alias="totalPending")
+    reviews: list[InboxReviewItem]
+
+    model_config = {"populate_by_name": True}
+
+
+class BulkApproveRequest(BaseModel):
+    """일괄 승인 요청"""
+
+    review_ids: list[UUID] = Field(alias="reviewIds")
+    custom_suffix: str | None = Field(default=None, alias="customSuffix")
+
+    model_config = {"populate_by_name": True}
+
+
+class BulkApproveResponse(BaseModel):
+    """일괄 승인 응답"""
+
+    success_count: int = Field(alias="successCount")
+    failed_count: int = Field(alias="failedCount")
+    failed_ids: list[UUID] = Field(default_factory=list, alias="failedIds")
+
+    model_config = {"populate_by_name": True}

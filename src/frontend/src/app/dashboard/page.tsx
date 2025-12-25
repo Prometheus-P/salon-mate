@@ -5,14 +5,15 @@
  * Main dashboard view for salon owners to monitor marketing metrics
  */
 
-import { Suspense, useState } from 'react';
-import { ShopSelector } from './components/ShopSelector';
+import { useEffect, useSyncExternalStore } from 'react';
 import { ReviewStats } from './components/ReviewStats';
 import { PostingCalendar } from './components/PostingCalendar';
 import { EngagementMetrics } from './components/EngagementMetrics';
 import { TrendCharts } from './components/TrendCharts';
 import { PendingReviews } from './components/PendingReviews';
 import { CardSkeleton } from './components/EmptyState';
+import { useShopStore } from '@/stores/shopStore';
+import { useShopsWithStats } from './hooks/useDashboard';
 
 // Material UI imports
 import Container from '@mui/material/Container';
@@ -20,28 +21,47 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid'; // Using Grid with v2 API (size prop)
 
+// Helper to safely get selectedShopId with hydration handling
+function useHydratedShopId() {
+  const store = useShopStore;
+  return useSyncExternalStore(
+    store.subscribe,
+    () => store.getState().selectedShopId,
+    () => null // Server snapshot returns null
+  );
+}
+
 export default function DashboardPage() {
-  const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
+  const selectedShopId = useHydratedShopId();
+  const setSelectedShopId = useShopStore((s) => s.setSelectedShopId);
+  const { data: shopsData } = useShopsWithStats();
+
+  // Auto-select first shop if none selected (only on client side after hydration)
+  const shops = shopsData?.shops;
+  useEffect(() => {
+    if (selectedShopId === null && shops && shops.length > 0) {
+      // Use setTimeout to avoid synchronous setState during render
+      const timeoutId = setTimeout(() => {
+        setSelectedShopId(shops[0].id);
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [selectedShopId, shops, setSelectedShopId]);
+
+  // Get the current shop name for display
+  const currentShop = shops?.find((s) => s.id === selectedShopId);
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Box sx={{ flexGrow: 1 }}>
-        {/* Header with Shop Selector - M3 Typography */}
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' }, mb: 4 }}>
-          <Box>
-            <Typography variant="h4" component="h1" gutterBottom>
-              대시보드
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              마케팅 현황을 한눈에 확인하세요
-            </Typography>
-          </Box>
-          <Suspense fallback={<Box sx={{ height: 40, width: 192, bgcolor: 'grey.300', animation: 'pulse 1.5s infinite', borderRadius: 1 }} />}>
-            <ShopSelector
-              selectedShopId={selectedShopId}
-              onShopChange={setSelectedShopId}
-            />
-          </Suspense>
+        {/* Header */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            대시보드
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            {currentShop ? `${currentShop.name} - 마케팅 현황` : '사이드바에서 매장을 선택하세요'}
+          </Typography>
         </Box>
 
         {/* Dashboard Content */}

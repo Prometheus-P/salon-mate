@@ -1,6 +1,6 @@
 # salon-mate Development Guidelines
 
-Last updated: 2025-12-23 | Version: 0.5.0
+Last updated: 2025-12-26 | Version: 0.6.0
 
 ## Active Technologies
 
@@ -88,7 +88,8 @@ vercel --prod                         # Deploy to Vercel
 
 ## Current Features
 
-### Implemented (v0.5.0)
+### Implemented (v0.6.0)
+- **Agency Mode**: Global Inbox, Bulk Approve, Shop Sidebar, Monthly Reports
 - **Marketing Dashboard**: Review stats, posting calendar, engagement metrics
 - **Content Studio**: Post editor, AI Studio, Media Library
 - **Reviews**: List, detail, analytics

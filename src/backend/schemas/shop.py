@@ -47,3 +47,28 @@ class ShopListResponse(BaseModel):
 
     shops: list[ShopResponse]
     total: int
+
+
+# ============================================================
+# Shop with Stats (Agency Mode)
+# ============================================================
+
+
+class ShopWithStats(BaseModel):
+    """샵 정보 + 통계 (사이드바용)"""
+
+    id: UUID
+    name: str
+    type: str
+    pending_count: int = Field(alias="pendingCount")
+
+    model_config = {"from_attributes": True, "populate_by_name": True}
+
+
+class ShopsWithStatsResponse(BaseModel):
+    """샵 목록 + 통계 응답"""
+
+    shops: list[ShopWithStats]
+    total_pending: int = Field(alias="totalPending")
+
+    model_config = {"populate_by_name": True}

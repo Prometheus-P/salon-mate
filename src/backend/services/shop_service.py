@@ -8,6 +8,7 @@ from uuid import UUID
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from models.review import Review
 from models.shop import Shop
 from models.user import User
 from schemas.shop import ShopCreate, ShopUpdate
@@ -91,3 +92,51 @@ class ShopService:
 
         await self.db.delete(shop)
         await self.db.commit()
+
+    async def get_shops_with_stats(
+        self, user: User
+    ) -> tuple[list[dict], int]:
+        """사용자의 매장 목록과 각 매장의 pending 리뷰 개수를 조회합니다 (Agency Mode)."""
+        # 서브쿼리: 각 샵별 pending 리뷰 개수
+        pending_subquery = (
+            select(
+                Review.shop_id,
+                func.count(Review.id).label("pending_count"),
+            )
+            .where(Review.status == "pending")
+            .group_by(Review.shop_id)
+            .subquery()
+        )
+
+        # 샵 + pending count 조인
+        query = (
+            select(
+                Shop.id,
+                Shop.name,
+                Shop.type,
+                func.coalesce(pending_subquery.c.pending_count, 0).label("pending_count"),
+            )
+            .outerjoin(pending_subquery, Shop.id == pending_subquery.c.shop_id)
+            .where(Shop.user_id == user.id)
+            .order_by(
+                func.coalesce(pending_subquery.c.pending_count, 0).desc(),  # pending 많은 순
+                Shop.name.asc(),
+            )
+        )
+
+        result = await self.db.execute(query)
+        rows = result.all()
+
+        shops = [
+            {
+                "id": row.id,
+                "name": row.name,
+                "type": row.type,
+                "pending_count": row.pending_count,
+            }
+            for row in rows
+        ]
+
+        total_pending = sum(shop["pending_count"] for shop in shops)
+
+        return shops, total_pending
