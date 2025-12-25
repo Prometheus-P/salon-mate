@@ -14,6 +14,9 @@ import {
   generateAIResponse,
   publishResponse,
   getUserShops,
+  getShopsWithStats,
+  getGlobalInbox,
+  bulkApproveReviews,
   type ReviewStatsResponse,
   type CalendarResponse,
   type EngagementResponse,
@@ -22,6 +25,10 @@ import {
   type GeneratedResponseResult,
   type PublishResponseResult,
   type ShopsListResponse,
+  type ShopsWithStatsResponse,
+  type GlobalInboxResponse,
+  type BulkApproveResponse,
+  type BulkApproveRequest,
 } from '@/lib/api/dashboard';
 
 // ============== Query Keys ==============
@@ -37,6 +44,9 @@ export const dashboardKeys = {
   pendingReviews: (shopId: string) =>
     [...dashboardKeys.all, 'pendingReviews', shopId] as const,
   shops: () => ['shops'] as const,
+  shopsWithStats: () => ['shops', 'with-stats'] as const,
+  globalInbox: (limit: number, offset: number) =>
+    [...dashboardKeys.all, 'globalInbox', limit, offset] as const,
 };
 
 // ============== Review Stats ==============
@@ -175,5 +185,39 @@ export function useUserShops() {
     queryKey: dashboardKeys.shops(),
     queryFn: getUserShops,
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+// ============== Shops with Stats (Agency Mode) ==============
+
+export function useShopsWithStats() {
+  return useQuery<ShopsWithStatsResponse>({
+    queryKey: dashboardKeys.shopsWithStats(),
+    queryFn: getShopsWithStats,
+    staleTime: 2 * 60 * 1000, // 2 minutes - refresh more often for pending counts
+  });
+}
+
+// ============== Global Inbox (Agency Mode) ==============
+
+export function useGlobalInbox(limit: number = 50, offset: number = 0) {
+  return useQuery<GlobalInboxResponse>({
+    queryKey: dashboardKeys.globalInbox(limit, offset),
+    queryFn: () => getGlobalInbox(limit, offset),
+    staleTime: 1 * 60 * 1000, // 1 minute - keep fresh for inbox
+  });
+}
+
+export function useBulkApprove() {
+  const queryClient = useQueryClient();
+
+  return useMutation<BulkApproveResponse, Error, BulkApproveRequest>({
+    mutationFn: bulkApproveReviews,
+    onSuccess: () => {
+      // Invalidate all inbox and pending reviews queries
+      queryClient.invalidateQueries({ queryKey: ['dashboard', 'globalInbox'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard', 'pendingReviews'] });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.shopsWithStats() });
+    },
   });
 }

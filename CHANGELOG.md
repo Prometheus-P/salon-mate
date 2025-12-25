@@ -12,6 +12,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 네이버 리뷰 답변 생성 기능
 - Google OAuth 인증
 - Kakao OAuth 인증
+- 인박스 키보드 단축키 (#79)
+- 네이버 RPA 크롬 익스텐션 (#80)
+- 실시간 리뷰 알림 시스템 (#81)
+
+---
+
+## [0.6.0] - 2025-12-26
+
+### Added
+
+#### Agency Mode - 1인 에이전시 운영 도구 전환
+SalonMate를 B2C SaaS에서 **에이전시 내부 도구**로 피벗. 30개 이상의 매장을 1인이 효율적으로 관리할 수 있도록 최적화.
+
+- **Global Inbox API** (`/api/v1/inbox`)
+  - 모든 매장의 pending 리뷰 통합 조회
+  - 매장별 pending 카운트 포함
+  - 페이지네이션 지원
+
+- **Bulk Approve Endpoint** (`POST /api/v1/inbox/bulk-approve`)
+  - 여러 리뷰의 AI 응답 일괄 승인
+  - 성공/실패 카운트 반환
+  - 트랜잭션 기반 처리
+
+- **Monthly Report Service** (`/api/v1/reports/{shop_id}/monthly`)
+  - HTML 기반 월간 성과 리포트
+  - 브라우저에서 PDF 인쇄 가능 (A4 최적화)
+  - 핵심 지표: 총 리뷰, 평균 평점, 응답률, 신규 리뷰
+  - 평점 분포 차트, 일별 트렌드 테이블
+  - JSON 데이터 API도 제공 (`/monthly/data`)
+
+- **Shop Sidebar Component**
+  - 드롭다운 → 고정 사이드바로 UI 전환
+  - 매장별 pending 리뷰 배지 표시
+  - pending > 0인 매장 상단 고정 정렬
+  - 검색 필터 기능
+  - 전체 인박스 바로가기
+
+- **Unified Inbox Page** (`/dashboard/inbox`)
+  - 전체 매장 리뷰 타임라인 뷰
+  - 다중 선택 및 일괄 승인 기능
+  - 매장별 컬러 배지 구분
+  - 인라인 AI 응답 생성/편집
+
+- **Copy-to-Clipboard UX 강화**
+  - 원클릭 복사 버튼
+  - 복사 완료 시 시각적 피드백 (녹색 전환)
+  - 네이버 플레이스 바로가기 버튼
+
+### Changed
+- Dashboard Layout: 사이드바 기반 레이아웃으로 변경
+- Shop Selector: 드롭다운에서 사이드바로 교체
+- `useSyncExternalStore` 패턴으로 Zustand hydration 처리 개선
+
+### Technical
+- `InboxReviewItem`, `GlobalInboxResponse` 타입 추가
+- `useGlobalInbox()`, `useBulkApprove()` React Query 훅
+- `ReportService` 클래스 (HTML 리포트 생성)
+- SQLAlchemy async 쿼리 최적화
 
 ---
 
@@ -214,6 +272,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Description |
 |---------|------|-------------|
+| 0.6.0 | 2025-12-26 | Agency Mode Pivot - 1인 에이전시 운영 도구 |
+| 0.5.0 | 2025-12-23 | Content Studio 에디터 컴포넌트 |
 | 0.4.3 | 2025-12-23 | CI lint/type 오류 수정 |
 | 0.4.2 | 2025-12-22 | README 및 CI 수정 |
 | 0.4.1 | 2025-12-22 | 라이센스 변경 (MIT → Proprietary) |
@@ -224,7 +284,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/Prometheus-P/salon-mate/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.3...v0.5.0
 [0.4.3]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.0...v0.4.1

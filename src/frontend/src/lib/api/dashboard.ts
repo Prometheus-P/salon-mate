@@ -111,6 +111,19 @@ export interface ShopsListResponse {
   shops: ShopSummary[];
 }
 
+// Agency Mode: Shops with Stats
+export interface ShopWithStats {
+  id: string;
+  name: string;
+  type: string;
+  pendingCount: number;
+}
+
+export interface ShopsWithStatsResponse {
+  shops: ShopWithStats[];
+  totalPending: number;
+}
+
 // ============== Helper ==============
 
 async function fetchWithAuth<T>(url: string, options: RequestInit = {}): Promise<T> {
@@ -209,4 +222,65 @@ export async function publishResponse(
 
 export async function getUserShops(): Promise<ShopsListResponse> {
   return fetchWithAuth<ShopsListResponse>(`${API_BASE_URL}/shops`);
+}
+
+export async function getShopsWithStats(): Promise<ShopsWithStatsResponse> {
+  return fetchWithAuth<ShopsWithStatsResponse>(`${API_BASE_URL}/shops/with-stats`);
+}
+
+// ============== Global Inbox (Agency Mode) ==============
+
+export interface InboxReviewItem {
+  id: string;
+  shopId: string;
+  shopName: string;
+  reviewerName: string;
+  reviewerProfileUrl: string | null;
+  rating: number;
+  content: string | null;
+  reviewDate: string;
+  status: string;
+  aiResponse: string | null;
+  aiResponseGeneratedAt: string | null;
+  platform: string;
+  createdAt: string;
+}
+
+export interface GlobalInboxResponse {
+  totalPending: number;
+  reviews: InboxReviewItem[];
+}
+
+export interface BulkApproveRequest {
+  reviewIds: string[];
+  customSuffix?: string;
+}
+
+export interface BulkApproveResponse {
+  successCount: number;
+  failedCount: number;
+  failedIds: string[];
+}
+
+export async function getGlobalInbox(
+  limit: number = 50,
+  offset: number = 0
+): Promise<GlobalInboxResponse> {
+  const params = new URLSearchParams({
+    limit: limit.toString(),
+    offset: offset.toString(),
+  });
+  return fetchWithAuth<GlobalInboxResponse>(`${API_BASE_URL}/inbox?${params}`);
+}
+
+export async function bulkApproveReviews(
+  request: BulkApproveRequest
+): Promise<BulkApproveResponse> {
+  return fetchWithAuth<BulkApproveResponse>(`${API_BASE_URL}/inbox/bulk-approve`, {
+    method: 'POST',
+    body: JSON.stringify({
+      review_ids: request.reviewIds,
+      custom_suffix: request.customSuffix,
+    }),
+  });
 }

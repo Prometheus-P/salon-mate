@@ -15,7 +15,9 @@ from schemas.shop import (
     ShopCreate,
     ShopListResponse,
     ShopResponse,
+    ShopsWithStatsResponse,
     ShopUpdate,
+    ShopWithStats,
 )
 from services.auth_service import AuthException, AuthService
 from services.shop_service import ShopException, ShopService
@@ -99,6 +101,37 @@ async def get_shops(
             for shop in shops
         ],
         total=total,
+    )
+
+
+@router.get(
+    "/with-stats",
+    response_model=ShopsWithStatsResponse,
+    summary="매장 목록 + 통계 조회 (Agency Mode)",
+    description="사용자의 모든 매장과 각 매장의 답변 대기 리뷰 개수를 조회합니다.",
+)
+async def get_shops_with_stats(
+    current_user: User = Depends(get_current_user),
+    shop_service: ShopService = Depends(get_shop_service),
+) -> ShopsWithStatsResponse:
+    """매장 목록과 각 매장의 pending 리뷰 개수를 조회합니다.
+
+    Agency 모드에서 사이드바에 샵별 대기 리뷰 배지를 표시하는 데 사용됩니다.
+    - 샵은 pending 리뷰 개수가 많은 순으로 정렬됩니다
+    - 각 샵에 pending 리뷰 개수가 포함됩니다
+    """
+    shops, total_pending = await shop_service.get_shops_with_stats(current_user)
+    return ShopsWithStatsResponse(
+        shops=[
+            ShopWithStats(
+                id=shop["id"],
+                name=shop["name"],
+                type=shop["type"],
+                pendingCount=shop["pending_count"],
+            )
+            for shop in shops
+        ],
+        totalPending=total_pending,
     )
 
 

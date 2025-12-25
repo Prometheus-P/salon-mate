@@ -452,3 +452,144 @@ class ReviewService:
             }
             for review in reviews
         ]
+
+    # ============================================================
+    # Global Inbox Methods (Agency Mode)
+    # ============================================================
+
+    async def get_all_pending_reviews(
+        self,
+        user: User,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> tuple[list[dict[str, Any]], int]:
+        """사용자의 모든 샵에서 pending 리뷰를 조회합니다 (Agency Mode).
+
+        Args:
+            user: 현재 사용자
+            limit: 조회할 개수 (최대 100)
+            offset: 시작 위치
+
+        Returns:
+            (리뷰 목록 with shop_name, 총 pending 개수)
+        """
+        # 1. 사용자의 모든 샵 ID 조회
+        shop_ids_result = await self.db.execute(
+            select(Shop.id).where(Shop.user_id == user.id)
+        )
+        shop_ids = [row[0] for row in shop_ids_result.all()]
+
+        if not shop_ids:
+            return [], 0
+
+        # 2. 총 pending 개수 조회
+        count_result = await self.db.execute(
+            select(func.count(Review.id))
+            .where(Review.shop_id.in_(shop_ids))
+            .where(Review.status == "pending")
+        )
+        total_pending = count_result.scalar() or 0
+
+        # 3. Review + Shop JOIN으로 shop_name 포함 조회
+        query = (
+            select(Review, Shop.name.label("shop_name"))
+            .join(Shop, Review.shop_id == Shop.id)
+            .where(Review.shop_id.in_(shop_ids))
+            .where(Review.status == "pending")
+            .order_by(Review.review_date.desc())
+            .offset(offset)
+            .limit(limit)
+        )
+        result = await self.db.execute(query)
+        rows = result.all()
+
+        reviews = [
+            {
+                "id": row.Review.id,
+                "shop_id": row.Review.shop_id,
+                "shop_name": row.shop_name,
+                "reviewer_name": row.Review.reviewer_name,
+                "reviewer_profile_url": row.Review.reviewer_profile_url,
+                "rating": row.Review.rating,
+                "content": row.Review.content,
+                "review_date": row.Review.review_date,
+                "status": row.Review.status,
+                "ai_response": row.Review.ai_response,
+                "ai_response_generated_at": row.Review.ai_response_generated_at,
+                "platform": "google" if row.Review.google_review_id else "manual",
+                "created_at": row.Review.created_at,
+            }
+            for row in rows
+        ]
+
+        return reviews, total_pending
+
+    async def bulk_approve_reviews(
+        self,
+        user: User,
+        review_ids: list[UUID],
+        custom_suffix: str | None = None,
+    ) -> dict[str, Any]:
+        """여러 리뷰의 AI 응답을 일괄 승인합니다.
+
+        Args:
+            user: 현재 사용자
+            review_ids: 승인할 리뷰 ID 목록
+            custom_suffix: 모든 응답 끝에 추가할 문구 (선택)
+
+        Returns:
+            성공/실패 개수 및 실패한 ID 목록
+        """
+        # 1. 사용자의 샵 ID 조회
+        shop_ids_result = await self.db.execute(
+            select(Shop.id).where(Shop.user_id == user.id)
+        )
+        user_shop_ids = {row[0] for row in shop_ids_result.all()}
+
+        success_count = 0
+        failed_count = 0
+        failed_ids: list[UUID] = []
+
+        now = datetime.now(UTC)
+
+        for review_id in review_ids:
+            # 2. 리뷰 조회 및 권한 확인
+            result = await self.db.execute(
+                select(Review).where(Review.id == review_id)
+            )
+            review = result.scalar_one_or_none()
+
+            # 3. 유효성 검사
+            if not review:
+                failed_count += 1
+                failed_ids.append(review_id)
+                continue
+
+            if review.shop_id not in user_shop_ids:
+                failed_count += 1
+                failed_ids.append(review_id)
+                continue
+
+            if not review.ai_response:
+                # AI 응답이 없으면 승인 불가
+                failed_count += 1
+                failed_ids.append(review_id)
+                continue
+
+            # 4. 승인 처리
+            final_response = review.ai_response
+            if custom_suffix:
+                final_response = f"{final_response}\n\n{custom_suffix}"
+
+            review.final_response = final_response
+            review.status = "replied"
+            review.replied_at = now
+            success_count += 1
+
+        await self.db.commit()
+
+        return {
+            "success_count": success_count,
+            "failed_count": failed_count,
+            "failed_ids": failed_ids,
+        }
