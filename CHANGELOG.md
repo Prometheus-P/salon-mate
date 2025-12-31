@@ -10,8 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - 구글 리뷰 자동 답변 기능
 - 네이버 리뷰 답변 생성 기능
-- Google OAuth 인증
-- Kakao OAuth 인증
+
+---
+
+## [0.5.1] - 2025-12-31
+
+### Changed
+- **CLAUDE.md 대폭 리팩토링** (#93)
+  - 일반적인 엔지니어링 교육 콘텐츠 제거 (Role-Based Principles, Frontend Engineering 등)
+  - 프로젝트 특화 아키텍처 패턴 및 코드 예시 추가
+  - 실용적인 명령어 (단일 테스트, Docker 등) 추가
+  - 문서 크기 86% 감소 (1,400줄 → 194줄)
 
 ---
 
@@ -214,6 +223,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Description |
 |---------|------|-------------|
+| 0.5.1 | 2025-12-31 | CLAUDE.md 리팩토링 (프로젝트 특화 가이드라인) |
+| 0.5.0 | 2025-12-23 | Content Studio, AI Studio, Media Library |
 | 0.4.3 | 2025-12-23 | CI lint/type 오류 수정 |
 | 0.4.2 | 2025-12-22 | README 및 CI 수정 |
 | 0.4.1 | 2025-12-22 | 라이센스 변경 (MIT → Proprietary) |
@@ -224,13 +235,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.3...HEAD
-[0.4.3]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.2...v0.4.3
-[0.4.2]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.1...v0.4.2
-[0.4.1]: https://github.com/Prometheus-P/salon-mate/compare/v0.4.0...v0.4.1
-[0.4.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.3.0...v0.4.0
-[0.3.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/Prometheus-P/salon-mate/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/Prometheus-P/salon-mate/releases/tag/v0.1.0
+[Unreleased]: https://github.com/x-ordo/salon-mate/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/x-ordo/salon-mate/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/x-ordo/salon-mate/compare/v0.4.3...v0.5.0
+[0.4.3]: https://github.com/x-ordo/salon-mate/compare/v0.4.2...v0.4.3
+[0.4.2]: https://github.com/x-ordo/salon-mate/compare/v0.4.1...v0.4.2
+[0.4.1]: https://github.com/x-ordo/salon-mate/compare/v0.4.0...v0.4.1
+[0.4.0]: https://github.com/x-ordo/salon-mate/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/x-ordo/salon-mate/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/x-ordo/salon-mate/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/x-ordo/salon-mate/releases/tag/v0.1.0
 
 *🤖 Generated with [Claude Code](https://claude.com/claude-code)*
